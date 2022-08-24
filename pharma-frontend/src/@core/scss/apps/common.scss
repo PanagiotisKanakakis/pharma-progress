@@ -1,0 +1,86 @@
+@import '@core/scss/angular/libs/datatables.component.scss';
+@import '@core/scss/angular/libs/date-time-picker.component.scss';
+
+.datatable-header-cell
+{
+  display: flex !important;
+  align-items: center !important;
+}
+
+.datatable-scroll {
+  width: auto !important;
+}
+
+.dark-layout .datatable-body-cell {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center;
+}
+
+.info_header {
+  background-color: white!important;
+}
+
+.dark-layout .card{
+  background-color: white!important;
+  color: black;
+}
+
+.ngx-datatable.bootstrap .datatable-body .datatable-body-row {
+  vertical-align: top;
+  border-top: 0px solid #d1d4d7;
+}
+
+.ngx-datatable.fixed-header .datatable-header .datatable-header-inner {
+  white-space: nowrap !important;
+  height: inherit!important;
+  text-align: center!important;
+}
+
+.btn-btn-success {
+  //border-color: $color_value !important;
+  //background-color: $color_value !important;
+  //color: $white !important;
+  border-color: #3b9965 !important;
+  background-color: #3b9965 !important;
+  color: #fff !important;
+  font-size: 15px;
+}
+
+.table-striped>tbody>tr:nth-child(even)>td,
+.table-striped>tbody>tr:nth-child(even)>th {
+  background-color: #babfc7 !important;// Choose your own color here
+}
+
+.table-striped>tbody>tr:nth-child(odd)>td,
+.table-striped>tbody>tr:nth-child(odd)>th {
+  background-color: white !important;// Choose your own color here
+}
+
+.table.table-dark>thead>tr>th {
+  background-color: #3A697B !important;
+  align-content: center;
+  font-size: 12px!important;
+}
+
+.dark-layout .table.table-dark td, .dark-layout .table.table-dark th .table.table-dark>tbody>tr>th {
+  border-color: #f8f9fa !important;
+  color: black!important;
+  font-weight: bold!important;
+  font-size: 15px!important;
+  align-content: center;
+}
+
+.table.table-dark>tfoot>tr>th {
+  color: black!important;
+  font-weight: bold!important;
+  font-size: 15px!important;
+  align-content: center!important;
+}
+
+
+.block{
+  display: block;
+  width: 100%;
+  text-align: center;
+}

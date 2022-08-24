@@ -1,0 +1,386 @@
+<!--&lt;!&ndash; Basic Date Picker &ndash;&gt;-->
+<!--<form class="form-inline" style="margin-left: 10px;margin-bottom:15px;">-->
+<!--    <div class="form-group">-->
+<!--        <div class="input-group">-->
+<!--            <div class="input-group-append">-->
+<!--                <button class="btn btn-outline-secondary feather icon-calendar"-->
+<!--                        (click)="basicDP.toggle()"-->
+<!--                        type="button" rippleEffect></button>-->
+<!--            </div>-->
+<!--            <input class="form-control" placeholder="mm/yyyy" name="Basic Date Picker"-->
+<!--                   [(ngModel)]="basicDPdata"-->
+<!--                   ngbDatepicker #basicDP="ngbDatepicker" (dateSelect)="onDateSelect($event)">-->
+
+<!--        </div>-->
+<!--    </div>-->
+<!--</form>-->
+<!--<div class="content-wrapper container-xxl p-0">-->
+<!--    <div class="content-body">-->
+<!--        <div class="row match-height" >-->
+<!--            <div class="col-xl-8 col-md-8 col-8">-->
+<!--                <div class="card card-statistics">-->
+<!--                    <div class="card-body statistics-body">-->
+<!--                        <div class="row">-->
+<!--                            <div class="col-xl-12 col-md-12 col-12">-->
+<!--                                <div class="card card-company-table">-->
+<!--                                    <div class="card-body p-0">-->
+<!--                                        <div class="table-responsive">-->
+<!--                                            <table class="table table-striped table-dark">-->
+<!--                                                <thead>-->
+<!--                                                <tr>-->
+<!--                                                    <th style="background-color: #3A697B !important; color: white!important;"></th>-->
+<!--                                                    <th style="background-color: #3A697B !important; color: white!important;">-->
+<!--                                                        Με ΦΠΑ-->
+<!--                                                    </th>-->
+<!--                                                    <th style="background-color: #3A697B !important; color: white!important;">-->
+<!--                                                        Χωρις ΦΠΑ-->
+<!--                                                    </th>-->
+<!--                                                </tr>-->
+<!--                                                </thead>-->
+<!--                                                <tbody>-->
+<!--                                                <tr>-->
+<!--                                                    <td>-->
+<!--                                                        <div class="d-flex align-items-center">-->
+<!--                                                            <div class="avatar bg-light-primary rounded">-->
+<!--                                                                <div class="avatar-content">-->
+<!--                                                                    <i data-feather="pocket"-->
+<!--                                                                       class="avatar-icon font-medium-3"></i>-->
+<!--                                                                </div>-->
+<!--                                                            </div>-->
+<!--                                                            <div>-->
+<!--                                                                <div class="font-weight-bolder">Αγορές</div>-->
+<!--                                                            </div>-->
+<!--                                                        </div>-->
+<!--                                                    </td>-->
+<!--                                                    <td>-->
+<!--                                                        <div class="d-flex align-items-center">-->
+<!--                                                                <span class="font-weight-bolder mb-25">{{totalExpenses().toLocaleString()}}-->
+<!--                                                                    €</span>-->
+<!--                                                        </div>-->
+<!--                                                    </td>-->
+<!--                                                    <td class="text-nowrap">-->
+<!--                                                        <div class="d-flex flex-column">-->
+<!--                                                                <span class="font-weight-bolder mb-25">{{totalExpensesWithNoVat().toLocaleString()}}-->
+<!--                                                                    €</span>-->
+<!--                                                        </div>-->
+<!--                                                    </td>-->
+<!--                                                </tr>-->
+<!--                                                <tr>-->
+<!--                                                    <td>-->
+<!--                                                        <div class="d-flex align-items-center">-->
+<!--                                                            <div class="avatar bg-light-primary rounded">-->
+<!--                                                                <div class="avatar-content">-->
+<!--                                                                    <i data-feather="pocket"-->
+<!--                                                                       class="avatar-icon font-medium-3"></i>-->
+<!--                                                                </div>-->
+<!--                                                            </div>-->
+<!--                                                            <div>-->
+<!--                                                                <div class="font-weight-bolder">Μεταβολή αποθεμάτων-->
+<!--                                                                </div>-->
+<!--                                                            </div>-->
+<!--                                                        </div>-->
+<!--                                                    </td>-->
+<!--                                                    <td>-->
+<!--                                                        <div class="d-flex align-items-center">-->
+<!--                                                            <span class="font-weight-bolder mb-25">0</span>-->
+<!--                                                        </div>-->
+<!--                                                    </td>-->
+<!--                                                    <td class="text-nowrap">-->
+<!--                                                        <div class="d-flex flex-column">-->
+<!--                                                            <span class="font-weight-bolder mb-25">0</span>-->
+<!--                                                        </div>-->
+<!--                                                    </td>-->
+<!--                                                </tr>-->
+<!--                                                <tr>-->
+<!--                                                    <td>-->
+<!--                                                        <div class="d-flex align-items-center">-->
+<!--                                                            <div class="avatar bg-light-primary rounded">-->
+<!--                                                                <div class="avatar-content">-->
+<!--                                                                    <i data-feather="pocket"-->
+<!--                                                                       class="avatar-icon font-medium-3"></i>-->
+<!--                                                                </div>-->
+<!--                                                            </div>-->
+<!--                                                            <div>-->
+<!--                                                                <div class="font-weight-bolder">Κόστος πωληθέντων</div>-->
+<!--                                                            </div>-->
+<!--                                                        </div>-->
+<!--                                                    </td>-->
+<!--                                                    <td>-->
+<!--                                                        <div class="d-flex align-items-center">-->
+<!--                                                            <span class="font-weight-bolder mb-25">0€</span>-->
+<!--                                                        </div>-->
+<!--                                                    </td>-->
+<!--                                                    <td class="text-nowrap">-->
+<!--                                                        <div class="d-flex flex-column">-->
+<!--                                                            <span class="font-weight-bolder mb-25">0€</span>-->
+<!--                                                        </div>-->
+<!--                                                    </td>-->
+<!--                                                </tr>-->
+<!--                                                <tr>-->
+<!--                                                    <td>-->
+<!--                                                        <div class="d-flex align-items-center">-->
+<!--                                                            <div class="avatar bg-light-primary rounded">-->
+<!--                                                                <div class="avatar-content">-->
+<!--                                                                    <i data-feather="pocket"-->
+<!--                                                                       class="avatar-icon font-medium-3"></i>-->
+<!--                                                                </div>-->
+<!--                                                            </div>-->
+<!--                                                            <div>-->
+<!--                                                                <div class="font-weight-bolder">Πωλήσεις</div>-->
+<!--                                                            </div>-->
+<!--                                                        </div>-->
+<!--                                                    </td>-->
+<!--                                                    <td>-->
+<!--                                                        <div class="d-flex align-items-center">-->
+<!--                                                                <span class="font-weight-bolder mb-25">{{totalSales().toLocaleString()}}-->
+<!--                                                                    €</span>-->
+<!--                                                        </div>-->
+<!--                                                    </td>-->
+<!--                                                    <td class="text-nowrap">-->
+<!--                                                        <div class="d-flex flex-column">-->
+<!--                                                                <span class="font-weight-bolder mb-25">{{totalSalesWithNoVat().toLocaleString()}}-->
+<!--                                                                    €</span>-->
+<!--                                                        </div>-->
+<!--                                                    </td>-->
+<!--                                                </tr>-->
+<!--                                                <tr>-->
+<!--                                                    <td>-->
+<!--                                                        <div class="d-flex align-items-center">-->
+<!--                                                            <div class="avatar bg-light-primary rounded">-->
+<!--                                                                <div class="avatar-content">-->
+<!--                                                                    <i data-feather="pocket"-->
+<!--                                                                       class="avatar-icon font-medium-3"></i>-->
+<!--                                                                </div>-->
+<!--                                                            </div>-->
+<!--                                                            <div>-->
+<!--                                                                <div class="font-weight-bolder">Μεικτά κέρδη</div>-->
+<!--                                                            </div>-->
+<!--                                                        </div>-->
+<!--                                                    </td>-->
+<!--                                                    <td>-->
+<!--                                                        <div class="d-flex align-items-center">-->
+<!--                                                            <span class="font-weight-bolder mb-25">0€</span>-->
+<!--                                                        </div>-->
+<!--                                                    </td>-->
+<!--                                                    <td class="text-nowrap">-->
+<!--                                                        <div class="d-flex flex-column">-->
+<!--                                                            <span class="font-weight-bolder mb-25">0€</span>-->
+<!--                                                        </div>-->
+<!--                                                    </td>-->
+<!--                                                </tr>-->
+<!--                                                </tbody>-->
+<!--                                            </table>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="col-xl-4 col-md-4 col-4">-->
+<!--                <div class="card card-statistics">-->
+<!--                    <div class="card-body statistics-body">-->
+<!--                        <div class="row">-->
+<!--                            <div class="col-sm-6 col-xl-6 mb-12 mb-xl-0">-->
+<!--                                <div class="media">-->
+<!--                                    <div class="avatar bg-light-primary mr-2">-->
+<!--                                        <div class="avatar-content">-->
+<!--                                            <i data-feather="trending-up" class="avatar-icon"></i>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="media-body my-auto">-->
+<!--                                        <h4 class="font-weight-bolder mb-0">36,64%</h4>-->
+<!--                                        <p class="card-text font-small-3 mb-0">Mark up (%)</p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="col-sm-6 col-xl-6 mb-12 mb-xl-0">-->
+<!--                                <div class="media">-->
+<!--                                    <div class="avatar bg-light-info mr-2">-->
+<!--                                        <div class="avatar-content">-->
+<!--                                            <i data-feather="trending-up" class="avatar-icon"></i>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="media-body my-auto">-->
+<!--                                        <h4 class="font-weight-bolder mb-0">26,81%</h4>-->
+<!--                                        <p class="card-text font-small-3 mb-0">Μικτό περιθώριο κέρδους</p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    <div class="card-body statistics-body">-->
+<!--                        <div class="row">-->
+<!--                            <div class="col-sm-6 col-xl-6 mb-12 mb-xl-0">-->
+<!--                                <div class="media">-->
+<!--                                    <div class="avatar bg-light-danger mr-2">-->
+<!--                                        <div class="avatar-content">-->
+<!--                                            <i data-feather="trending-up" class="avatar-icon"></i>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="media-body my-auto">-->
+<!--                                        <h4 class="font-weight-bolder mb-0">9,61%</h4>-->
+<!--                                        <p class="card-text font-small-3 mb-0">Καθαρό περιθώριο κέρδους</p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="col-sm-6 col-xl-6 mb-12 mb-xl-0">-->
+<!--                                <div class="media">-->
+<!--                                    <div class="avatar bg-light-primary mr-2">-->
+<!--                                        <div class="avatar-content">-->
+<!--                                            <i data-feather="trending-up" class="avatar-icon"></i>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="media-body my-auto">-->
+<!--                                        <h4 class="font-weight-bolder mb-0">2,5%</h4>-->
+<!--                                        <p class="card-text font-small-3 mb-0">Ταχύτητα κυκλοφορίας αποθεμάτων</p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    <div class="card-body statistics-body">-->
+<!--                        <div class="row">-->
+<!--                            <div class="col-sm-6 col-xl-6 mb-12 mb-xl-0">-->
+<!--                                <div class="media">-->
+<!--                                    <div class="avatar bg-light-primary mr-2">-->
+<!--                                        <div class="avatar-content">-->
+<!--                                            <i data-feather="trending-up" class="avatar-icon"></i>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="media-body my-auto">-->
+<!--                                        <h4 class="font-weight-bolder mb-0">145</h4>-->
+<!--                                        <p class="card-text font-small-3 mb-0">Μέση διάρκεια παραμονής αποθεμάτων-->
+<!--                                            (ημέρες)</p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="col-sm-6 col-xl-6 mb-12 mb-xl-0">-->
+<!--                                <div class="media">-->
+<!--                                    <div class="avatar bg-light-info mr-2">-->
+<!--                                        <div class="avatar-content">-->
+<!--                                            <i data-feather="trending-up" class="avatar-icon"></i>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="media-body my-auto">-->
+<!--                                        <h4 class="font-weight-bolder mb-0">5,91%</h4>-->
+<!--                                        <p class="card-text font-small-3 mb-0">Αποδοτικότητα ιδίων κεφαλαίων(%)</p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div class="row match-height">-->
+<!--            <div class="col-lg-4 col-md-6 col-12">-->
+<!--                <div class="card card-browser-states">-->
+<!--                    <div class="card-header">-->
+<!--                        <div class="card-browser-states">-->
+<!--                            <h4 class="card-title font-weight-bolder" style="color: #1e1e1e">Ανάλυση πωλήσεων</h4>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="card-body">-->
+<!--                        <div class="browser-states">-->
+<!--                            <div class="media">-->
+<!--                                <img src="assets/images/icons/receipt.svg" class="rounded mr-1" height="30"-->
+<!--                                     alt="Google Chrome"/>-->
+<!--                                <h6 class="font-weight-bolder align-self-center mb-0" style="color: #1e1e1e">Ρευστά-->
+<!--                                    διαθέσιμα <br>(cash + pos)</h6>-->
+<!--                            </div>-->
+<!--                            <div class="d-flex align-items-center">-->
+<!--                                <div class="font-weight-bolder mr-1">{{(this.cash + this.pos).toLocaleString()}}-->
+<!--                                    €-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="browser-states">-->
+<!--                            <div class="media">-->
+<!--                                <img-->
+<!--                                        src="assets/images/icons/receipt.svg"-->
+<!--                                        class="rounded mr-1"-->
+<!--                                        height="30"-->
+<!--                                        alt="Mozila Firefox"-->
+<!--                                />-->
+<!--                                <h6 class="font-weight-bolder align-self-center mb-0" style="color: #1e1e1e">ΕΟΠΠΥ <br>-->
+<!--                                    (με ΦΠΑ)</h6>-->
+<!--                            </div>-->
+<!--                            <div class="d-flex align-items-center">-->
+<!--                                <div class="font-weight-bolder mr-1">{{this.eoppy.toLocaleString()}}€-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="browser-states">-->
+<!--                            <div class="media">-->
+<!--                                <img src="assets/images/icons/receipt.svg" class="rounded mr-1" height="30"-->
+<!--                                     alt="Apple Safari"/>-->
+<!--                                <h6 class="font-weight-bolder align-self-center mb-0" style="color: #1e1e1e">Επί-->
+<!--                                    πιστώσει</h6>-->
+<!--                            </div>-->
+<!--                            <div class="d-flex align-items-center">-->
+<!--                                <div class="font-weight-bolder mr-1">{{this.onAccount.toLocaleString()}}-->
+<!--                                    €-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="col-lg-4 col-md-6 col-12">-->
+<!--                <div class="card card-browser-states">-->
+<!--                    <div class="card-header">-->
+<!--                        <div class="card-browser-states">-->
+<!--                            <h4 class="card-title font-weight-bolder" style="color: #1e1e1e">Ανάλυση αγορών</h4>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="card-body">-->
+<!--                        <div class="browser-states">-->
+<!--                            <div class="media">-->
+<!--                                <img src="assets/images/icons/receipt.svg" class="rounded mr-1" height="30"-->
+<!--                                     alt="Google Chrome"/>-->
+<!--                                <h6 class="font-weight-bolder align-self-center mb-0" style="color: #1e1e1e">ΠΕΙΦΑΣΥΝ</h6>-->
+<!--                            </div>-->
+<!--                            <div class="d-flex align-items-center">-->
+<!--                                <div class="font-weight-bolder mr-1">{{totalSalesMainSupplier().toLocaleString()}}-->
+<!--                                    €-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="browser-states">-->
+<!--                            <div class="media">-->
+<!--                                <img-->
+<!--                                        src="assets/images/icons/receipt.svg"-->
+<!--                                        class="rounded mr-1"-->
+<!--                                        height="30"-->
+<!--                                        alt="Mozila Firefox"-->
+<!--                                />-->
+<!--                                <h6 class="font-weight-bolder align-self-center mb-0" style="color: #1e1e1e">Άλλες εταιρείες</h6>-->
+<!--                            </div>-->
+<!--                            <div class="d-flex align-items-center">-->
+<!--                                <div class="font-weight-bolder mr-1">{{totalSalesOtherSupplier().toLocaleString()}}-->
+<!--                                    €-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="browser-states">-->
+<!--                            <div class="media">-->
+<!--                                <img src="assets/images/icons/receipt.svg" class="rounded mr-1" height="30"-->
+<!--                                     alt="Apple Safari"/>-->
+<!--                                <h6 class="font-weight-bolder align-self-center mb-0" style="color: #1e1e1e">Ανταλλαγές</h6>-->
+<!--                            </div>-->
+<!--                            <div class="d-flex align-items-center">-->
+<!--                                <div class="font-weight-bolder mr-1">0€</div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->

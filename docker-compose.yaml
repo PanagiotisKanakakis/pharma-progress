@@ -1,0 +1,113 @@
+version: '3.8'
+
+services:
+  pharma-frontend:
+    image: pharma/pharma-frontend:latest
+    container_name: pharma_frontend
+    build:
+      context: pharma-frontend
+      dockerfile: Dockerfile
+    ports:
+      - '127.0.0.1:3001:3000'
+    volumes:
+      - ./pharma-frontend:/home/node/app
+      - /home/node/app/node_modules
+#      - /home/node/app/.next
+  pharma-backend:
+    image: pharma/pharma-backend:latest
+    container_name: pharma_backend
+    build:
+      context: pharma-backend
+      dockerfile: Dockerfile
+    ports:
+      - '127.0.0.1:3002:3000'
+      - '127.0.0.1:9229:9229'
+    depends_on:
+      - pharma-db
+    environment:
+      TZ: ${PHARMA_TIMEZONE}
+      FORCE_COLOR: "1"
+      PHARMA_ENV: ${PHARMA_ENV}
+      PHARMA_LOGGING: ${PHARMA_BACKEND_LOGGING}
+      PHARMA_POSTGRES_HOST: ${PHARMA_BACKEND_POSTGRES_HOST}
+      PHARMA_POSTGRES_PORT: ${PHARMA_BACKEND_POSTGRES_PORT}
+      PHARMA_POSTGRES_DB: ${PHARMA_BACKEND_POSTGRES_DB}
+      PHARMA_POSTGRES_USER: ${PHARMA_BACKEND_POSTGRES_USER}
+      PHARMA_POSTGRES_PASSWORD: ${PHARMA_BACKEND_POSTGRES_PASSWORD}
+      PHARMA_POSTGRES_KEEP_CONN_ALIVE: ${PHARMA_BACKEND_POSTGRES_KEEP_CONN_ALIVE}
+      PHARMA_TYPEORM_LOGGING: ${PHARMA_BACKEND_TYPEORM_LOGGING}
+      PHARMA_TOKEN_VALIDATION: ${PHARMA_BACKEND_TOKEN_VALIDATION}
+      NEST_DEBUG: ${PHARMA_BACKEND_NEST_DEBUG}
+      PHARMA_CLIENT_ID: ${PHARMA_BACKEND_CLIENT_ID}
+      PHARMA_CLIENT_SECRET: ${PHARMA_BACKEND_CLIENT_SECRET}
+      PHARMA_KEYCLOAK_URL: ${PHARMA_KEYCLOAK_URL}
+      PHARMA_KEYCLOAK_REALM: ${PHARMA_KEYCLOAK_REALM}
+    volumes:
+      - ./pharma-backend:/home/node/app
+      - /home/node/app/node_modules
+  pharma-db:
+    image: postgres:14.1
+    container_name: pharma_db
+    restart: always
+    ports:
+      - '127.0.0.1:5433:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      TZ: ${PHARMA_TIMEZONE}
+      POSTGRES_DB: ${PHARMA_BACKEND_POSTGRES_DB}
+      POSTGRES_USER: ${PHARMA_BACKEND_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${PHARMA_BACKEND_POSTGRES_PASSWORD}
+#  oauth2-proxy:
+#    image: pharma/oauth2-proxy:latest
+#    build:
+#      context: oauth2-proxy
+#      dockerfile: Dockerfile
+#    container_name: pharma_oauth2_proxy
+#    ports:
+#      - '127.0.0.1:4180:4180'
+#    depends_on:
+#      - pharma-backend
+#    environment:
+#      TZ: ${PHARMA_TIMEZONE}
+#      OAUTH2_PROXY_PROVIDER: "oidc"
+#      OAUTH2_PROXY_PROVIDER_DISPLAY_NAME: "keycloak oidc"
+#      OAUTH2_PROXY_CLIENT_ID: ${PHARMA_BACKEND_CLIENT_ID}
+#      OAUTH2_PROXY_CLIENT_SECRET: ${PHARMA_BACKEND_CLIENT_SECRET}
+#      OAUTH2_PROXY_REDIRECT_URL: ${PHARMA_OAUTH2_PROXY_REDIRECT_URL}
+#      OAUTH2_PROXY_OIDC_ISSUER_URL: ${PHARMA_OAUTH2_PROXY_OIDC_ISSUER_URL}
+#      OAUTH2_PROXY_PROFILE_URL: ${PHARMA_OAUTH2_PROXY_PROFILE_URL}
+#      OAUTH2_PROXY_REDEEM_URL: ${PHARMA_OAUTH2_PROXY_REDEEM_URL}
+#      OAUTH2_PROXY_REAL_CLIENT_IP_HEADER: "X-Forwarded-For"
+#      OAUTH2_PROXY_REVERSE_PROXY: "true"
+#      OAUTH2_PROXY_SHOW_DEBUG_ON_ERROR: ${PHARMA_OAUTH2_PROXY_SHOW_DEBUG_ON_ERROR}
+#      OAUTH2_PROXY_SKIP_PROVIDER_BUTTON: "true"
+#      OAUTH2_PROXY_HTTP_ADDRESS: "0.0.0.0:4180"
+#      OAUTH2_PROXY_UPSTREAMS: "http://pharma-backend:3000/"
+#      OAUTH2_PROXY_WHITELIST_DOMAINS: ${PHARMA_OAUTH2_PROXY_WHITELIST_DOMAINS}
+#      OAUTH2_PROXY_EMAIL_DOMAINS: "*"
+#      OAUTH2_PROXY_COOKIE_SECRET: ${PHARMA_OAUTH2_PROXY_COOKIE_SECRET}
+#      OAUTH2_PROXY_COOKIE_SECURE: ${PHARMA_OAUTH2_PROXY_COOKIE_SECURE}
+#      OAUTH2_PROXY_COOKIE_REFRESH: ${PHARMA_OAUTH2_PROXY_COOKIE_REFRESH}
+#      OAUTH2_PROXY_SKIP_JWT_BEARER_TOKENS: ${PHARMA_OAUTH2_PROXY_SKIP_JWT_BEARER_TOKENS}
+#      OAUTH2_PROXY_PASS_ACCESS_TOKEN: ${PHARMA_OAUTH2_PROXY_PASS_ACCESS_TOKEN}
+#      OAUTH2_PROXY_PASS_AUTHORIZATION_HEADER: ${PHARMA_OAUTH2_PROXY_PASS_AUTHORIZATION_HEADER}
+#      OAUTH2_PROXY_SESSION_STORE_TYPE: ${PHARMA_OAUTH2_PROXY_SESSION_STORE_TYPE}
+#      OAUTH2_PROXY_REDIS_CONNECTION_URL: ${PHARMA_OAUTH2_PROXY_REDIS_CONNECTION_URL}
+#      OAUTH2_PROXY_INSECURE_OIDC_ALLOW_UNVERIFIED_EMAIL: ${PHARMA_OAUTH2_PROXY_INSECURE_OIDC_ALLOW_UNVERIFIED_EMAIL}
+#      PHARMA_KEYCLOAK_REALM: ${PHARMA_KEYCLOAK_REALM}
+#      PHARMA_KEYCLOAK_URL: ${PHARMA_KEYCLOAK_URL}
+  redis:
+    image: redis:6-bullseye
+    container_name: pharma_redis
+    ports:
+      - '127.0.0.1:6379:6379'
+    volumes:
+      - ./redis/redis.conf:/etc/redis/redis.conf
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
