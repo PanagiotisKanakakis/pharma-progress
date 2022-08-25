@@ -6,6 +6,9 @@ import {Subject} from 'rxjs';
 
 import {AuthenticationService} from 'app/auth/service';
 import {CoreConfigService} from '@core/services/config.service';
+import {CoreTranslationService} from '../../../../../@core/services/translation.service';
+import {locale as english} from '../../../../common/i18n/en';
+import {locale as greek} from '../../../../common/i18n/gr';
 
 @Component({
     selector: 'app-auth-login-v2',
@@ -30,18 +33,25 @@ export class AuthLoginV2Component implements OnInit {
      * Constructor
      *
      * @param {CoreConfigService} _coreConfigService
+     * @param _formBuilder
+     * @param _route
+     * @param _router
+     * @param _authenticationService
+     * @param _coreTranslationService
      */
     constructor(
         private _coreConfigService: CoreConfigService,
         private _formBuilder: FormBuilder,
         private _route: ActivatedRoute,
         private _router: Router,
-        private _authenticationService: AuthenticationService
+        private _authenticationService: AuthenticationService,
+        private _coreTranslationService: CoreTranslationService,
     ) {
         // redirect to home if already logged in
         if (this._authenticationService.currentUserValue) {
             this._router.navigate(['/']);
         }
+        this._coreTranslationService.translate(english, greek);
 
         this._unsubscribeAll = new Subject();
 
@@ -86,10 +96,16 @@ export class AuthLoginV2Component implements OnInit {
         // Login
         this.loading = true;
         this._authenticationService
-            // .login(this.f.email.value, this.f.password.value)
-            .login('pkanakakis', '1234')
+            .login(this.f.username.value, this.f.password.value)
             .catch((error) => {
-                this.error = error;
+                console.log(error);
+                if (error.response.status === 400) {
+                    this.error = 'Ο λογιριασμός δεν έχει ενεργοποιηθεί!';
+                } else if (error.response.status === 401) {
+                    this.error = 'Λανθασμένα στοιχεία!';
+                } else {
+                    this.error = error;
+                }
                 this.loading = false;
             });
     }
@@ -102,8 +118,8 @@ export class AuthLoginV2Component implements OnInit {
      */
     ngOnInit(): void {
         this.loginForm = this._formBuilder.group({
-            email: ['admin@demo.com', [Validators.required, Validators.email]],
-            password: ['admin', Validators.required]
+            username: ['', [Validators.required]],
+            password: ['', Validators.required]
         });
 
         // get return url from route parameters or default to '/'

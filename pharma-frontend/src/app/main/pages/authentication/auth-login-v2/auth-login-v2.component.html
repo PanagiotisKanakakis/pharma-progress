@@ -23,8 +23,8 @@
     <!-- Login-->
     <div class="d-flex col-lg-4 align-items-center auth-bg px-2 p-lg-5">
       <div class="col-12 col-sm-8 col-md-6 col-lg-12 px-xl-2 mx-auto">
-        <h3 class="card-title font-weight-bold mb-1">Welcome to Pharma progress! 👋</h3>
-        <p class="card-text mb-2">Please sign-in to your account</p>
+        <h3 class="card-title font-weight-bold mb-1">{{'FORM.LOGIN.WELCOME_MESSAGE' | translate}}</h3>
+        <p style="color: white" class="card-text mb-2">{{'FORM.LOGIN.SIGN_IN_MESSAGE' | translate}}</p>
         <ngb-alert [type]="'danger'" [dismissible]="false" *ngIf="error">
           <div class="alert-body">
             <p>{{ error }}</p>
@@ -33,29 +33,30 @@
 
         <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
           <div class="form-group">
-            <label class="form-label" for="login-email">Email</label>
+            <label for="login-username" class="form-label">{{'FORM.REGISTER.USERNAME' | translate}}</label>
             <input
-              type="text"
-              formControlName="email"
-              class="form-control"
-              [ngClass]="{ 'is-invalid': submitted && f.email.errors }"
-              placeholder="admin@demo.com"
-              aria-describedby="login-email"
-              autofocus=""
-              tabindex="1"
+                    style="color: white"
+                    type="text"
+                    formControlName="username"
+                    class="form-control"
+                    placeholder="johndoe"
+                    aria-describedby="login-username"
+                    tabindex="1"
+                    autofocus
+                    [ngClass]="{ 'is-invalid': submitted && f.username.errors }"
             />
-            <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
-              <div *ngIf="f.email.errors.required">Email is required</div>
-              <div *ngIf="f.email.errors.email">Email must be a valid email address</div>
+            <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+              <div *ngIf="f.username.errors.required">{{'FORM.ERROR.FIELD_REQUIRED' | translate}}</div>
             </div>
           </div>
           <div class="form-group">
             <div class="d-flex justify-content-between">
-              <label for="login-password">Password</label
-              ><a routerLink="/pages/authentication/forgot-password-v2"><small>Forgot Password?</small></a>
+              <label for="login-password">{{'FORM.LOGIN.PASSWORD' | translate}}</label>
+<!--              <a routerLink="/pages/authentication/forgot-password-v2"><small>Forgot Password?</small></a>-->
             </div>
-            <div class="input-group input-group-merge form-password-toggle">
+            <div style="color: white" class="input-group input-group-merge form-password-toggle">
               <input
+                      style="color: white"
                 [type]="passwordTextType ? 'text' : 'password'"
                 formControlName="password"
                 class="form-control form-control-merge"
@@ -82,22 +83,23 @@
               class="invalid-feedback"
               [ngClass]="{ 'd-block': submitted && f.password.errors }"
             >
-              <div *ngIf="f.password.errors.required">Password is required</div>
+              <div *ngIf="f.password.errors.required">{{'FORM.ERROR.FIELD_REQUIRED' | translate}}</div>
             </div>
           </div>
           <div class="form-group">
-            <div class="custom-control custom-checkbox">
-              <input class="custom-control-input" id="remember-me" type="checkbox" tabindex="3" />
-              <label class="custom-control-label" for="remember-me"> Remember Me</label>
-            </div>
+<!--            <div class="custom-control custom-checkbox">-->
+<!--              <input class="custom-control-input" id="remember-me" type="checkbox" tabindex="3" />-->
+<!--              <label class="custom-control-label" for="remember-me"> Remember Me</label>-->
+<!--            </div>-->
           </div>
           <button [disabled]="loading" class="btn btn-primary btn-block" tabindex="4" rippleEffect>
-            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>Sign in
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            {{'BUTTON.SIGN_IN' | translate}}
           </button>
         </form>
         <p class="text-center mt-2">
-          <span>New on our platform?</span
-          ><a routerLink="/pages/authentication/register-v2"><span>&nbsp;Create an account</span></a>
+          <span style="color: white">{{'FORM.LOGIN.NEW_USER' | translate}}</span
+          ><a routerLink="/pages/authentication/register-v2"><span>&nbsp;{{'FORM.LOGIN.CREATE_ACCOUNT' | translate}}</span></a>
         </p>
 <!--        <div class="divider my-2">-->
 <!--          <div class="divider-text">or</div>-->

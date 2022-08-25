@@ -40,7 +40,7 @@ export const locale = {
         WITHDRAWALS_BANK: 'Τράπεζα',
         WITHDRAWALS_POS: 'Μετρητά',
         PRESCRIPT: 'Επιταγές/Υποχρεώσεις',
-        COMMENTS: "Σχόλια συναλλαγών",
+        COMMENTS: 'Σχόλια συναλλαγών',
         PAYMENT: 'Πληρωμές προμηθευτών',
         EOPPY: 'ΕΟΠΠΥ',
         EOPPY_INCOME: 'Είσπραξη',

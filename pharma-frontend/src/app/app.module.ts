@@ -129,10 +129,6 @@ const appRoutes: Routes = [
         {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
         {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
         {provide: NgbDateParserFormatter, useClass: NgbDateCustomParserFormatter},
-
-
-        // ! IMPORTANT: Provider used to create fake backend, comment while using real API
-      //  fakeBackendProvider
     ],
     entryComponents: [BasicCustomContextMenuComponent, AnimatedCustomContextMenuComponent],
     bootstrap: [AppComponent]

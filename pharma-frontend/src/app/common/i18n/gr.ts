@@ -13,6 +13,9 @@ export const locale = {
     BUTTON: {
       ADD_NEW_RECORD: 'Προσθήκη νέας καταχώρησης',
       SUBMIT: 'Ολοκλήρωση καταχώρησης',
+      IMPORT_FILE: 'Εισαγωγή από αρχείο',
+      SIGN_UP: 'Εγγραφή',
+      SIGN_IN: 'Είσοδος',
     },
     TABLE: {
       CATEGORY: 'Κατηγορια',
@@ -35,6 +38,29 @@ export const locale = {
       PRESCRIPT: 'Επιταγη',
       STATUS: 'Κατασταση'
     },
-    INCOME: 'Πωλήσεις'
+    INCOME: 'Πωλήσεις',
+    FORM: {
+      REGISTER: {
+        NAME: 'Όνομα',
+        SURNAME: 'Επώνυμο',
+        USERNAME: 'Όνομα χρήστη',
+        EMAIL: 'Email',
+        PASSWORD: 'Κωδικός',
+        ACCOUNT_EXISTS: 'Έχετε ήδη λογαριασμό?',
+        SIGN_IN_INSTEAD: 'Κάντε είσοδο'
+      },
+      LOGIN: {
+        USERNAME: 'Όνομα χρήστη',
+        PASSWORD: 'Κωδικός',
+        NEW_USER: 'Είστε νέος χρήστης στην πλατφόρμα μας?',
+        CREATE_ACCOUNT: 'Δημιουργήστε λογαριασμό',
+        SIGN_IN_MESSAGE: 'Παρακαλώ κάντε είσοδο στο λογαριασμό σας',
+        WELCOME_MESSAGE: 'Καλως ήρθατε στο Pharma Progress! 👋'
+      },
+      ERROR: {
+        FIELD_REQUIRED: 'Το πεδίο πρέπει να συμπληρωθεί',
+        EMAIL_FORMAT: 'Λανθασμένη μορφη email',
+      }
+    }
   }
 };

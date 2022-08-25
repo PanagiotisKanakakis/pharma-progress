@@ -13,7 +13,9 @@ export const locale = {
     BUTTON: {
       ADD_NEW_RECORD: 'Add new records',
       SUBMIT: 'Submit records',
-      IMPORT_FILE: 'Import file'
+      IMPORT_FILE: 'Import file',
+      SIGN_UP: 'Sign up',
+      SIGN_IN: 'Sign in'
     },
     TABLE: {
       CATEGORY: 'Category',
@@ -36,7 +38,30 @@ export const locale = {
       PRESCRIPT: 'Prescript',
       STATUS: 'Status'
     },
-    INCOME: 'Income'
+    INCOME: 'Income',
+    FORM: {
+      REGISTER: {
+        NAME: 'Name',
+        SURNAME: 'Surname',
+        USERNAME: 'Username',
+        EMAIL: 'Email',
+        PASSWORD: 'Password',
+        ACCOUNT_EXISTS: 'Already have an account?',
+        SIGN_IN_INSTEAD: 'Sign in instead'
+      },
+      LOGIN: {
+        USERNAME: 'Username',
+        PASSWORD: 'Password',
+        NEW_USER: 'New on our platform?',
+        CREATE_ACCOUNT: 'Create an account',
+        SIGN_IN_MESSAGE: 'Please sign-in to your account',
+        WELCOME_MESSAGE: 'Welcome to Pharma Progress! 👋'
+      },
+      ERROR: {
+        FIELD_REQUIRED: 'Field is required',
+        EMAIL_FORMAT: 'Email must be a valid email address',
+      }
+    }
   }
 };
 

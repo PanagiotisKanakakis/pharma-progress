@@ -5,6 +5,11 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { CoreConfigService } from '@core/services/config.service';
+import {locale as english} from '../../../../common/i18n/en';
+import {locale as greek} from '../../../../common/i18n/gr';
+import {CoreTranslationService} from '../../../../../@core/services/translation.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {AuthenticationService} from '../../../../auth/service';
 
 @Component({
   selector: 'app-auth-register-v2',
@@ -18,6 +23,8 @@ export class AuthRegisterV2Component implements OnInit {
   public passwordTextType: boolean;
   public registerForm: FormGroup;
   public submitted = false;
+  public loading = false;
+  public error = '';
 
   // Private
   private _unsubscribeAll: Subject<any>;
@@ -27,10 +34,20 @@ export class AuthRegisterV2Component implements OnInit {
    *
    * @param {CoreConfigService} _coreConfigService
    * @param {FormBuilder} _formBuilder
+   * @param _route
+   * @param _router
+   * @param _authenticationService
+   * @param _coreTranslationService
    */
-  constructor(private _coreConfigService: CoreConfigService, private _formBuilder: FormBuilder) {
+  constructor(private _coreConfigService: CoreConfigService,
+              private _formBuilder: FormBuilder,
+              private _route: ActivatedRoute,
+              private _router: Router,
+              private _authenticationService: AuthenticationService,
+              private _coreTranslationService: CoreTranslationService,
+  ) {
     this._unsubscribeAll = new Subject();
-
+    this._coreTranslationService.translate(english, greek);
     // Configure the layout
     this._coreConfigService.config = {
       layout: {
@@ -71,6 +88,21 @@ export class AuthRegisterV2Component implements OnInit {
     if (this.registerForm.invalid) {
       return;
     }
+
+    // Login
+    this.loading = true
+    this._authenticationService
+        .register(
+            this.f.firstname.value,
+            this.f.surname.value,
+            this.f.username.value,
+            this.f.password.value,
+            this.f.email.value
+        )
+        .catch((error) => {
+          this.error = error;
+          this.loading = false;
+        });
   }
 
   // Lifecycle Hooks
@@ -81,6 +113,8 @@ export class AuthRegisterV2Component implements OnInit {
    */
   ngOnInit(): void {
     this.registerForm = this._formBuilder.group({
+      firstname: ['', [Validators.required]],
+      surname: ['', [Validators.required]],
       username: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
