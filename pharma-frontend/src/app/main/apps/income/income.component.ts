@@ -1,10 +1,8 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {Subject} from 'rxjs';
 import {ColumnMode} from '@swimlane/ngx-datatable';
 import {CoreTranslationService} from '@core/services/translation.service';
 import {NgbDate, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import {TransactionEntity} from 'app/api/transaction/transaction.entity';
-import {IncomeService} from './income.service';
 import {locale as english} from 'app/common/i18n/en';
 import {locale as greek} from 'app/common/i18n/gr';
 import {
@@ -37,7 +35,6 @@ export class IncomeComponent implements OnInit {
         '                        καταχωρησης\'\n' +
         '                        τα στοιχεια αποστελλονται προς καταχωρηση στο συστημα.';
 
-    private _unsubscribeAll: Subject<any>;
     public rows = [];
     public firstTableRows = [];
     public secondTableRows = [];
@@ -55,12 +52,10 @@ export class IncomeComponent implements OnInit {
     public type = '';
     public numberFormControl: any[][] = [];
 
-    constructor(private _datatablesService: IncomeService,
-                private _coreTranslationService: CoreTranslationService,
+    constructor(private _coreTranslationService: CoreTranslationService,
                 private _authenticationService: AuthenticationService,
                 private _router: Router,
                 private route: ActivatedRoute) {
-        this._unsubscribeAll = new Subject();
         this._coreTranslationService.translate(english, greek);
         this._authenticationService.currentUser.subscribe(x => (this.currentUser = x));
     }

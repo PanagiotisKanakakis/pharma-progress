@@ -61,6 +61,11 @@ export const locale = {
         FIELD_REQUIRED: 'Το πεδίο πρέπει να συμπληρωθεί',
         EMAIL_FORMAT: 'Λανθασμένη μορφη email',
       }
+    },
+    NOTIFICATIONS: {
+      NEW: 'Νέα (ες)',
+      NOTIFICATIONS: 'Ειδοποιήσεις',
+      OPERATING_EXPENSES: 'Λειτουργικα έξοδα'
     }
   }
 };

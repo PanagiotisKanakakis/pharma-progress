@@ -19,7 +19,7 @@ export const menu: CoreMenu[] = [
         children: [
             {
                 id: 'results',
-                title: 'Results',
+                title: 'Αποτελέσματα',
                 translate: 'MENU.DASHBOARD.RESULTS',
                 type: 'item',
                 // role: ['Admin'], //? To set multiple role: ['Admin', 'Client']
@@ -29,7 +29,7 @@ export const menu: CoreMenu[] = [
             {
                 // If role is not assigned will be display to all
                 id: 'forecasting',
-                title: 'Forecasting',
+                title: 'Προβλέψεις',
                 translate: 'MENU.DASHBOARD.FORECASTING',
                 type: 'item',
                 icon: 'circle',
@@ -38,7 +38,7 @@ export const menu: CoreMenu[] = [
             {
                 // If role is not assigned will be display to all
                 id: 'charts',
-                title: 'Charts',
+                title: 'Γραφήματα',
                 translate: 'MENU.DASHBOARD.CHARTS',
                 type: 'item',
                 icon: 'circle',
@@ -49,20 +49,20 @@ export const menu: CoreMenu[] = [
     {
         id: 'dataEntry',
         type: 'section',
-        title: 'Data entry',
+        title: 'Καταχωρηση συναλλαγων',
         translate: 'MENU.INPUT.DATAENTRY',
         icon: 'package',
         children: [
             {
                 id: 'income',
-                title: 'Income',
+                title: 'Πωλήσεις',
                 translate: 'MENU.APPS.INCOME',
                 type: 'collapsible',
                 icon: 'file-text',
                 children: [
                     {
                         id: 'income_z',
-                        title: 'MENU.APPS.INCOME_Z',
+                        title: 'Εισπράξεις Ζ',
                         translate: 'MENU.APPS.INCOME_Z',
                         type: 'item',
                         icon: 'circle',
@@ -71,7 +71,7 @@ export const menu: CoreMenu[] = [
                     },
                     {
                         id: 'income_real',
-                        title: 'MENU.APPS.INCOME_REAL',
+                        title: 'Πραγμ. Εισπράξεις',
                         translate: 'MENU.APPS.INCOME_REAL',
                         type: 'item',
                         icon: 'circle',
@@ -80,14 +80,14 @@ export const menu: CoreMenu[] = [
                     },
                     {
                         id: 'eoppy',
-                        title: 'EOPPY',
+                        title: 'ΕΟΠΠΥ',
                         translate: 'MENU.APPS.EOPPY',
                         type: 'collapsible',
                         icon: 'circle',
                         children: [
                             {
                                 id: 'eoppy_on_account',
-                                title: 'MENU.APPS.EOPPY_ON_ACCOUNT',
+                                title: 'Επί πιστώσει',
                                 translate: 'MENU.APPS.EOPPY_ON_ACCOUNT',
                                 type: 'item',
                                 icon: 'circle',
@@ -95,7 +95,7 @@ export const menu: CoreMenu[] = [
                                 children: [],
                             }, {
                                 id: 'eoppy_income',
-                                title: 'MENU.APPS.EOPPY_INCOME',
+                                title: 'Είσπραξη',
                                 translate: 'MENU.APPS.EOPPY_INCOME',
                                 type: 'item',
                                 icon: 'circle',
@@ -108,20 +108,20 @@ export const menu: CoreMenu[] = [
             },
             {
                 id: 'expenses',
-                title: 'Expenses',
+                title: 'Αγορές',
                 translate: 'MENU.APPS.EXPENSES',
                 type: 'collapsible',
                 icon: 'file-text',
                 children: [
                     {
                         id: 'expenses_cash',
-                        title: 'MENU.APPS.MAIN_SUPPLIER',
+                        title: 'Κύριος Προμηθευτής',
                         translate: 'MENU.APPS.MAIN_SUPPLIER',
                         type: 'collapsible',
                         icon: 'circle',
                         children: [{
                             id: 'expenses_on_account_main',
-                            title: 'MENU.APPS.EXPENSES_ON_ACCOUNT_MAIN_COMPANY',
+                            title: 'Επί πιστώσει',
                             translate: 'MENU.APPS.EXPENSES_ON_ACCOUNT_MAIN_COMPANY',
                             type: 'item',
                             icon: 'circle',
@@ -131,13 +131,13 @@ export const menu: CoreMenu[] = [
                     },
                     {
                         id: 'expenses_cash',
-                        title: 'MENU.APPS.OTHER_SUPPLIER',
+                        title: 'Άλλοι προμηθευτές',
                         translate: 'MENU.APPS.OTHER_SUPPLIER',
                         type: 'collapsible',
                         icon: 'circle',
                         children: [{
                             id: 'expenses_cash',
-                            title: 'MENU.APPS.EXPENSES_CASH',
+                            title: 'Μετρητά',
                             translate: 'MENU.APPS.EXPENSES_CASH',
                             type: 'item',
                             icon: 'circle',
@@ -146,7 +146,7 @@ export const menu: CoreMenu[] = [
                         },
                             {
                                 id: 'expenses_on_account_other',
-                                title: 'MENU.APPS.EXPENSES_ON_ACCOUNT_OTHER_COMPANY',
+                                title: 'Επί πιστώσει',
                                 translate: 'MENU.APPS.EXPENSES_ON_ACCOUNT_OTHER_COMPANY',
                                 type: 'item',
                                 icon: 'circle',
@@ -158,14 +158,14 @@ export const menu: CoreMenu[] = [
             },
             {
                 id: 'payment',
-                title: 'Payment',
+                title: 'Πληρωμές προμηθευτών',
                 translate: 'MENU.APPS.PAYMENT',
                 type: 'collapsible',
                 icon: 'file-text',
                 children: [
                     {
                         id: 'payment',
-                        title: 'Payment',
+                        title: 'Κύριος Προμηθευτής',
                         translate: 'MENU.APPS.MAIN_SUPPLIER',
                         type: 'item',
                         icon: 'circle',
@@ -173,7 +173,7 @@ export const menu: CoreMenu[] = [
                     },
                     {
                         id: 'payment',
-                        title: 'Payment',
+                        title: 'Άλλοι προμηθευτές',
                         translate: 'MENU.APPS.OTHER_SUPPLIER',
                         type: 'item',
                         icon: 'circle',
@@ -183,7 +183,7 @@ export const menu: CoreMenu[] = [
             },
             {
                 id: 'operating_expenses',
-                title: 'Operating expenses',
+                title: 'Λειτουργικά έξοδα',
                 translate: 'MENU.APPS.OPERATING_EXPENSES',
                 type: 'item',
                 icon: 'file-text',
@@ -191,14 +191,14 @@ export const menu: CoreMenu[] = [
             },
             {
                 id: 'personal_withdrawals',
-                title: 'Withdrawals',
+                title: 'Προσωπικές αναλήψεις',
                 translate: 'MENU.APPS.PERSONAL_WITHDRAWALS',
                 type: 'collapsible',
                 icon: 'file-text',
                 children: [
                     {
                         id: 'expenses_cash',
-                        title: 'MENU.APPS.WITHDRAWALS_BANK',
+                        title: 'Τράπεζα',
                         translate: 'MENU.APPS.WITHDRAWALS_BANK',
                         type: 'item',
                         icon: 'circle',
@@ -207,7 +207,7 @@ export const menu: CoreMenu[] = [
                     },
                     {
                         id: 'expenses_on_account_main',
-                        title: 'MENU.APPS.WITHDRAWALS_POS',
+                        title: 'Μετρητά',
                         translate: 'MENU.APPS.WITHDRAWALS_POS',
                         type: 'item',
                         icon: 'circle',
@@ -221,13 +221,13 @@ export const menu: CoreMenu[] = [
     {
         id: 'dataEntry',
         type: 'section',
-        title: 'Data entry',
+        title: 'Πληροφοριακα στοιχεια',
         translate: 'MENU.INPUT.INFO',
         icon: 'package',
         children: [
             {
                 id: 'prescript',
-                title: 'Prescript/Obligations',
+                title: 'Επιταγές/Υποχρεώσεις',
                 translate: 'MENU.APPS.PRESCRIPT',
                 type: 'item',
                 icon: 'file-text',
@@ -235,7 +235,7 @@ export const menu: CoreMenu[] = [
             },
             {
                 id: 'prescript',
-                title: 'Prescript/Obligations',
+                title: 'Νεκρό σημείο πωλήσεων',
                 translate: 'MENU.APPS.BREAK_EVEN_POINT',
                 type: 'item',
                 icon: 'file-text',
@@ -243,7 +243,7 @@ export const menu: CoreMenu[] = [
             },
             {
                 id: 'prescript',
-                title: 'Prescript/Obligations',
+                title: 'Κατηγορίες mark-up',
                 translate: 'MENU.APPS.MARK_UP',
                 type: 'item',
                 icon: 'file-text',
@@ -251,7 +251,7 @@ export const menu: CoreMenu[] = [
             },
             {
                 id: 'prescript',
-                title: 'Prescript/Obligations',
+                title: 'Σχόλια συναλλαγών',
                 translate: 'MENU.APPS.COMMENTS',
                 type: 'item',
                 icon: 'file-text',

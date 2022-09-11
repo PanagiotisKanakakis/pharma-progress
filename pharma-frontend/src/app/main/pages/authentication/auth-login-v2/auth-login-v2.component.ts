@@ -100,7 +100,7 @@ export class AuthLoginV2Component implements OnInit {
             .catch((error) => {
                 console.log(error);
                 if (error.response.status === 400) {
-                    this.error = 'Ο λογιριασμός δεν έχει ενεργοποιηθεί!';
+                    this.error = 'Ο λογαριασμός δεν έχει ενεργοποιηθεί!';
                 } else if (error.response.status === 401) {
                     this.error = 'Λανθασμένα στοιχεία!';
                 } else {

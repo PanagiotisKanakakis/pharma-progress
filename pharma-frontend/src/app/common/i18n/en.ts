@@ -61,6 +61,11 @@ export const locale = {
         FIELD_REQUIRED: 'Field is required',
         EMAIL_FORMAT: 'Email must be a valid email address',
       }
+    },
+    NOTIFICATIONS: {
+      NEW: 'New',
+      NOTIFICATIONS: 'Notifications',
+      OPERATING_EXPENSES: 'Operating Expenses'
     }
   }
 };

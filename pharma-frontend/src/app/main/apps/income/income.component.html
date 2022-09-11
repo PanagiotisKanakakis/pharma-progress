@@ -7,14 +7,13 @@
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary feather icon-calendar custom-placeholder"
+                            <button class="btn btn-outline-secondary feather icon-calendar"
                                     (click)="basicDP.toggle()"
                                     style="background-color: #33557e; color: white"
                                     type="button" rippleEffect></button>
                         </div>
-                        <input class="form-control" placeholder="dd-mm-yyyy" name="Basic Date Picker"
+                        <input class="form-control font-weight-bolder" placeholder="dd-mm-yyyy" name="Basic Date Picker"
                                [(ngModel)]="basicDPdata"
-                               style="background-color: #33557e; color: white"
                                ngbDatepicker #basicDP="ngbDatepicker" (dateSelect)="onDateSelect($event)">
 
                     </div>

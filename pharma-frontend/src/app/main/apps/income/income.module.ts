@@ -13,7 +13,6 @@ import {CoreCardModule} from '../../../../@core/components/core-card/core-card.m
 import {NgSelectModule} from '@ng-select/ng-select';
 import {TranslateModule} from '@ngx-translate/core';
 import {CoreDirectivesModule} from '../../../../@core/directives/directives';
-import {IncomeService} from './income.service';
 import {CardBasicModule} from '../../ui/card/card-basic/card-basic.module';
 
 
@@ -54,10 +53,6 @@ const routes: Routes = [
         CardBasicModule,
         NgbTooltipModule
     ],
-    providers: [
-        IncomeService
-    ]
-
 })
 export class IncomeModule {
 
