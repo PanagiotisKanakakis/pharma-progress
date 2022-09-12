@@ -304,7 +304,11 @@ export class IncomeComponent implements OnInit {
     summaryFooterColumn(j: number) {
         let value = 0;
         for (let rowIndex = 0; rowIndex < this.rows.length; rowIndex++) {
-            value += Number(this.cells[rowIndex][j].cost);
+            if( this.rows[rowIndex].paymentType != PaymentType.ON_ACCOUNT
+                && this.rows[rowIndex].paymentType != PaymentType.PREVIOUS_MONTHS_RECEIPTS  ){
+                value += Number(this.cells[rowIndex][j].cost);
+            }
+
         }
         return value;
     }

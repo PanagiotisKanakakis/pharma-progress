@@ -477,15 +477,15 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     }
 
     calculateMarkUp() {
-        return this.totalCostOfSoldedItems() > 0 ? this.totalGrossProfitWithoutVat() / this.totalCostOfSoldedItems() : 0;
+        return this.totalCostOfSoldedItems() > 0 ? (this.totalGrossProfitWithoutVat() / this.totalCostOfSoldedItems())*100 : 0;
     }
 
     calculateGrossProfitMargin() {
-        return this.totalSalesWithNoVat() > 0 ? this.totalGrossProfitWithoutVat() / this.totalSalesWithNoVat() : 0;
+        return this.totalSalesWithNoVat() > 0 ? (this.totalGrossProfitWithoutVat() / this.totalSalesWithNoVat())*100 : 0;
     }
 
     calculateNetProfitMargin() {
-        return this.totalSalesWithNoVat() > 0 ? this.totalNetProfitWithoutTaxes() / this.totalSalesWithNoVat() : 0;
+        return this.totalSalesWithNoVat() > 0 ? (this.totalNetProfitWithoutTaxes() / this.totalSalesWithNoVat()) * 100: 0;
     }
 
     totalNetProfitWithoutTaxes() {

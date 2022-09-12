@@ -1,13 +1,19 @@
-import {Injectable, Logger} from '@nestjs/common';
-import {Transaction} from './transaction.entity';
-import {InjectConnection, InjectRepository} from '@nestjs/typeorm';
-import {Connection, Repository} from 'typeorm';
-import {CommitTransactionDto, CriteriaDto, IncomeAnalysisDto, IncomeOutcomeAnalysisDto, OutcomeSupplierAnalysisDto,} from './dto';
-import {UsersService} from '../authbroker';
-import {PaymentType, TransactionType, VAT} from './enums';
-import {plainToInstance} from 'class-transformer';
-import {OutcomeAnalysisDto} from './dto/outcome-analysis.dto';
-import {SupplierType} from './enums/supplier-type.enum';
+import { Injectable, Logger } from '@nestjs/common';
+import { Transaction } from './transaction.entity';
+import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
+import { Connection, Repository } from 'typeorm';
+import {
+    CommitTransactionDto,
+    CriteriaDto,
+    IncomeAnalysisDto,
+    IncomeOutcomeAnalysisDto,
+    OutcomeSupplierAnalysisDto,
+} from './dto';
+import { UsersService } from '../authbroker';
+import { PaymentType, TransactionType, VAT } from './enums';
+import { plainToInstance } from 'class-transformer';
+import { OutcomeAnalysisDto } from './dto/outcome-analysis.dto';
+import { SupplierType } from './enums/supplier-type.enum';
 
 @Injectable()
 export class TransactionService {
@@ -168,7 +174,7 @@ export class TransactionService {
 
     private async getTotalEOPPY(criteria: CriteriaDto) {
         criteria.transactionType = [TransactionType.EOPPY];
-        criteria.paymentType = [PaymentType.ON_ACCOUNT, PaymentType.BANK];
+        criteria.paymentType = [PaymentType.ON_ACCOUNT];
         return this.createAndExecuteCriteriaQuery(criteria);
     }
 
@@ -199,7 +205,7 @@ export class TransactionService {
 
     private async getOutcomePerVatType(criteria: CriteriaDto) {
         criteria.transactionType = [TransactionType.EXPENSE];
-        criteria.paymentType = [PaymentType.CASH];
+        criteria.paymentType = [PaymentType.CASH, PaymentType.ON_ACCOUNT];
         const query = this.createPerVatTypeQuery(criteria);
         const values: Partial<Record<VAT, number>> = {};
         query.getRawMany().then((rs) => {
@@ -207,6 +213,7 @@ export class TransactionService {
                 values[totalAndVat.vat] = +totalAndVat.total;
             });
         });
+        console.log(values);
         return values;
     }
 
@@ -256,19 +263,11 @@ export class TransactionService {
     }
 
     private async getOutcomeForMainSupplier(criteria: CriteriaDto) {
-        const values: Partial<
-            Record<PaymentType.CASH | PaymentType.ON_ACCOUNT, number>
-        > = {};
+        const values: Partial<Record<PaymentType.ON_ACCOUNT, number>> = {};
 
         criteria.transactionType = [TransactionType.EXPENSE];
         criteria.supplierType = SupplierType.MAIN;
-
-        criteria.paymentType = [PaymentType.CASH];
-        values[PaymentType.CASH] = await this.createAndExecuteCriteriaQuery(
-            criteria,
-        );
-
-        criteria.paymentType = [PaymentType.CASH];
+        criteria.paymentType = [PaymentType.ON_ACCOUNT];
         values[PaymentType.ON_ACCOUNT] =
             await this.createAndExecuteCriteriaQuery(criteria);
         return values;
