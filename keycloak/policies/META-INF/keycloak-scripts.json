@@ -1,9 +1,0 @@
-{
-    "policies": [
-        {
-            "name": "PHARMA Acl Policy",
-            "fileName": "pharma-acl-policy.js",
-            "description": "PHARMA ACL policy"
-        }
-    ]
-}

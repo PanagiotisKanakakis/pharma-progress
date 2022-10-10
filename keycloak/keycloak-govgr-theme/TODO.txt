@@ -1,1 +1,0 @@
-- Implement digigov sdk style to "Weclome" page
