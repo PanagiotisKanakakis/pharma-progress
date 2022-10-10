@@ -4,7 +4,6 @@ import {
     ResourceOrRoleGuard,
     ShortAccessTokenGuard,
 } from './common';
-import { UsersService, User, UsersController } from './users';
 import { ProfileService, ProfileController } from './profile';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
@@ -21,6 +20,7 @@ import {
     ShortAccessTokenEntity,
     ShortAccessTokenService,
 } from './shortaccesstoken';
+import { User, UserController, UserService } from './users';
 
 @Module({
     imports: [
@@ -31,7 +31,7 @@ import {
         ShortAccessTokenService,
         KeycloakConnectService,
         KeycloakAdminService,
-        UsersService,
+        UserService,
         ProfileService,
         AclResourcesService,
         KeycloakGroupsService,
@@ -53,7 +53,7 @@ import {
     ],
     controllers: [
         ProfileController,
-        UsersController,
+        UserController,
         RolesController,
         ShortAccessTokenController,
     ],

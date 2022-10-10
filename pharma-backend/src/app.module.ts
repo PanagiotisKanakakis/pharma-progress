@@ -4,10 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerOptions } from 'typeorm';
 import { HealthModule } from './health';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthBrokerModule, AuthGuard, ResourceOrRoleGuard } from './authbroker';
+import { AuthGuard, ResourceOrRoleGuard } from './authbroker';
 import { ScheduleModule } from '@nestjs/schedule';
 import { LoggingModule } from './logging';
-import { FilesModule } from './files';
+import { BullModule } from '@nestjs/bull';
+import { OpeningBalanceModule } from './opening-balance/opening-balance.module';
+import { AuthBrokerModule } from './authbroker/authbroker.module';
 import { TransactionModule } from './transaction/transaction.module';
 
 @Module({
@@ -53,16 +55,33 @@ import { TransactionModule } from './transaction/transaction.module';
                 ),
             }),
         }),
+        // bull jobs
+        BullModule.forRootAsync({
+            imports: [ConfigModule],
+            useFactory: async (configService: ConfigService) => ({
+                redis: {
+                    host: configService.get('PHARMA_QUEUES_BULL_REDIS_HOST'),
+                    port: +configService.get('PHARMA_QUEUES_BULL_REDIS_PORT'),
+                    db: +configService.get('PHARMA_QUEUES_BULL_REDIS_DB_INDEX'),
+                    username: configService.get(
+                        'PHARMA_QUEUES_BULL_REDIS_USER',
+                    ),
+                    password: configService.get(
+                        'PHARMA_QUEUES_BULL_REDIS_PASSWORD',
+                    ),
+                },
+            }),
+            inject: [ConfigService],
+        }),
         // cron support
         ScheduleModule.forRoot(),
         // health endpoints
         HealthModule,
         // custom logger
         LoggingModule,
-        // authentication
         AuthBrokerModule,
-        FilesModule,
         TransactionModule,
+        OpeningBalanceModule,
     ],
     providers: [
         {

@@ -9,19 +9,20 @@ import {
     IncomeOutcomeAnalysisDto,
     OutcomeSupplierAnalysisDto,
 } from './dto';
-import { UsersService } from '../authbroker';
 import { PaymentType, TransactionType, VAT } from './enums';
 import { plainToInstance } from 'class-transformer';
 import { OutcomeAnalysisDto } from './dto/outcome-analysis.dto';
 import { SupplierType } from './enums/supplier-type.enum';
+import { UserService } from '../authbroker/users';
 
 @Injectable()
 export class TransactionService {
     private readonly logger = new Logger(TransactionService.name);
+
     constructor(
         @InjectRepository(Transaction)
         private readonly transactionRepository: Repository<Transaction>,
-        private readonly userService: UsersService,
+        private readonly userService: UserService,
         @InjectConnection()
         private readonly connection: Connection,
     ) {}

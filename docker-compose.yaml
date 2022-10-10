@@ -42,6 +42,11 @@ services:
       PHARMA_CLIENT_SECRET: ${PHARMA_BACKEND_CLIENT_SECRET}
       PHARMA_KEYCLOAK_URL: ${PHARMA_KEYCLOAK_URL}
       PHARMA_KEYCLOAK_REALM: ${PHARMA_KEYCLOAK_REALM}
+      PHARMA_QUEUES_BULL_REDIS_USER: ${PHARMA_BACKEND_QUEUES_BULL_REDIS_USER}
+      PHARMA_QUEUES_BULL_REDIS_PASSWORD: ${PHARMA_BACKEND_QUEUES_BULL_REDIS_PASSWORD}
+      PHARMA_QUEUES_BULL_REDIS_HOST: ${PHARMA_BACKEND_QUEUES_BULL_REDIS_HOST}
+      PHARMA_QUEUES_BULL_REDIS_PORT: ${PHARMA_BACKEND_QUEUES_BULL_REDIS_PORT}
+      PHARMA_QUEUES_BULL_REDIS_DB_INDEX: ${PHARMA_BACKEND_QUEUES_BULL_REDIS_DB_INDEX}
     volumes:
       - ./pharma-backend:/home/node/app
       - /home/node/app/node_modules
@@ -58,6 +63,53 @@ services:
       POSTGRES_DB: ${PHARMA_BACKEND_POSTGRES_DB}
       POSTGRES_USER: ${PHARMA_BACKEND_POSTGRES_USER}
       POSTGRES_PASSWORD: ${PHARMA_BACKEND_POSTGRES_PASSWORD}
+
+  keycloak-db:
+    image: postgres:14.1
+    container_name: pharma_keycloak_db
+    restart: always
+    ports:
+      - '127.0.0.1:5434:5432'
+    volumes:
+      - keycloak_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${PHARMA_KEYCLOAK_POSTGRES_DB}
+      POSTGRES_USER: ${PHARMA_KEYCLOAK_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${PHARMA_KEYCLOAK_POSTGRES_PASSWORD}
+      TZ: ${PHARMA_TIMEZONE}
+  keycloak:
+    image: pharma/keycloak:latest
+    container_name: pharma_keycloak
+    build:
+      context: pharma-keycloak
+      dockerfile: Dockerfile
+    environment:
+      KEYCLOAK_ADMIN: ${PHARMA_KEYCLOAK_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${PHARMA_KEYCLOAK_PASSWORD}
+      KC_DB: postgres
+      KC_DB_SCHEMA: public
+      KC_DB_URL_DATABASE: ${PHARMA_KEYCLOAK_POSTGRES_DB}
+      KC_DB_USERNAME: ${PHARMA_KEYCLOAK_POSTGRES_USER}
+      KC_DB_PASSWORD: ${PHARMA_KEYCLOAK_POSTGRES_PASSWORD}
+      KC_DB_URL_HOST: keycloak-db
+      KC_DB_URL_PORT: 5432
+      KC_HOSTNAME: ${PHARMA_KEYCLOAK_HOSTNAME}
+      KC_HOSTNAME_ADMIN: ${PHARMA_KEYCLOAK_HOSTNAME_ADMIN}
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_HTTP_PORT: "8080"
+      KC_PROXY: "edge"
+      TZ: ${PHARMA_TIMEZONE}
+      PHARMA_BACKEND_CLIENT_SECRET: ${PHARMA_BACKEND_CLIENT_SECRET}
+      PHARMA_BACKEND_SCHEME: ${PHARMA_BACKEND_SCHEME}
+      PHARMA_BACKEND_DOMAIN: ${PHARMA_BACKEND_DOMAIN}
+    ports:
+      - '127.0.0.1:8185:8080'
+    depends_on:
+      - keycloak-db
+    volumes:
+      - ./etc/keycloak/pharma.json:/opt/keycloak/data/import/pharma.json
+      - ./etc/keycloak/quarkus.dev.properties:/opt/keycloak/conf/quarkus.properties
 #  oauth2-proxy:
 #    image: pharma/oauth2-proxy:latest
 #    build:
@@ -105,9 +157,22 @@ services:
     volumes:
       - ./redis/redis.conf:/etc/redis/redis.conf
       - redis_data:/data
+  pharma-proxy:
+    image: pharma/pharma-proxy:latest
+    container_name: pharma_proxy
+    build:
+      context: pharma-proxy
+      dockerfile: Dockerfile
+    command:
+      - sh
+      - -c
+      - |
+        /bin/true
 
 volumes:
   postgres_data:
     driver: local
   redis_data:
+    driver: local
+  keycloak_data:
     driver: local

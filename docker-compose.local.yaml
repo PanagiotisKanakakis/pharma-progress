@@ -4,12 +4,15 @@ services:
   pharma-frontend:
     volumes:
       - ./.env:/home/node/app/.env
-  pharma-proxy:
-    image: pharma/pharma-proxy:latest
-    container_name: pharma_proxy
+  pharma-backend:
     build:
-      context: pharma-proxy
       dockerfile: Dockerfile
+    ports:
+      - '127.0.0.1:9229:9229'
+    volumes:
+      - ./pharma-backend:/home/node/app
+      - /home/node/app/node_modules
+  pharma-proxy:
     ports:
       - '127.0.0.1:80:80'
     command:
@@ -19,64 +22,32 @@ services:
         nginx-debug -g 'daemon off;'
     volumes:
       - ./pharma-proxy/nginx.conf:/etc/nginx/nginx.conf
+    environment:
+      TZ: ${PHARMA_TIMEZONE}
     networks:
       default:
         aliases:
-          - pharma.test
           - auth.pharma.test
-  keycloak-db:
-    image: postgres:14.1
-    container_name: pharma_keycloak_db
-    restart: always
-    ports:
-      - '127.0.0.1:5434:5432'
-    volumes:
-      - keycloak_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: ${PHARMA_KEYCLOAK_POSTGRES_DB}
-      POSTGRES_USER: ${PHARMA_KEYCLOAK_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${PHARMA_KEYCLOAK_POSTGRES_PASSWORD}
+          - pharma.test
   keycloak:
-    image: pharma/pharma-keycloak:latest
-    container_name: pharma_keycloak
-    build:
-      context: keycloak
-      dockerfile: Dockerfile
-    environment:
-      KEYCLOAK_ADMIN: ${PHARMA_KEYCLOAK_USER}
-      KEYCLOAK_ADMIN_PASSWORD: ${PHARMA_KEYCLOAK_PASSWORD}
-      KC_DB_SCHEMA: public 
-      KC_DB_URL_DATABASE: ${PHARMA_KEYCLOAK_POSTGRES_DB}
-      KC_DB_USERNAME: ${PHARMA_KEYCLOAK_POSTGRES_USER}
-      KC_DB_PASSWORD: ${PHARMA_KEYCLOAK_POSTGRES_PASSWORD}
-      KC_DB_URL_HOST: keycloak-db:5432
-      KC_HOSTNAME: auth.pharma.test
-      KC_HOSTNAME_ADMIN: auth.pharma.test
-      KC_HTTP_ENABLED: "true"
-      KC_HOSTNAME_STRICT_HTTPS: "false"
-      KC_PROXY: "edge"
-      #DEBUG: "true"
-      #DEBUG_PORT: "*:8787"
-    ports:
-      - '127.0.0.1:8185:8080'
-    depends_on:
-      - keycloak-db
-  pharma-load-realm-sidecar:
-    image: pharma/pharma-load-realm-sidecar:latest
-    container_name: pharma_load_realm_sidecar
-    build:
-      context: pharma-load-realm-sidecar
-      dockerfile: Dockerfile
-    depends_on:
-      - keycloak
-      - pharma-proxy
-    environment:
-      PHARMA_BACKEND_CLIENT_ID: ${PHARMA_BACKEND_CLIENT_ID}
-      PHARMA_KEYCLOAK_URL: ${PHARMA_KEYCLOAK_URL}
-      PHARMA_KEYCLOAK_REALM: ${PHARMA_KEYCLOAK_REALM}
-      PHARMA_CAMUNDA_CLIENT_ID: ${PHARMA_CAMUNDA_CLIENT_ID}
-      PHARMA_KEYCLOAK_USER: ${PHARMA_KEYCLOAK_USER}
-      PHARMA_KEYCLOAK_PASSWORD: ${PHARMA_KEYCLOAK_PASSWORD}
+    volumes:
+      - ./etc/keycloak/quarkus.local.properties:/opt/keycloak/conf/quarkus.properties
+#  pharma-load-realm-sidecar:
+#    image: pharma/pharma-load-realm-sidecar:latest
+#    container_name: pharma_load_realm_sidecar
+#    build:
+#      context: pharma-load-realm-sidecar
+#      dockerfile: Dockerfile
+#    depends_on:
+#      - keycloak
+#      - pharma-proxy
+#    environment:
+#      PHARMA_BACKEND_CLIENT_ID: ${PHARMA_BACKEND_CLIENT_ID}
+#      PHARMA_KEYCLOAK_URL: ${PHARMA_KEYCLOAK_URL}
+#      PHARMA_KEYCLOAK_REALM: ${PHARMA_KEYCLOAK_REALM}
+#      PHARMA_CAMUNDA_CLIENT_ID: ${PHARMA_CAMUNDA_CLIENT_ID}
+#      PHARMA_KEYCLOAK_USER: ${PHARMA_KEYCLOAK_USER}
+#      PHARMA_KEYCLOAK_PASSWORD: ${PHARMA_KEYCLOAK_PASSWORD}
 #  pharma-load-data-sidecar:
 #    image: pharma/pharma-load-data-sidecar:latest
 #    container_name: PHARMA_load_data_sidecar
@@ -98,7 +69,4 @@ services:
 #      PHARMA_KEYCLOAK_USER: ${PHARMA_KEYCLOAK_USER}
 #      PHARMA_KEYCLOAK_PASSWORD: ${PHARMA_KEYCLOAK_PASSWORD}
 
-volumes:
-  keycloak_data:
-    driver: local
 

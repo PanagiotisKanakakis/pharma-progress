@@ -1,7 +1,6 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 
 import {Subject} from 'rxjs';
-import {ColumnMode} from '@swimlane/ngx-datatable';
 
 import {CoreTranslationService} from '@core/services/translation.service';
 import {NgbDate, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
@@ -165,7 +164,7 @@ export class OperatingExpensesComponent implements OnInit {
             cost: cost,
             createdAt: date,
             comment: '',
-            vat: VAT.NONE,
+            vat: this.calculateVat(transactionType),
             paymentType: PaymentType.CASH,
         }];
     }
@@ -295,5 +294,21 @@ export class OperatingExpensesComponent implements OnInit {
                 ]
             }
         };
+    }
+
+    private calculateVat(transactionType: string): VAT {
+        if(transactionType == TransactionType.ELECTRICITY_BILL){
+            return VAT.SIX;
+        }else if(transactionType == TransactionType.WATER_SUPPLY){
+            return VAT.THIRTEEN;
+        }else if (
+            transactionType == TransactionType.ACCOUNTANT ||
+            transactionType == TransactionType.PHONE_BILL ||
+            transactionType == TransactionType.CONSUMABLES ||
+            transactionType == TransactionType.OTHER_EXPENSES){
+            return VAT.TWENTYFOUR
+        }else {
+            return VAT.ZERO;
+        }
     }
 }

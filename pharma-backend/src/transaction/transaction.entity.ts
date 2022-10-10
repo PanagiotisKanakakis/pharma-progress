@@ -5,12 +5,13 @@ import {
     Generated,
     ManyToOne,
     PrimaryColumn,
+    Relation,
     UpdateDateColumn,
 } from 'typeorm';
 import { VAT } from './enums';
 import { TransactionType } from './enums';
 import { PaymentType } from './enums';
-import { User } from '../authbroker';
+import type { User } from '../authbroker/users';
 import { Exclude } from 'class-transformer';
 import { SupplierType } from './enums/supplier-type.enum';
 
@@ -56,7 +57,7 @@ export class Transaction {
     @Column()
     public comment: string;
 
-    @ManyToOne(() => User, (user) => user.transactions)
+    @ManyToOne('User', 'transactions')
     @Exclude()
-    user!: User;
+    user!: Relation<User>;
 }

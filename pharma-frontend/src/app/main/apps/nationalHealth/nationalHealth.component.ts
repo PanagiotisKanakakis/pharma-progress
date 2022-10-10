@@ -151,7 +151,8 @@ export class NationalHealthComponent implements OnInit {
 
     submitTransaction(row, rowIndex) {
         if (this.dateFormControl[rowIndex].valid) {
-            const tr = new TransactionEntity();
+            let transactions = []
+            let tr = new TransactionEntity();
             tr.userId = this.currentUser.id;
             tr.transactionType = TransactionType.getIndexOf(row.transactionType);
             tr.paymentType = PaymentType.getIndexOf(row.paymentType);
@@ -160,9 +161,28 @@ export class NationalHealthComponent implements OnInit {
             tr.cost = row.cost;
             tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
             tr.comment = row.comment;
+            transactions.push(tr);
+
+            /*
+            * in case we have an income from EOPPY we create an extra transaction
+            * for income of previous months
+            * */
+            if(this.type === 'income'){
+                let tr = new TransactionEntity();
+                tr.userId = this.currentUser.id;
+                tr.transactionType = TransactionType.getIndexOf(TransactionType.INCOME);
+                tr.paymentType = PaymentType.getIndexOf(PaymentType.PREVIOUS_MONTHS_RECEIPTS);
+                tr.vat = VAT.getIndexOf(VAT.NONE);
+                tr.createdAt = DateUtils.queryFormattedDate(DateUtils.toDate(row.createdAt));
+                tr.cost = row.cost;
+                tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
+                tr.comment = row.comment;
+                transactions.push(tr);
+            }
+
             console.log(tr);
             submitTransactions(
-                {'transactions': [tr]},
+                {'transactions': transactions},
                 {
                     'Accept': 'application/json',
                     'Authorization': 'Bearer ' + this.currentUser.token

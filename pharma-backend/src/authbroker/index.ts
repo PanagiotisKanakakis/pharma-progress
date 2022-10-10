@@ -2,8 +2,5 @@ export * from './common';
 export * from './interfaces';
 export * from './keycloak';
 export * from './authbroker.constants';
-export * from './authbroker.module';
-export * from './profile';
 export * from './roles';
-export * from './users';
 export * from './shortaccesstoken';

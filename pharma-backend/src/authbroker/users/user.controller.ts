@@ -8,12 +8,17 @@ import {
     Put,
     Query,
 } from '@nestjs/common';
-import { PageDto, AfmParams, IdParams, NumericIdParams } from '../../common';
+import { IdParams, NumericIdParams, PageDto } from '../../common';
 import { UpdateResult } from 'typeorm';
-import { RealmRole } from '../authbroker.constants';
-import { CreateUserDto, QueryUserDto, UpdateUserDto, Roles } from '../common';
+import {
+    CreateUserDto,
+    QueryUserDto,
+    RealmRole,
+    Roles,
+    UpdateUserDto,
+} from '../index';
 import { User } from './user.entity';
-import { UsersService } from './users.service';
+import { UserService } from './user.service';
 import {
     ApiBearerAuth,
     ApiCreatedResponse,
@@ -25,8 +30,8 @@ import {
 
 @ApiTags('Authn/Authz')
 @Controller('api/auth/users')
-export class UsersController {
-    constructor(private readonly usersService: UsersService) {}
+export class UserController {
+    constructor(private readonly usersService: UserService) {}
 
     @Post()
     @Roles({ roles: [RealmRole.Admin] })
@@ -90,18 +95,6 @@ export class UsersController {
     @ApiBearerAuth()
     findOneByKeycloakIdOrFail(@Param() params: IdParams): Promise<User> {
         return this.usersService.findOneByKeycloakIdOrFail(params.id);
-    }
-
-    @Get('/afm/:afm')
-    @Roles({ roles: [RealmRole.Admin] })
-    @ApiCreatedResponse({
-        description: 'Retrieve user by afm',
-        type: User,
-    })
-    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    @ApiBearerAuth()
-    findOneByAfm(@Param() params: AfmParams): Promise<User> {
-        return this.usersService.findOneByAfmOrFail(params.afm);
     }
 
     @Delete(':id')

@@ -14,7 +14,7 @@ export const environment = {
   KEYCLOAK_USER: 'admin',
   KEYCLOAK_PASSWORD: 'admin',
   CLIENT_ID: 'pharma-app',
-  CLIENT_SECRET: 'j3LeI9M31LuYOQrphX2N1HHwtVUrVdzS'
+  CLIENT_SECRET: 'pleaseChangeEkepClientSecret'
 };
 
 /*

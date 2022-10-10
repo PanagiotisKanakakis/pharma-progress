@@ -7,13 +7,13 @@ import {
     CreateUserDto,
     QueryUserDto,
     UpdateUserDto,
-} from '../common';
+} from '../index';
 import { User } from './user.entity';
-import { KeycloakUsersService } from '../keycloak';
+import { KeycloakUsersService } from '../index';
 
 @Injectable()
-export class UsersService {
-    private readonly logger = new Logger(UsersService.name);
+export class UserService {
+    private readonly logger = new Logger(UserService.name);
 
     constructor(
         @InjectRepository(User)
@@ -42,6 +42,19 @@ export class UsersService {
         user.firstName = dto.firstName;
         user.lastName = dto.lastName;
         return this.usersRepository.update({ id }, user);
+    }
+
+    async getAllUserIds(): Promise<string[]> {
+        return await this.usersRepository
+            .createQueryBuilder('user')
+            .select('user.id')
+            .distinct(true)
+            .getRawMany()
+            .then((r) =>
+                r.map((i) => {
+                    return i['userId'];
+                }),
+            );
     }
 
     async findAll(dto: QueryUserDto): Promise<PageDto<User>> {

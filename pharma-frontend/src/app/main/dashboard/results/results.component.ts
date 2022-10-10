@@ -493,6 +493,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     }
 
     calculateRebate() {
+        console.log(this.totalEOPPYIncludingVat());
         return 0;
     }
 

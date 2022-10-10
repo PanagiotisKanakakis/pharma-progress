@@ -1,7 +1,8 @@
 import { AbstractEntity } from '../../common';
 import { Entity, Column, Index, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { Transaction } from '../../transaction/transaction.entity';
+import { Transaction } from '../../transaction';
+import { OpeningBalance } from '../../opening-balance';
 
 @Entity({ name: 'users' })
 export class User extends AbstractEntity {
@@ -31,4 +32,8 @@ export class User extends AbstractEntity {
     @OneToMany(() => Transaction, (transaction) => transaction.user)
     @Exclude()
     public transactions: Transaction[];
+
+    @OneToMany(() => OpeningBalance, (openingBalance) => openingBalance.user)
+    @Exclude()
+    public openingBalances: OpeningBalance[];
 }

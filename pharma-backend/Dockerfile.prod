@@ -1,0 +1,51 @@
+FROM node:16-alpine AS builder
+
+RUN apk add --update --no-cache wget
+
+RUN wget -O /usr/local/bin/wait-for https://github.com/eficode/wait-for/releases/download/v2.2.3/wait-for
+RUN chmod +x /usr/local/bin/wait-for
+
+USER node
+
+RUN mkdir -p /home/node/app
+WORKDIR /home/node/app/
+COPY --chown=node:node . ./
+RUN npm ci && npm run build
+
+
+# Actual image
+FROM node:16-alpine
+
+ARG migrations_on_boot=false
+ENV EKEP_RUN_MIGRATIONS_ON_BOOT $migrations_on_boot
+
+ARG seeds_on_boot=false
+ENV EKEP_RUN_SEEDS_ON_BOOT $seeds_on_boot
+
+RUN apk add --update --no-cache netcat-openbsd bash dumb-init postgresql-client
+
+COPY --from=builder /usr/local/bin/wait-for /usr/local/bin/wait-for
+RUN chmod +x /usr/local/bin/wait-for
+
+USER node
+
+RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
+WORKDIR /home/node/app
+
+COPY --chown=node:node entrypoint.prod.sh /home/node/app/entrypoint.sh
+RUN chmod +x /home/node/app/entrypoint.sh
+COPY --from=builder --chown=node:node /home/node/app/package.json /home/node/app/package.json
+COPY --from=builder --chown=node:node /home/node/app/package-lock.json /home/node/app/package-lock.json
+COPY --from=builder --chown=node:node /home/node/app/tsconfig.json /home/node/app/tsconfig.json
+COPY --from=builder --chown=node:node /home/node/app/tsconfig.build.json /home/node/app/tsconfig.build.json
+COPY --from=builder --chown=node:node /home/node/app/node_modules /home/node/app/node_modules
+COPY --from=builder --chown=node:node /home/node/app/dist /home/node/app/dist
+
+# Source files are needs since we run migrations using ts-node from sources.
+COPY --from=builder --chown=node:node /home/node/app/src /home/node/app/src
+
+EXPOSE 3000
+
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+CMD ["/home/node/app/entrypoint.sh"]
+

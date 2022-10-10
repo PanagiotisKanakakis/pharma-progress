@@ -7,14 +7,14 @@ import {
     UpdateUserInfoDto,
 } from '../common';
 import { KeycloakAdminService } from '../keycloak';
-import { UsersService, User } from '../users';
+import { UserService, User } from '../users';
 
 @Injectable()
 export class ProfileService {
     private readonly logger = new Logger(ProfileService.name);
 
     constructor(
-        private readonly usersService: UsersService,
+        private readonly usersService: UserService,
         private readonly keycloakAdminService: KeycloakAdminService,
     ) {}
 

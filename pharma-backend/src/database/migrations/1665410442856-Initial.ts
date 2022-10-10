@@ -1,18 +1,62 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class initial1661176063671 implements MigrationInterface {
-    name = 'initial1661176063671'
+export class Initial1665410442856 implements MigrationInterface {
+    name = 'Initial1665410442856'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
-            CREATE TABLE "file" (
+            CREATE TABLE "opening_balance" (
                 "id" SERIAL NOT NULL,
                 "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "fileName" character varying NOT NULL,
-                "mimeType" character varying NOT NULL,
-                "data" bytea NOT NULL,
-                CONSTRAINT "PK_36b46d232307066b3a2c9ea3a1d" PRIMARY KEY ("id")
+                "value" character varying NOT NULL,
+                "userId" integer,
+                CONSTRAINT "PK_b8778e0226b17d5286b2548e422" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TYPE "public"."transaction_transactiontype_enum" AS ENUM(
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+                '6',
+                '7',
+                '8',
+                '9',
+                '10',
+                '11',
+                '12',
+                '13',
+                '14',
+                '15',
+                '16'
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TYPE "public"."transaction_vat_enum" AS ENUM('0', '1', '2', '3', '4')
+        `);
+        await queryRunner.query(`
+            CREATE TYPE "public"."transaction_paymenttype_enum" AS ENUM('0', '1', '2', '3', '4', '5', '6', '7')
+        `);
+        await queryRunner.query(`
+            CREATE TYPE "public"."transaction_suppliertype_enum" AS ENUM('0', '1', '2')
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "transaction" (
+                "id" SERIAL NOT NULL,
+                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "transactionType" "public"."transaction_transactiontype_enum" NOT NULL,
+                "vat" "public"."transaction_vat_enum" NOT NULL,
+                "paymentType" "public"."transaction_paymenttype_enum" NOT NULL,
+                "supplierType" "public"."transaction_suppliertype_enum" NOT NULL,
+                "cost" character varying NOT NULL,
+                "comment" character varying NOT NULL,
+                "userId" integer,
+                CONSTRAINT "PK_89eadb93a89810556e1cbcd6ab9" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
@@ -64,49 +108,8 @@ export class initial1661176063671 implements MigrationInterface {
             CREATE INDEX "IDX_fe0bb3f6520ee0469504521e71" ON "users" ("username")
         `);
         await queryRunner.query(`
-            CREATE TYPE "public"."transaction_transactiontype_enum" AS ENUM(
-                '0',
-                '1',
-                '2',
-                '3',
-                '4',
-                '5',
-                '6',
-                '7',
-                '8',
-                '9',
-                '10',
-                '11',
-                '12',
-                '13',
-                '14',
-                '15',
-                '16'
-            )
-        `);
-        await queryRunner.query(`
-            CREATE TYPE "public"."transaction_vat_enum" AS ENUM('0', '1', '2', '3', '4')
-        `);
-        await queryRunner.query(`
-            CREATE TYPE "public"."transaction_paymenttype_enum" AS ENUM('0', '1', '2', '3', '4', '5', '6', '7')
-        `);
-        await queryRunner.query(`
-            CREATE TYPE "public"."transaction_suppliertype_enum" AS ENUM('0', '1', '2')
-        `);
-        await queryRunner.query(`
-            CREATE TABLE "transaction" (
-                "id" SERIAL NOT NULL,
-                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "transactionType" "public"."transaction_transactiontype_enum" NOT NULL,
-                "vat" "public"."transaction_vat_enum" NOT NULL,
-                "paymentType" "public"."transaction_paymenttype_enum" NOT NULL,
-                "supplierType" "public"."transaction_suppliertype_enum" NOT NULL,
-                "cost" character varying NOT NULL,
-                "comment" character varying NOT NULL,
-                "userId" integer,
-                CONSTRAINT "PK_89eadb93a89810556e1cbcd6ab9" PRIMARY KEY ("id")
-            )
+            ALTER TABLE "opening_balance"
+            ADD CONSTRAINT "FK_cd0dcf2d53900224c503453f9d0" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
             ALTER TABLE "transaction"
@@ -119,19 +122,7 @@ export class initial1661176063671 implements MigrationInterface {
             ALTER TABLE "transaction" DROP CONSTRAINT "FK_605baeb040ff0fae995404cea37"
         `);
         await queryRunner.query(`
-            DROP TABLE "transaction"
-        `);
-        await queryRunner.query(`
-            DROP TYPE "public"."transaction_suppliertype_enum"
-        `);
-        await queryRunner.query(`
-            DROP TYPE "public"."transaction_paymenttype_enum"
-        `);
-        await queryRunner.query(`
-            DROP TYPE "public"."transaction_vat_enum"
-        `);
-        await queryRunner.query(`
-            DROP TYPE "public"."transaction_transactiontype_enum"
+            ALTER TABLE "opening_balance" DROP CONSTRAINT "FK_cd0dcf2d53900224c503453f9d0"
         `);
         await queryRunner.query(`
             DROP INDEX "public"."IDX_fe0bb3f6520ee0469504521e71"
@@ -158,7 +149,22 @@ export class initial1661176063671 implements MigrationInterface {
             DROP TYPE "public"."shortaccesstoken_resourcetype_enum"
         `);
         await queryRunner.query(`
-            DROP TABLE "file"
+            DROP TABLE "transaction"
+        `);
+        await queryRunner.query(`
+            DROP TYPE "public"."transaction_suppliertype_enum"
+        `);
+        await queryRunner.query(`
+            DROP TYPE "public"."transaction_paymenttype_enum"
+        `);
+        await queryRunner.query(`
+            DROP TYPE "public"."transaction_vat_enum"
+        `);
+        await queryRunner.query(`
+            DROP TYPE "public"."transaction_transactiontype_enum"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "opening_balance"
         `);
     }
 
