@@ -17,7 +17,7 @@ WORKDIR /home/node/app
 COPY --chown=node:node package.json ./
 COPY --chown=node:node package-lock.json ./
 
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 COPY --chown=node:node . .
 
