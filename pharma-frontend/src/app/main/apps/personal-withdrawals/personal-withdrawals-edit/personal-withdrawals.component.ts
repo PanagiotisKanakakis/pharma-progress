@@ -167,8 +167,8 @@ export class PersonalWithdrawalsComponent implements OnInit {
         getTransactionsByCriteria(
             {
                 'userId': this.currentUser.id.toString(),
-                'dateFrom': this.period.dateFrom,
-                'dateTo': this.period.dateTo,
+                'date': this.period.dateFrom,
+                'range': 'monthly',
                 'transactionType': [TransactionType.getIndexOf(TransactionType.PERSONAL_WITHDRAWALS)],
                 'supplierType': SupplierType.getIndexOf(SupplierType.NONE),
                 'paymentType': [this.getPaymentType()]

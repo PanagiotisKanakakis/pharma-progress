@@ -1,6 +1,10 @@
-import { PaymentType } from '../enums';
+import { PaymentType } from '../../transaction/enums';
 
 export class OutcomeSupplierAnalysisDto {
-    mainSupplier: Record<PaymentType.CASH | PaymentType.ON_ACCOUNT, number>;
-    otherSuppliers: Record<PaymentType.CASH | PaymentType.ON_ACCOUNT, number>;
+    mainSupplier: Partial<
+        Record<PaymentType.CASH | PaymentType.ON_ACCOUNT, number>
+    >;
+    otherSuppliers: Partial<
+        Record<PaymentType.CASH | PaymentType.ON_ACCOUNT, number>
+    >;
 }

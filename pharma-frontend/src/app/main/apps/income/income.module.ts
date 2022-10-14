@@ -14,6 +14,7 @@ import {NgSelectModule} from '@ng-select/ng-select';
 import {TranslateModule} from '@ngx-translate/core';
 import {CoreDirectivesModule} from '../../../../@core/directives/directives';
 import {CardBasicModule} from '../../ui/card/card-basic/card-basic.module';
+import {Ng2FlatpickrModule} from 'ng2-flatpickr';
 
 
 const routes: Routes = [
@@ -51,7 +52,8 @@ const routes: Routes = [
         TranslateModule,
         CoreDirectivesModule,
         CardBasicModule,
-        NgbTooltipModule
+        NgbTooltipModule,
+        Ng2FlatpickrModule
     ],
 })
 export class IncomeModule {

@@ -33,7 +33,7 @@ export const menu: CoreMenu[] = [
                 translate: 'MENU.DASHBOARD.FORECASTING',
                 type: 'item',
                 icon: 'circle',
-                url: 'dashboard/analytics'
+                url: 'dashboard/forecasting'
             },
             {
                 // If role is not assigned will be display to all

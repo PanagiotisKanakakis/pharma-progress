@@ -77,10 +77,76 @@ export class NationalHealthComponent implements OnInit {
         if (this.numberFormControl[rowIndex].valid) {
             this.editingValue[rowIndex] = false;
             this.rows[rowIndex].cost = event.target.value;
+
+            let transactions = [];
+            let tr = new TransactionEntity();
+            tr.userId = this.currentUser.id;
+            tr.transactionType = TransactionType.getIndexOf(this.rows[rowIndex].transactionType);
+            tr.paymentType = PaymentType.getIndexOf(this.rows[rowIndex].paymentType);
+            tr.vat = VAT.getIndexOf(this.rows[rowIndex].vat);
+            tr.createdAt = DateUtils.queryFormattedDate(DateUtils.toDate(this.rows[rowIndex].createdAt));
+            tr.cost = this.rows[rowIndex].cost;
+            tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
+            tr.comment = this.rows[rowIndex].comment;
+
             if (this.rows[rowIndex].id === undefined) {
-                this.submitTransaction(this.rows[rowIndex], rowIndex);
+                if (this.dateFormControl[rowIndex].valid) {
+                    transactions.push(tr);
+                    submitTransactions(
+                        {'transactions': transactions},
+                        {
+                            'Accept': 'application/json',
+                            'Authorization': 'Bearer ' + this.currentUser.token
+                        }
+                    ).then(r => this.rows[rowIndex].id = r[0].id).catch((_: any) => {
+                        localStorage.removeItem('currentUser');
+                        this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
+                    });
+                }
+                /*
+                * in case we have an income from EOPPY we create an extra transaction
+                * for income of previous months
+                * */
+                if (this.type === 'income') {
+                    let tr = new TransactionEntity();
+                    tr.userId = this.currentUser.id;
+                    tr.transactionType = TransactionType.getIndexOf(TransactionType.INCOME);
+                    tr.paymentType = PaymentType.getIndexOf(PaymentType.PREVIOUS_MONTHS_RECEIPTS);
+                    tr.vat = VAT.getIndexOf(VAT.NONE);
+                    tr.createdAt = DateUtils.queryFormattedDate(DateUtils.toDate(this.rows[rowIndex].createdAt));
+                    tr.cost = this.rows[rowIndex].cost;
+                    tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
+                    tr.comment = this.rows[rowIndex].comment;
+                    submitTransactions(
+                        {'transactions': [tr]},
+                        {
+                            'Accept': 'application/json',
+                            'Authorization': 'Bearer ' + this.currentUser.token
+                        }
+                    ).catch((_: any) => {
+                        localStorage.removeItem('currentUser');
+                        this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
+                    });
+                }
             } else {
-                this.updateTransaction(this.rows[rowIndex]);
+                if (this.dateFormControl[rowIndex].valid) {
+                    transactions.push(tr);
+                    tr.id = this.rows[rowIndex].id;
+                    updateTransactions(
+                        {'transactions': transactions},
+                        {
+                            'Accept': 'application/json',
+                            'Authorization': 'Bearer ' + this.currentUser.token
+                        }
+                    ).then();
+                    /*
+                   * in case we have update an income from EOPPY we need to update
+                   * the income of previous months for that day
+                   * */
+                    if (this.type === 'income') {
+                        this.updatePreviousMonthsIncome(this.rows[rowIndex].createdAt, this.rows[rowIndex].cost);
+                    }
+                }
             }
         }
     }
@@ -90,7 +156,7 @@ export class NationalHealthComponent implements OnInit {
         this.getTransactions();
     }
 
-    addNewRow(id: number | undefined , cost: number, comment: string, date: string | undefined) {
+    addNewRow(id: number | undefined, cost: number, comment: string, date: string | undefined) {
         this.numberFormControl[this.rows.length] = new FormControl('',
             [Validators.required, Validators.min(0)]);
         this.dateFormControl[this.rows.length] = new FormControl('',
@@ -149,76 +215,8 @@ export class NationalHealthComponent implements OnInit {
         }
     }
 
-    submitTransaction(row, rowIndex) {
-        if (this.dateFormControl[rowIndex].valid) {
-            let transactions = []
-            let tr = new TransactionEntity();
-            tr.userId = this.currentUser.id;
-            tr.transactionType = TransactionType.getIndexOf(row.transactionType);
-            tr.paymentType = PaymentType.getIndexOf(row.paymentType);
-            tr.vat = VAT.getIndexOf(row.vat);
-            tr.createdAt = DateUtils.queryFormattedDate(DateUtils.toDate(row.createdAt));
-            tr.cost = row.cost;
-            tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
-            tr.comment = row.comment;
-            transactions.push(tr);
-
-            /*
-            * in case we have an income from EOPPY we create an extra transaction
-            * for income of previous months
-            * */
-            if(this.type === 'income'){
-                let tr = new TransactionEntity();
-                tr.userId = this.currentUser.id;
-                tr.transactionType = TransactionType.getIndexOf(TransactionType.INCOME);
-                tr.paymentType = PaymentType.getIndexOf(PaymentType.PREVIOUS_MONTHS_RECEIPTS);
-                tr.vat = VAT.getIndexOf(VAT.NONE);
-                tr.createdAt = DateUtils.queryFormattedDate(DateUtils.toDate(row.createdAt));
-                tr.cost = row.cost;
-                tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
-                tr.comment = row.comment;
-                transactions.push(tr);
-            }
-
-            console.log(tr);
-            submitTransactions(
-                {'transactions': transactions},
-                {
-                    'Accept': 'application/json',
-                    'Authorization': 'Bearer ' + this.currentUser.token
-                }
-            )
-                .then(r => row.id = r[0].id)
-                .catch((error: any) => {
-                    localStorage.removeItem('currentUser');
-                    this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
-            });
-        }
-
-    }
-
     onChange(event, row) {
         row.comment = event.target.value;
-    }
-
-    private updateTransaction(row: any) {
-        const tr = new TransactionEntity();
-        tr.id = row.id;
-        tr.userId = this.currentUser.id;
-        tr.transactionType = TransactionType.getIndexOf(row.transactionType);
-        tr.paymentType = PaymentType.getIndexOf(row.paymentType);
-        tr.vat = VAT.getIndexOf(row.vat);
-        tr.createdAt = DateUtils.queryFormattedDate(DateUtils.toDate(row.createdAt));
-        tr.cost = row.cost;
-        tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
-        tr.comment = row.comment;
-        updateTransactions(
-            {'transactions': [tr]},
-            {
-                'Accept': 'application/json',
-                'Authorization': 'Bearer ' + this.currentUser.token
-            }
-        ).then();
     }
 
     private getTransactions() {
@@ -229,8 +227,8 @@ export class NationalHealthComponent implements OnInit {
         getTransactionsByCriteria(
             {
                 'userId': this.currentUser.id.toString(),
-                'dateFrom': this.period.dateFrom,
-                'dateTo': this.period.dateTo,
+                'date': this.period.dateFrom,
+                'range': 'monthly',
                 'transactionType': [TransactionType.getIndexOf(TransactionType.EOPPY)],
                 'paymentType': [PaymentType.getIndexOf(paymentType)]
             },
@@ -244,10 +242,47 @@ export class NationalHealthComponent implements OnInit {
             if (data.length !== 0) {
                 for (let i = 0; i < data.length; i++) {
                     const transaction = plainToInstance(TransactionEntity, data[i]);
-                    this.addNewRow(transaction.id, transaction.cost, transaction.comment,  DateUtils.formatDbDate(transaction.createdAt));
+                    this.addNewRow(transaction.id, transaction.cost, transaction.comment, DateUtils.formatDbDate(transaction.createdAt));
                     this.rows[i].createdAt = DateUtils.formatDbDate(transaction.createdAt);
                 }
                 this.summaryColumn();
+            }
+        }).catch((_: any) => {
+            localStorage.removeItem('currentUser');
+            this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
+        });
+    }
+
+    private updatePreviousMonthsIncome(createdAt, cost) {
+        getTransactionsByCriteria(
+            {
+                'userId': this.currentUser.id.toString(),
+                'date': DateUtils.queryFormattedDate(DateUtils.toDate(createdAt)),
+                'range': 'monthly',
+                'transactionType': [TransactionType.getIndexOf(TransactionType.INCOME)],
+                'paymentType': [PaymentType.getIndexOf(PaymentType.PREVIOUS_MONTHS_RECEIPTS)],
+            },
+            {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + this.currentUser.token
+            }
+        ).then((data) => {
+            if (data.length !== 0) {
+                for (let i = 0; i < data.length; i++) {
+                    const transaction = plainToInstance(TransactionEntity, data[i]);
+                    transaction.cost -= cost;
+                    console.log(transaction)
+                    updateTransactions(
+                        {'transactions': [transaction]},
+                        {
+                            'Accept': 'application/json',
+                            'Authorization': 'Bearer ' + this.currentUser.token
+                        }
+                    ).catch((_: any) => {
+                        localStorage.removeItem('currentUser');
+                        this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
+                    });
+                }
             }
         }).catch((_: any) => {
             localStorage.removeItem('currentUser');

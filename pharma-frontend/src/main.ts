@@ -6,6 +6,8 @@ import { environment } from './environments/environment';
 
 import { hmrBootstrap } from './hmr';
 
+console.log(environment.production)
+console.log(environment.hmr)
 if (environment.production) {
   enableProdMode();
 }

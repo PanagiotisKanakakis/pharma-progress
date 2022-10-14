@@ -4,10 +4,13 @@ import { Connection, Repository } from 'typeorm';
 import { CreateOpeningBalanceDto } from './dto';
 import { UserService } from '../authbroker/users';
 import { InjectQueue, Process } from '@nestjs/bull';
-import { Queue } from 'bull';
+import { Job, Queue } from 'bull';
 import { ConfigService } from '@nestjs/config';
 import { CronExpression } from '@nestjs/schedule';
 import { OpeningBalance } from './opening-balance.entity';
+import { StatisticsService } from '../statistics/statistics.service';
+import { CriteriaDto } from '../statistics/dto';
+import { parseDate } from '../common';
 
 @Injectable()
 export class OpeningBalanceService {
@@ -17,6 +20,7 @@ export class OpeningBalanceService {
         @InjectRepository(OpeningBalance)
         private readonly openingBalanceRepository: Repository<OpeningBalance>,
         private readonly userService: UserService,
+        private readonly statisticsService: StatisticsService,
         private readonly configService: ConfigService,
         @InjectQueue('opening-balance-queue')
         private readonly openingBalanceQueue: Queue,
@@ -25,7 +29,7 @@ export class OpeningBalanceService {
     ) {
         const cronSchedule = this.configService.get(
             'PHARMA_TRANSACTION_GENERATION_CRONJOB',
-            CronExpression.EVERY_DAY_AT_MIDNIGHT,
+            CronExpression.EVERY_MINUTE,
         );
 
         this.openingBalanceQueue.add(
@@ -45,15 +49,35 @@ export class OpeningBalanceService {
      * Start job of daily opening balance creation
      */
     @Process('daily-opening-balance-creation')
-    async dailyOpeningBalanceCreation() {
+    async dailyOpeningBalanceCreation(job: Job<unknown> | undefined) {
         this.logger.log(
             `Scheduled daily opening balance creation job started!`,
         );
+        const today = parseDate(new Date().toLocaleDateString());
+        const criteria = new CriteriaDto();
+        const dateFrom = today;
+        const dateTo = today;
         const userIds = await this.userService.getAllUserIds();
         for (const userId in userIds) {
             const openingBalance = new OpeningBalance();
             openingBalance.user = await this.userService.findOneOrFail(userId);
-            openingBalance.value = '0';
+            openingBalance.value = String(
+                +(await this.statisticsService.getTotalIncome(
+                    criteria,
+                    dateFrom,
+                    dateTo,
+                )) -
+                    +(await this.statisticsService.getTotalCashPurchases(
+                        criteria,
+                        dateFrom,
+                        dateTo,
+                    )) -
+                    +(await this.statisticsService.getTotalOperatingExpenses(
+                        criteria,
+                        dateFrom,
+                        dateTo,
+                    )),
+            );
             try {
                 await this.openingBalanceRepository.save(openingBalance);
             } catch (e) {

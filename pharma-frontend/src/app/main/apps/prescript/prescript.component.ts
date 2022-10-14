@@ -66,7 +66,8 @@ export class PrescriptComponent implements OnInit {
         getTransactionsByCriteria(
             {
                 'userId': this.currentUser.id.toString(),
-                'dateFrom': DateUtils.NgbDateToDate(date),
+                'date': DateUtils.NgbDateToDate(date),
+                'range': 'monthly',
                 'transactionType': [TransactionType.getIndexOf(TransactionType.PAYMENT)],
                 'paymentType': [PaymentType.getIndexOf(paymentType)]
             },

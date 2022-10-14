@@ -96,8 +96,8 @@ export class PaymentComponent implements OnInit {
         getTransactionsByCriteria(
             {
                 'userId': this.currentUser.id.toString(),
-                'dateFrom': this.period.dateFrom,
-                'dateTo': this.period.dateTo,
+                'date': this.period.dateFrom,
+                'range': 'monthly',
                 'transactionType': [TransactionType.getIndexOf(TransactionType.PAYMENT)],
                 'supplierType': this.getSupplierType(),
                 'paymentType': [PaymentType.getIndexOf(PaymentType.ON_ACCOUNT)]

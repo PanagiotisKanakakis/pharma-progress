@@ -1,8 +1,8 @@
 import { OutcomeSupplierAnalysisDto } from './outcome-supplier-analysis.dto';
-import { VAT } from '../enums';
+import { VAT } from '../../transaction/enums';
 
 export class OutcomeAnalysisDto {
-    outcomePerVat: Record<VAT, number>;
+    outcomePerVat: Partial<Record<VAT, number>>;
     suppliers: OutcomeSupplierAnalysisDto;
     exchange: number;
 }

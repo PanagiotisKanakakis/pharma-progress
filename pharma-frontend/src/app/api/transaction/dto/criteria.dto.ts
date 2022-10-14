@@ -1,9 +1,8 @@
 export class CriteriaDto {
     userId: string;
-    dateFrom?: string;
-    dateTo?: string;
+    date: string;
+    range: string;
     transactionType?: number[];
     paymentType?: number[];
     supplierType?: number;
 }
-

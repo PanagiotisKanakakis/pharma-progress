@@ -14,19 +14,30 @@ import {
     Put,
     Query,
 } from '@nestjs/common';
-import {
-    CommitTransactionDto,
-    CriteriaDto,
-    IncomeOutcomeAnalysisDto,
-} from './dto';
+import { CommitTransactionDto } from './dto';
 import { TransactionService } from './transaction.service';
+import { CriteriaDto } from '../statistics/dto';
 import { Transaction } from './transaction.entity';
 
 @ApiTags('Transactions')
 @Controller('api/transaction')
 export class TransactionController {
     constructor(readonly service: TransactionService) {}
+
     private readonly logger = new Logger(TransactionController.name);
+
+    @Get('getAllTransactionsByCriteria')
+    @ApiOkResponse({
+        status: 201,
+        description: 'Get transaction (s) for a given userId using criteria',
+    })
+    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    @ApiBearerAuth()
+    async getAllTransactionsByCriteria(
+        @Query() criteriaDto: CriteriaDto,
+    ): Promise<Transaction[]> {
+        return await this.service.getAllTransactionsByCriteria(criteriaDto);
+    }
 
     @Post('commit')
     @ApiOkResponse({
@@ -59,31 +70,5 @@ export class TransactionController {
     @ApiBearerAuth()
     async getAllByAfm(@Param('userId') userId): Promise<any> {
         return [];
-    }
-
-    @Get('getAllTransactionsByCriteria')
-    @ApiOkResponse({
-        status: 201,
-        description: 'Get transaction (s) for a given userId using criteria',
-    })
-    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    @ApiBearerAuth()
-    async getAllTransactionsByCriteria(
-        @Query() criteriaDto: CriteriaDto,
-    ): Promise<Transaction[]> {
-        return await this.service.getAllTransactionsByCriteria(criteriaDto);
-    }
-
-    @Get('sales/stats')
-    @ApiOkResponse({
-        status: 201,
-        description: 'Get sales transactions statistics',
-    })
-    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    @ApiBearerAuth()
-    async getSalesStatisticsByCriteria(
-        @Query() criteriaDto: CriteriaDto,
-    ): Promise<IncomeOutcomeAnalysisDto> {
-        return this.service.getSalesStatisticsByCriteria(criteriaDto);
     }
 }

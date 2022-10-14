@@ -18,6 +18,6 @@ export const getTransactionsByCriteriaUrl = () => {
 };
 
 export const getSalesStatisticsByCriteriaUrl = () => {
-    return `${API_BASE_URL}/transaction/sales/stats`;
+    return `${API_BASE_URL}/statistics`;
 };
 

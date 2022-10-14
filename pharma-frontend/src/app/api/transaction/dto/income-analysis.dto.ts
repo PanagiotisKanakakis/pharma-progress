@@ -7,4 +7,5 @@ export class IncomeAnalysisDto {
     totalEOPPY: number;
     totalOnAccount: number;
     totalPreviousMonths: number;
+    totalIncome: number;
 }

@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 
 import {CoreConfigService} from '@core/services/config.service';
 import {CoreTranslationService} from '@core/services/translation.service';
@@ -9,13 +9,13 @@ import {AuthenticationService} from 'app/auth/service';
 import {DashboardService} from 'app/main/dashboard/dashboard.service';
 
 import {locale as greek} from 'app/main/dashboard/i18n/gr';
-import {getSalesStatisticsByCriteria,  VAT} from '../../../api/transaction';
 import {NgbDate, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import DateUtils from '../../../common/utils/date';
 import {DatePeriod} from '../../../common/utils/interfaces/date-period.interface';
 import {plainToInstance} from 'class-transformer';
 import {Router} from '@angular/router';
-import {OutcomeSupplierAnalysisDto} from '../../../api/transaction/dto/outcome-supplier-analysis.dto';
+import {Greek} from 'flatpickr/dist/l10n/gr';
+import { StatisticsDto } from '../../../api/transaction';
 
 @Component({
     selector: 'app-chart',
@@ -24,70 +24,38 @@ import {OutcomeSupplierAnalysisDto} from '../../../api/transaction/dto/outcome-s
     encapsulation: ViewEncapsulation.None
 })
 export class ChartComponent implements OnInit {
-    // Decorator
-    @ViewChild('statisticsBarChartRef') statisticsBarChartRef: any;
-    @ViewChild('statisticsLineChartRef') statisticsLineChartRef: any;
-    @ViewChild('earningChartRef') earningChartRef: any;
-    @ViewChild('revenueReportChartRef') revenueReportChartRef: any;
-    @ViewChild('budgetChartRef') budgetChartRef: any;
-    @ViewChild('statePrimaryChartRef') statePrimaryChartRef: any;
-    @ViewChild('stateWarningChartRef') stateWarningChartRef: any;
-    @ViewChild('stateSecondaryChartRef') stateSecondaryChartRef: any;
-    @ViewChild('stateInfoChartRef') stateInfoChartRef: any;
-    @ViewChild('stateDangerChartRef') stateDangerChartRef: any;
-    @ViewChild('goalChartRef') goalChartRef: any;
 
     // Public
     public data: any;
     public currentUser: User;
     public isAdmin: boolean;
     public isClient: boolean;
-    public statisticsBar;
-    public statisticsLine;
-    public revenueReportChartoptions;
-    public budgetChartoptions;
-    public goalChartoptions;
-    public statePrimaryChartoptions;
-    public stateWarningChartoptions;
-    public stateSecondaryChartoptions;
-    public stateInfoChartoptions;
-    public stateDangerChartoptions;
-    public earningChartoptions;
     public isMenuToggled = false;
-
-    public sales = 0;
-    public cash = 0;
-    public pos = 0;
-    public eoppy = 0;
-    public onAccount = 0;
-    public previousMonths = 0;
     public basicDPdata: NgbDateStruct;
     public period: DatePeriod;
-    // Private
-    private $barColor = '#f3f3f3';
-    private $trackBgColor = '#EBEBEB';
-    private $textMutedColor = '#b9b9c3';
-    private $budgetStrokeColor2 = '#dcdae3';
-    private $goalStrokeColor2 = '#51e5a8';
-    private $textHeadingColor = '#5e5873';
-    private $strokeColor = '#ebe9f1';
-    private $earningsStrokeColor2 = '#28c76f66';
-    private $earningsStrokeColor3 = '#28c76f33';
-
-    private incomePerVat: Record<string, number> = {};
-    private outcomePerVat: Record<string, number> = {};
-    private suppliers: OutcomeSupplierAnalysisDto;
+    DateRangeOptions: any;
+    public labels = [];
+    statistics: StatisticsDto;
+    // Color Variables
+    private warningColorShade = '#ffe802';
+    private greenColorShade = '#30ff02';
+    private tooltipShadow = 'rgba(0, 0, 0, 0.25)';
+    private lineChartPrimary = '#666ee8';
+    private lineChartDanger = '#ff4961';
+    private labelColor = '#6e6b7b';
+    private grid_line_color = 'rgba(200, 200, 200, 0.2)'; // RGBA color helps in dark layout
+    tableLabels = [];
     /**
      * Constructor
      * @param {AuthenticationService} _authenticationService
-     * @param {DashboardService} _dashboardService
+     * @param dashboardService
      * @param {CoreConfigService} _coreConfigService
      * @param {CoreTranslationService} _coreTranslationService
      * @param _router
      */
     constructor(
         private _authenticationService: AuthenticationService,
-        private _dashboardService: DashboardService,
+        public dashboardService: DashboardService,
         private _coreConfigService: CoreConfigService,
         private _coreTranslationService: CoreTranslationService,
         private _router: Router,
@@ -96,600 +64,301 @@ export class ChartComponent implements OnInit {
         this.isAdmin = this._authenticationService.isAdmin;
         this.isClient = this._authenticationService.isClient;
         this._coreTranslationService.translate(greek);
-        // Statistics Bar Chart
-        this.statisticsBar = {
-            chart: {
-                height: 70,
-                type: 'bar',
-                stacked: true,
-                toolbar: {
-                    show: false
-                }
+        this.basicDPdata = DateUtils.getTodayAsNgbDateStruct();
+        this.period = DateUtils.NgbDateToMonthPeriod(new NgbDate(this.basicDPdata.year, this.basicDPdata.month, this.basicDPdata.day));
+        this.tableLabels = this.generateLabels(new Date(this.basicDPdata.year, this.basicDPdata.month-1, this.basicDPdata.day));
+        console.log(this.tableLabels)
+        // ng2-flatpickr options
+        this.DateRangeOptions = {
+            locale: Greek,
+            altInput: true,
+            altInputClass: 'form-control flat-picker bg-transparent border-0 shadow-none flatpickr-input',
+            defaultDate: new Date(),
+            shorthand: true,
+            dateFormat: "m.y",
+            altFormat: "F Y",
+            onClose: (selectedDates: any) => {
+                const [month, day, year] = selectedDates[0].toLocaleDateString().split('/');
+                this.period = DateUtils.NgbDateToMonthPeriod(new NgbDate(+year,+month,+day));
+                this.getData();
             },
-            grid: {
-                show: false,
-                padding: {
-                    left: 0,
-                    right: 0,
-                    top: -15,
-                    bottom: -15
-                }
-            },
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '20%',
-                    startingShape: 'rounded',
-                    colors: {
-                        backgroundBarColors: [this.$barColor, this.$barColor, this.$barColor, this.$barColor, this.$barColor],
-                        backgroundBarRadius: 5
-                    }
-                }
-            },
-            legend: {
-                show: false
-            },
-            dataLabels: {
-                enabled: false
-            },
-            colors: [colors.solid.warning],
-            series: [
-                {
-                    name: '2020',
-                    data: [45, 85, 65, 45, 65]
-                }
-            ],
-            xaxis: {
-                labels: {
-                    show: false
-                },
-                axisBorder: {
-                    show: false
-                },
-                axisTicks: {
-                    show: false
-                }
-            },
-            yaxis: {
-                show: false
-            },
-            tooltip: {
-                x: {
-                    show: false
-                }
-            }
-        };
-
-        // Statistics Line Chart
-        this.statisticsLine = {
-            chart: {
-                height: 70,
-                type: 'line',
-                toolbar: {
-                    show: false
-                },
-                zoom: {
-                    enabled: false
-                }
-            },
-            grid: {
-                // show: true,
-                borderColor: this.$trackBgColor,
-                strokeDashArray: 5,
-                xaxis: {
-                    lines: {
-                        show: true
-                    }
-                },
-                yaxis: {
-                    lines: {
-                        show: false
-                    }
-                },
-                padding: {
-                    // left: 0,
-                    // right: 0,
-                    top: -30,
-                    bottom: -10
-                }
-            },
-            stroke: {
-                width: 3
-            },
-            colors: [colors.solid.info],
-            series: [
-                {
-                    data: [0, 20, 5, 30, 15, 45]
-                }
-            ],
-            markers: {
-                size: 2,
-                colors: colors.solid.info,
-                strokeColors: colors.solid.info,
-                strokeWidth: 2,
-                strokeOpacity: 1,
-                strokeDashArray: 0,
-                fillOpacity: 1,
-                discrete: [
-                    {
-                        seriesIndex: 0,
-                        dataPointIndex: 5,
-                        fillColor: '#ffffff',
-                        strokeColor: colors.solid.info,
-                        size: 5
-                    }
-                ],
-                shape: 'circle',
-                radius: 2,
-                hover: {
-                    size: 3
-                }
-            },
-            xaxis: {
-                labels: {
-                    show: true,
-                    style: {
-                        fontSize: '0px'
-                    }
-                },
-                axisBorder: {
-                    show: false
-                },
-                axisTicks: {
-                    show: false
-                }
-            },
-            yaxis: {
-                show: false
-            },
-            tooltip: {
-                x: {
-                    show: false
-                }
-            }
-        };
-
-        // Revenue Report Chart
-        this.revenueReportChartoptions = {
-            chart: {
-                height: 230,
-                stacked: true,
-                type: 'bar',
-                toolbar: {show: false}
-            },
-            plotOptions: {
-                bar: {
-                    columnWidth: '17%',
-                    endingShape: 'rounded'
-                }
-            },
-            colors: [colors.solid.primary, colors.solid.warning],
-            dataLabels: {
-                enabled: false
-            },
-            legend: {
-                show: false
-            },
-            grid: {
-                padding: {
-                    top: -20,
-                    bottom: -10
-                },
-                yaxis: {
-                    lines: {show: false}
-                }
-            },
-            xaxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-                labels: {
-                    style: {
-                        colors: this.$textMutedColor,
-                        fontSize: '0.86rem'
-                    }
-                },
-                axisTicks: {
-                    show: false
-                },
-                axisBorder: {
-                    show: false
-                }
-            },
-            yaxis: {
-                labels: {
-                    style: {
-                        colors: this.$textMutedColor,
-                        fontSize: '0.86rem'
-                    }
-                }
-            }
-        };
-
-        // Budget Chart
-        this.budgetChartoptions = {
-            chart: {
-                height: 80,
-                toolbar: {show: false},
-                zoom: {enabled: false},
-                type: 'line',
-                sparkline: {enabled: true}
-            },
-            stroke: {
-                curve: 'smooth',
-                dashArray: [0, 5],
-                width: [2]
-            },
-            colors: [colors.solid.primary, this.$budgetStrokeColor2],
-            tooltip: {
-                enabled: false
-            }
-        };
-
-        // Goal Overview  Chart
-        this.goalChartoptions = {
-            chart: {
-                height: 245,
-                type: 'radialBar',
-                sparkline: {
-                    enabled: true
-                },
-                dropShadow: {
-                    enabled: true,
-                    blur: 3,
-                    left: 1,
-                    top: 1,
-                    opacity: 0.1
-                }
-            },
-            colors: [this.$goalStrokeColor2],
-            plotOptions: {
-                radialBar: {
-                    offsetY: -10,
-                    startAngle: -150,
-                    endAngle: 150,
-                    hollow: {
-                        size: '77%'
-                    },
-                    track: {
-                        background: this.$strokeColor,
-                        strokeWidth: '50%'
-                    },
-                    dataLabels: {
-                        name: {
-                            show: false
-                        },
-                        value: {
-                            color: this.$textHeadingColor,
-                            fontSize: '2.86rem',
-                            fontWeight: '600'
-                        }
-                    }
-                }
-            },
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    shade: 'dark',
-                    type: 'horizontal',
-                    shadeIntensity: 0.5,
-                    gradientToColors: [colors.solid.success],
-                    inverseColors: true,
-                    opacityFrom: 1,
-                    opacityTo: 1,
-                    stops: [0, 100]
-                }
-            },
-            stroke: {
-                lineCap: 'round'
-            },
-            grid: {
-                padding: {
-                    bottom: 30
-                }
-            }
-        };
-
-        // Browser States Primary Chart
-        this.statePrimaryChartoptions = {
-            chart: {
-                height: 30,
-                width: 30,
-                type: 'radialBar'
-            },
-            grid: {
-                show: false,
-                padding: {
-                    left: -15,
-                    right: -15,
-                    top: -12,
-                    bottom: -15
-                }
-            },
-            colors: [colors.solid.primary],
-            series: [54.4],
-            plotOptions: {
-                radialBar: {
-                    hollow: {
-                        size: '22%'
-                    },
-                    track: {
-                        background: this.$trackBgColor
-                    },
-                    dataLabels: {
-                        showOn: 'always',
-                        name: {
-                            show: false
-                        },
-                        value: {
-                            show: false
-                        }
-                    }
-                }
-            },
-            stroke: {
-                lineCap: 'round'
-            }
-        };
-
-        // Browser States Warning Chart
-        this.stateWarningChartoptions = {
-            chart: {
-                height: 30,
-                width: 30,
-                type: 'radialBar'
-            },
-            grid: {
-                show: false,
-                padding: {
-                    left: -15,
-                    right: -15,
-                    top: -12,
-                    bottom: -15
-                }
-            },
-            colors: [colors.solid.warning],
-            series: [6.1],
-            plotOptions: {
-                radialBar: {
-                    hollow: {
-                        size: '22%'
-                    },
-                    track: {
-                        background: this.$trackBgColor
-                    },
-                    dataLabels: {
-                        showOn: 'always',
-                        name: {
-                            show: false
-                        },
-                        value: {
-                            show: false
-                        }
-                    }
-                }
-            },
-            stroke: {
-                lineCap: 'round'
-            }
-        };
-
-        // Browser States Secondary Chart
-        this.stateSecondaryChartoptions = {
-            chart: {
-                height: 30,
-                width: 30,
-                type: 'radialBar'
-            },
-            grid: {
-                show: false,
-                padding: {
-                    left: -15,
-                    right: -15,
-                    top: -12,
-                    bottom: -15
-                }
-            },
-            colors: [colors.solid.secondary],
-            series: [14.6],
-            plotOptions: {
-                radialBar: {
-                    hollow: {
-                        size: '22%'
-                    },
-                    track: {
-                        background: this.$trackBgColor
-                    },
-                    dataLabels: {
-                        showOn: 'always',
-                        name: {
-                            show: false
-                        },
-                        value: {
-                            show: false
-                        }
-                    }
-                }
-            },
-            stroke: {
-                lineCap: 'round'
-            }
-        };
-
-        // Browser States Info Chart
-        this.stateInfoChartoptions = {
-            chart: {
-                height: 30,
-                width: 30,
-                type: 'radialBar'
-            },
-            grid: {
-                show: false,
-                padding: {
-                    left: -15,
-                    right: -15,
-                    top: -12,
-                    bottom: -15
-                }
-            },
-            colors: [colors.solid.info],
-            series: [4.2],
-            plotOptions: {
-                radialBar: {
-                    hollow: {
-                        size: '22%'
-                    },
-                    track: {
-                        background: this.$trackBgColor
-                    },
-                    dataLabels: {
-                        showOn: 'always',
-                        name: {
-                            show: false
-                        },
-                        value: {
-                            show: false
-                        }
-                    }
-                }
-            },
-            stroke: {
-                lineCap: 'round'
-            }
-        };
-
-        // Browser States Danger Chart
-        this.stateDangerChartoptions = {
-            chart: {
-                height: 30,
-                width: 30,
-                type: 'radialBar'
-            },
-            grid: {
-                show: false,
-                padding: {
-                    left: -15,
-                    right: -15,
-                    top: -12,
-                    bottom: -15
-                }
-            },
-            colors: [colors.solid.danger],
-            series: [8.4],
-            plotOptions: {
-                radialBar: {
-                    hollow: {
-                        size: '22%'
-                    },
-                    track: {
-                        background: this.$trackBgColor
-                    },
-                    dataLabels: {
-                        showOn: 'always',
-                        name: {
-                            show: false
-                        },
-                        value: {
-                            show: false
-                        }
-                    }
-                }
-            },
-            stroke: {
-                lineCap: 'round'
-            }
-        };
-
-        // Earnings Chart
-        this.earningChartoptions = {
-            chart: {
-                type: 'donut',
-                height: 120,
-                toolbar: {
-                    show: false
-                }
-            },
-            dataLabels: {
-                enabled: false
-            },
-            series: [53, 16, 31],
-            legend: {show: false},
-            comparedResult: [2, -3, 8],
-            labels: ['App', 'Service', 'Product'],
-            stroke: {width: 0},
-            colors: [this.$earningsStrokeColor2, this.$earningsStrokeColor3, colors.solid.success],
-            grid: {
-                padding: {
-                    right: -20,
-                    bottom: -8,
-                    left: -20
-                }
-            },
-            plotOptions: {
-                pie: {
-                    startAngle: -10,
-                    donut: {
-                        labels: {
-                            show: true,
-                            name: {
-                                offsetY: 15
-                            },
-                            value: {
-                                offsetY: -15,
-                                formatter: function (val) {
-                                    return parseInt(val) + '%';
-                                }
-                            },
-                            total: {
-                                show: true,
-                                offsetY: 15,
-                                label: 'App',
-                                formatter: function (w) {
-                                    return '53%';
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            responsive: [
-                {
-                    breakpoint: 1325,
-                    options: {
-                        chart: {
-                            height: 100
-                        }
-                    }
-                },
-                {
-                    breakpoint: 1200,
-                    options: {
-                        chart: {
-                            height: 120
-                        }
-                    }
-                },
-                {
-                    breakpoint: 1065,
-                    options: {
-                        chart: {
-                            height: 100
-                        }
-                    }
-                },
-                {
-                    breakpoint: 992,
-                    options: {
-                        chart: {
-                            height: 120
-                        }
-                    }
-                }
-            ]
         };
     }
 
-    // Lifecycle Hooks
-    // -----------------------------------------------------------------------------------------------------
 
+
+    //** To add spacing between legends and chart
+    public plugins = [
+        {
+            beforeInit(chart) {
+                chart.legend.afterFit = function () {
+                    this.height += 20;
+                };
+            }
+        }
+    ];
+
+
+    // line chart
+    public lineChart = {
+        chartType: 'line',
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            backgroundColor: false,
+            hover: {
+                mode: 'label'
+            },
+            tooltips: {
+                // Updated default tooltip UI
+                shadowOffsetX: 1,
+                shadowOffsetY: 1,
+                shadowBlur: 8,
+                shadowColor: this.tooltipShadow,
+                backgroundColor: colors.solid.white,
+                titleFontColor: colors.solid.black,
+                bodyFontColor: colors.solid.black
+            },
+            scales: {
+                xAxes: [
+                    {
+                        display: true,
+                        scaleLabel: {
+                            display: true
+                        },
+                        gridLines: {
+                            display: true,
+                            color: this.grid_line_color,
+                            zeroLineColor: this.grid_line_color
+                        },
+                        ticks: {
+                            fontColor: this.labelColor
+                        }
+                    }
+                ],
+                yAxes: [
+                    {
+                        display: true,
+                        scaleLabel: {
+                            display: true
+                        },
+                        ticks: {
+                            // stepSize: 100,
+                            min: 0,
+                            // max: 400,
+                            fontColor: this.labelColor
+                        },
+                        gridLines: {
+                            display: true,
+                            color: this.grid_line_color,
+                            zeroLineColor: this.grid_line_color
+                        }
+                    }
+                ]
+            },
+            layout: {
+                padding: {
+                    top: -15,
+                    bottom: -25,
+                    left: -15
+                }
+            },
+            legend: {
+                position: 'top',
+                align: 'start',
+                labels: {
+                    usePointStyle: true,
+                    padding: 25,
+                    boxWidth: 9
+                }
+            }
+        },
+
+        labels: this.generateLabels(new Date()),
+        datasets: [
+            {
+                data: this.getSales(),
+                label: 'Πωλήσεις',
+                borderColor: this.lineChartDanger,
+                lineTension: 0.5,
+                pointStyle: 'circle',
+                backgroundColor: this.lineChartDanger,
+                fill: false,
+                pointRadius: 1,
+                pointHoverRadius: 5,
+                pointHoverBorderWidth: 5,
+                pointBorderColor: 'transparent',
+                pointHoverBorderColor: colors.solid.white,
+                pointHoverBackgroundColor: this.lineChartDanger,
+                pointShadowOffsetX: 1,
+                pointShadowOffsetY: 1,
+                pointShadowBlur: 5,
+                pointShadowColor: this.tooltipShadow
+            },
+            {
+                data: this.getOutcome(),
+                label: 'Αγορές',
+                borderColor: this.lineChartPrimary,
+                lineTension: 0.5,
+                pointStyle: 'circle',
+                backgroundColor: this.lineChartPrimary,
+                fill: false,
+                pointRadius: 1,
+                pointHoverRadius: 5,
+                pointHoverBorderWidth: 5,
+                pointBorderColor: 'transparent',
+                pointHoverBorderColor: colors.solid.white,
+                pointHoverBackgroundColor: this.lineChartPrimary,
+                pointShadowOffsetX: 1,
+                pointShadowOffsetY: 1,
+                pointShadowBlur: 5,
+                pointShadowColor: this.tooltipShadow
+            },
+            {
+                data: this.getEOPPY(),
+                label: 'ΕΟΠΠΥ & Αναλώσιμα',
+                borderColor: this.warningColorShade,
+                lineTension: 0.5,
+                pointStyle: 'circle',
+                backgroundColor: this.warningColorShade,
+                fill: false,
+                pointRadius: 1,
+                pointHoverRadius: 5,
+                pointHoverBorderWidth: 5,
+                pointBorderColor: 'transparent',
+                pointHoverBorderColor: colors.solid.white,
+                pointHoverBackgroundColor: this.warningColorShade,
+                pointShadowOffsetX: 1,
+                pointShadowOffsetY: 1,
+                pointShadowBlur: 5,
+                pointShadowColor: this.tooltipShadow
+            },
+            {
+                data: [80, 99, 82, 90, 133, 115, 74, 75, 130, 155, 125, 90, 140, 130, 180],
+                label: 'Ρευστά διαθέσιμα',
+                borderColor: this.greenColorShade,
+                lineTension: 0.5,
+                pointStyle: 'circle',
+                backgroundColor: this.greenColorShade,
+                fill: false,
+                pointRadius: 1,
+                pointHoverRadius: 5,
+                pointHoverBorderWidth: 5,
+                pointBorderColor: 'transparent',
+                pointHoverBorderColor: colors.solid.white,
+                pointHoverBackgroundColor: this.greenColorShade,
+                pointShadowOffsetX: 1,
+                pointShadowOffsetY: 1,
+                pointShadowBlur: 5,
+                pointShadowColor: this.tooltipShadow
+            }
+        ]
+    };
+
+    public grossProfitLineChart = {
+        datasets: [
+            {
+                data: this.getGrossProfitWithoutVat(),
+                label: 'Μεικτά κέρδη',
+                borderColor: this.lineChartDanger,
+                lineTension: 0.5,
+                pointStyle: 'circle',
+                backgroundColor: this.lineChartDanger,
+                fill: false,
+                pointRadius: 1,
+                pointHoverRadius: 5,
+                pointHoverBorderWidth: 5,
+                pointBorderColor: 'transparent',
+                pointHoverBorderColor: colors.solid.white,
+                pointHoverBackgroundColor: this.lineChartDanger,
+                pointShadowOffsetX: 1,
+                pointShadowOffsetY: 1,
+                pointShadowBlur: 5,
+                pointShadowColor: this.tooltipShadow
+            },
+            {
+                data: this.getOperatingExpensesValue(),
+                label: 'Λειτουργικά έξοδα',
+                borderColor: this.lineChartPrimary,
+                lineTension: 0.5,
+                pointStyle: 'circle',
+                backgroundColor: this.lineChartPrimary,
+                fill: false,
+                pointRadius: 1,
+                pointHoverRadius: 5,
+                pointHoverBorderWidth: 5,
+                pointBorderColor: 'transparent',
+                pointHoverBorderColor: colors.solid.white,
+                pointHoverBackgroundColor: this.lineChartPrimary,
+                pointShadowOffsetX: 1,
+                pointShadowOffsetY: 1,
+                pointShadowBlur: 5,
+                pointShadowColor: this.tooltipShadow
+            },
+            {
+                data: this.getRebate(),
+                label: 'Rebate',
+                borderColor: this.warningColorShade,
+                lineTension: 0.5,
+                pointStyle: 'circle',
+                backgroundColor: this.warningColorShade,
+                fill: false,
+                pointRadius: 1,
+                pointHoverRadius: 5,
+                pointHoverBorderWidth: 5,
+                pointBorderColor: 'transparent',
+                pointHoverBorderColor: colors.solid.white,
+                pointHoverBackgroundColor: this.warningColorShade,
+                pointShadowOffsetX: 1,
+                pointShadowOffsetY: 1,
+                pointShadowBlur: 5,
+                pointShadowColor: this.tooltipShadow
+            },
+            {
+                data: this.getNetProfitWithTaxes(),
+                label: 'Καθαρά κέρδη/ζημια προ φορων',
+                borderColor: this.greenColorShade,
+                lineTension: 0.5,
+                pointStyle: 'circle',
+                backgroundColor: this.greenColorShade,
+                fill: false,
+                pointRadius: 1,
+                pointHoverRadius: 5,
+                pointHoverBorderWidth: 5,
+                pointBorderColor: 'transparent',
+                pointHoverBorderColor: colors.solid.white,
+                pointHoverBackgroundColor: this.greenColorShade,
+                pointShadowOffsetX: 1,
+                pointShadowOffsetY: 1,
+                pointShadowBlur: 5,
+                pointShadowColor: this.tooltipShadow
+            }
+        ]
+    }
+
+    public markUpLineChart = {
+        datasets: [
+            {
+                data: this.getMarkUp(),
+                label: 'Mark Up',
+                borderColor: this.lineChartDanger,
+                lineTension: 0.5,
+                pointStyle: 'circle',
+                backgroundColor: this.lineChartDanger,
+                fill: false,
+                pointRadius: 1,
+                pointHoverRadius: 5,
+                pointHoverBorderWidth: 5,
+                pointBorderColor: 'transparent',
+                pointHoverBorderColor: colors.solid.white,
+                pointHoverBackgroundColor: this.lineChartDanger,
+                pointShadowOffsetX: 1,
+                pointShadowOffsetY: 1,
+                pointShadowBlur: 5,
+                pointShadowColor: this.tooltipShadow
+            }
+        ]
+    }
 
     /**
      * On init
@@ -697,15 +366,32 @@ export class ChartComponent implements OnInit {
     ngOnInit(): void {
         // get the currentUser details from localStorage
         this.currentUser = plainToInstance(User, JSON.parse(localStorage.getItem('currentUser')));
+        this.getData();
+    }
 
-        // Get the dashboard service data
-        this._dashboardService.onApiDataChanged.subscribe(response => {
-            this.data = response;
-        });
+    getData(){
+        this.dashboardService.getStatisticsData(String((this.currentUser.id)),this.currentUser.token, this.period.dateFrom, 'yearly')
+            .then(response => {
+                this.statistics = plainToInstance(StatisticsDto, response);
+                const [year, month, day] = this.period.dateFrom.split('-');
+                this.tableLabels = this.generateLabels(new Date(+year, +month - 1, +day));
+                this.lineChart.labels = this.generateLabels(new Date(+year, +month - 1, +day));
 
-        this.basicDPdata = DateUtils.getTodayAsNgbDateStruct();
-        this.period = DateUtils.NgbDateToMonthPeriod(new NgbDate(this.basicDPdata.year, this.basicDPdata.month, this.basicDPdata.day));
-        this.getSalesStatistics();
+                this.lineChart.datasets[0].data = this.getSales();
+                this.lineChart.datasets[1].data = this.getOutcome();
+                this.lineChart.datasets[2].data = this.getEOPPY();
+
+                this.grossProfitLineChart.datasets[0].data = this.getGrossProfitWithoutVat();
+                this.grossProfitLineChart.datasets[1].data = this.getOperatingExpensesValue();
+                this.grossProfitLineChart.datasets[2].data = this.getRebate();
+                this.grossProfitLineChart.datasets[3].data = this.getNetProfitWithTaxes();
+
+                this.markUpLineChart.datasets[0].data = this.getMarkUp();
+            })
+            .catch((_: Error) => {
+                localStorage.removeItem('currentUser');
+                this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
+            })
     }
 
     /**
@@ -723,97 +409,197 @@ export class ChartComponent implements OnInit {
                     if (this.currentUser.role === 'Admin') {
                         // Get Dynamic Width for Charts
                         this.isMenuToggled = true;
-                        this.statisticsBar.chart.width = this.statisticsBarChartRef?.nativeElement.offsetWidth;
-                        this.statisticsLine.chart.width = this.statisticsLineChartRef?.nativeElement.offsetWidth;
-                        this.earningChartoptions.chart.width = this.earningChartRef?.nativeElement.offsetWidth;
-                        this.revenueReportChartoptions.chart.width = this.revenueReportChartRef?.nativeElement.offsetWidth;
-                        this.budgetChartoptions.chart.width = this.budgetChartRef?.nativeElement.offsetWidth;
-                        this.goalChartoptions.chart.width = this.goalChartRef?.nativeElement.offsetWidth;
                     }
                 }, 500);
             }
         });
     }
 
-    getSalesStatistics(){
-        getSalesStatisticsByCriteria(
-            {
-                'userId': this.currentUser.id.toString(),
-                'dateFrom': this.period.dateFrom,
-                'dateTo': this.period.dateTo,
-            },
-            {
-                'Accept': 'application/json',
-                'Authorization': 'Bearer ' + this.currentUser.token
-            }
-        ).then(r => {
-            this.incomePerVat = r.income.incomePerVat;
-            this.eoppy = r.income.totalEOPPY;
-            this.onAccount = r.income.totalOnAccount;
-            this.cash = r.income.totalCash;
-            this.pos = r.income.totalPos;
-            this.previousMonths = r.income.totalPreviousMonths;
-            this.outcomePerVat = r.outcome.outcomePerVat;
-            this.suppliers = r.outcome.suppliers;
-            console.log(r)
-        }).catch((error: any) => {
-            console.log(error)
-            localStorage.removeItem('currentUser');
-            this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
-        });
+    generateLabels(aDay) {
+        let labels = [];
+        for (let i = 0; i <= 12; i++) {
+            labels.push(aDay.getMonth()+1 + "/" + aDay.getFullYear())
+            aDay.setMonth(aDay.getMonth() - 1);
+        }
+        return labels.reverse()
     }
 
-    onDateSelect(date: NgbDate) {
-        this.period = DateUtils.NgbDateToMonthPeriod(date);
-        this.getSalesStatistics();
+    private getSales() {
+        let sales = [];
+        for(let date in this.statistics){
+            sales.push(this.dashboardService.totalSales(this.statistics, date))
+        }
+        return sales.reverse();
     }
 
-    totalSales() {
-        return this.pos + this.cash + this.onAccount + this.eoppy - this.previousMonths;
+    private getSalesWithoutVat() {
+        let sales = [];
+        for(let date in this.statistics){
+            sales.push(this.dashboardService.totalSalesWithNoVat(this.statistics, date))
+        }
+        return sales.reverse();
     }
 
-    totalSalesWithNoVat(){
-        let totalZNoVat = 0;
-        let totalZ = 0;
-        Object.keys(this.incomePerVat).forEach(key => {
-            let vat = +VAT.valueOf(+key)/100;
-            totalZNoVat += this.incomePerVat[key] / (1 + vat)
-            totalZ += this.incomePerVat[key];
-        })
-        const extra =  this.pos + this.cash - totalZ + this.onAccount - this.previousMonths;
-        return totalZNoVat + extra + this.eoppy/1.06;
+    private getOutcome() {
+        let outcome = [];
+        for(let date in this.statistics){
+            outcome.push(this.dashboardService.totalExpenses(this.statistics, date))
+        }
+        return outcome.reverse();
     }
 
-    totalExpenses() {
-        let totalExpenses = 0;
-        Object.keys(this.outcomePerVat).forEach(key => {
-            totalExpenses += this.outcomePerVat[key]
-        })
-        return totalExpenses;
+    private getEOPPY() {
+        let eoppy = [];
+        for(let date in this.statistics){
+            eoppy.push(this.dashboardService.totalEOPPYIncludingVat(this.statistics, date))
+        }
+        return eoppy.reverse();
     }
 
-    totalExpensesWithNoVat() {
-        let totalExpensesNoVat = 0;
-        Object.keys(this.outcomePerVat).forEach(key => {
-            let vat = +VAT.valueOf(+key)/100;
-            totalExpensesNoVat += this.outcomePerVat[key] / (1 + vat)
-        })
-        return totalExpensesNoVat;
+    private getTotalPersonalWithdrawals(){
+        let pw = [];
+        for(let date in this.statistics){
+            pw.push(this.dashboardService.totalPersonalWithdrawals(this.statistics, date))
+        }
+        return pw.reverse();
     }
 
-    totalSalesMainSupplier() {
-        let total = 0;
-        Object.keys(this.suppliers.mainSupplier).forEach(key => {
-            total += this.suppliers.mainSupplier[key]
-        })
-        return total;
+    //convert from 10/2021 -> 2021-10-01
+    dateToDictionaryFormat(monthYear: string){
+        const [month,year] = monthYear.split('/');
+        return year + "-" + month + "-" + '01';
     }
 
-    totalSalesOtherSupplier() {
-        let total = 0;
-        Object.keys(this.suppliers.otherSuppliers).forEach(key => {
-            total += this.suppliers.otherSuppliers[key]
-        })
-        return total;
+    lineChartTableSummaryColumn(){
+        return [
+            this.getSales().reduce((partialSum,a) => partialSum+a,0),
+            this.getOutcome().reduce((partialSum,a) => partialSum+a,0),
+            this.getEOPPY().reduce((partialSum,a) => partialSum+a,0),
+            0
+        ]
+    }
+
+    lineChartTableAvgColumn(){
+        return [
+            this.getSales().reduce((partialSum,a) => partialSum+a,0)/12,
+            this.getOutcome().reduce((partialSum,a) => partialSum+a,0)/12,
+            this.getEOPPY().reduce((partialSum,a) => partialSum+a,0)/12,
+            0/12
+        ]
+    }
+
+    totalSalesWithNoVatAndCostOfSoldedItemsSummaryColumn(){
+        return [
+            this.getSalesWithoutVat().reduce((partialSum,a) => partialSum+a,0),
+            this.getCostOfSoldedItems().reduce((partialSum,a) => partialSum+a,0)
+        ]
+    }
+
+    totalSalesWithNoVatAndCostOfSoldedItemsAvgColumn(){
+        return [
+            this.getSalesWithoutVat().reduce((partialSum,a) => partialSum+a,0)/12,
+            this.getCostOfSoldedItems().reduce((partialSum,a) => partialSum+a,0)/12,
+        ]
+    }
+
+    lineChartTablePersonalWithdrawalsSummaryColumn() {
+        return [
+            this.getTotalPersonalWithdrawals().reduce((partialSum,a) => partialSum+a,0),
+        ]
+    }
+
+    lineChartTablePersonalWithdrawalsAvgColumn() {
+        return [
+            this.getTotalPersonalWithdrawals().reduce((partialSum,a) => partialSum+a,0)/12,
+        ]
+    }
+
+    grossProfitOperatingExpensesRebateTableSummaryColumn() {
+        return [
+            this.getGrossProfitWithoutVat().reduce((partialSum,a) => partialSum+a,0),
+            this.getOperatingExpensesValue().reduce((partialSum,a) => partialSum+a,0),
+            this.getRebate().reduce((partialSum,a) => partialSum+a,0),
+            (this.getGrossProfitWithoutVat().reduce((partialSum,a) => partialSum+a,0)
+            - this.getOperatingExpensesValue().reduce((partialSum,a) => partialSum+a,0)
+            - this.getRebate().reduce((partialSum,a) => partialSum+a,0))
+        ]
+    }
+
+    grossProfitOperatingExpensesRebateTableAvgColumn() {
+        return [
+            this.getGrossProfitWithoutVat().reduce((partialSum,a) => partialSum+a,0)/12,
+            this.getOperatingExpensesValue().reduce((partialSum,a) => partialSum+a,0)/12,
+            this.getRebate().reduce((partialSum,a) => partialSum+a,0)/12,
+            (this.getGrossProfitWithoutVat().reduce((partialSum,a) => partialSum+a,0)/12
+                - this.getOperatingExpensesValue().reduce((partialSum,a) => partialSum+a,0)/12
+                - this.getRebate().reduce((partialSum,a) => partialSum+a,0)/12)
+        ]
+    }
+
+    private getGrossProfitWithoutVat() {
+        let total = [];
+        for(let date in this.statistics){
+            total.push(this.dashboardService.totalGrossProfitWithoutVat(this.statistics, date))
+        }
+        return total.reverse();
+    }
+
+    private getOperatingExpensesValue() {
+        let total = [];
+        for(let date in this.statistics){
+            total.push(this.dashboardService.totalOperatingExpensesValue(this.statistics, date))
+        }
+        return total.reverse();
+    }
+
+    private getRebate() {
+        let total = [];
+        for(let date in this.statistics){
+            total.push(this.dashboardService.calculateRebate(this.statistics, date))
+        }
+        return total.reverse();
+    }
+
+    private getNetProfitWithTaxes(){
+        let total = [];
+        for(let date in this.statistics){
+            total.push((this.dashboardService.totalGrossProfitWithoutVat(this.statistics, date)
+                - this.dashboardService.totalOperatingExpensesValue(this.statistics,date)
+                - this.dashboardService.calculateRebate(this.statistics, date)))
+        }
+        return total.reverse();
+    }
+
+
+    markUpTableAvgColumn() {
+        let sumGrossProfit = this.getGrossProfitWithoutVat().reduce((partialSum,a) => partialSum+a,0);
+        let sumCostOfSoldedItems = this.getCostOfSoldedItems().reduce((partialSum,a) => partialSum+a,0);
+
+
+        let sumNetProfitWithoutTaxes = (this.getGrossProfitWithoutVat().reduce((partialSum,a) => partialSum+a,0)
+            - this.getOperatingExpensesValue().reduce((partialSum,a) => partialSum+a,0)
+            - this.getRebate().reduce((partialSum,a) => partialSum+a,0))
+        let sumSalesWithNoVat = this.getSalesWithoutVat().reduce((partialSum,a) => partialSum+a,0)
+
+
+        return [
+            (sumGrossProfit/sumCostOfSoldedItems), (sumNetProfitWithoutTaxes/sumSalesWithNoVat)
+        ]
+    }
+
+    private getMarkUp() {
+        let total = [];
+        for(let date in this.statistics){
+            total.push(this.dashboardService.calculateMarkUp(this.statistics, date))
+        }
+        return total.reverse();
+    }
+
+    private getCostOfSoldedItems() {
+        let total = [];
+        for(let date in this.statistics){
+            total.push(this.dashboardService.totalCostOfSoldedItems(this.statistics, date))
+        }
+        return total.reverse();
     }
 }

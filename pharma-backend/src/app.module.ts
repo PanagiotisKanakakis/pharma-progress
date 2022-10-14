@@ -11,6 +11,7 @@ import { BullModule } from '@nestjs/bull';
 import { OpeningBalanceModule } from './opening-balance/opening-balance.module';
 import { AuthBrokerModule } from './authbroker/authbroker.module';
 import { TransactionModule } from './transaction/transaction.module';
+import {StatisticsModule} from './statistics/statistics.module';
 
 @Module({
     imports: [
@@ -82,6 +83,7 @@ import { TransactionModule } from './transaction/transaction.module';
         AuthBrokerModule,
         TransactionModule,
         OpeningBalanceModule,
+        StatisticsModule,
     ],
     providers: [
         {

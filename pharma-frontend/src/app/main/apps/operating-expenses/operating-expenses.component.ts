@@ -187,8 +187,8 @@ export class OperatingExpensesComponent implements OnInit {
         getTransactionsByCriteria(
             {
                 'userId': this.currentUser.id.toString(),
-                'dateFrom': this.period.dateFrom,
-                'dateTo': this.period.dateTo,
+                'date': this.period.dateFrom,
+                'range': 'monthly',
                 'transactionType': transactionType,
                 'supplierType': SupplierType.getIndexOf(SupplierType.NONE),
                 'paymentType': [PaymentType.getIndexOf(PaymentType.CASH)]

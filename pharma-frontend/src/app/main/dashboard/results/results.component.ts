@@ -1,4 +1,4 @@
-import {AfterContentInit, AfterViewInit, Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 
 import {CoreConfigService} from '@core/services/config.service';
 import {CoreTranslationService} from '@core/services/translation.service';
@@ -9,21 +9,13 @@ import {AuthenticationService} from 'app/auth/service';
 import {DashboardService} from 'app/main/dashboard/dashboard.service';
 import {ColumnMode} from '@swimlane/ngx-datatable';
 import {locale as greek} from 'app/common/i18n/gr';
-import {
-    getSalesStatisticsByCriteria,
-    getTransactionsByCriteria,
-    PaymentType,
-    TransactionEntity,
-    TransactionType,
-    VAT
-} from '../../../api/transaction';
+import {StatisticsDto, TransactionType} from '../../../api/transaction';
 import {NgbDate, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import DateUtils from '../../../common/utils/date';
 import {DatePeriod} from '../../../common/utils/interfaces/date-period.interface';
 import {plainToInstance} from 'class-transformer';
 import {Router} from '@angular/router';
-import {SupplierType} from '../../../api/transaction/enums/supplier-type.enum';
-import {IncomeOutcomeAnalysisDto} from '../../../api/transaction/dto/income-outcome-analysis.dto';
+import {Greek} from 'flatpickr/dist/l10n/gr';
 
 @Component({
     selector: 'app-results',
@@ -60,24 +52,25 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     private $personalWithdrawalsWarning = '#FF9F43';
     private $operatingExpensesWarning = '#9042f5';
     private $eoppyAndConsumablesWarning = '#5af542';
-    public operatingExpensesData: any;
-    private incomeOutcomeAnalysisDto: IncomeOutcomeAnalysisDto;
+    private statistics: StatisticsDto;
+    DateRangeOptions: any;
+    operatingExpensesData: any;
+
 
     /**
      * Constructor
      * @param {AuthenticationService} _authenticationService
-     * @param {DashboardService} _dashboardService
+     * @param dashboardService
      * @param {CoreConfigService} _coreConfigService
      * @param {CoreTranslationService} _coreTranslationService
      * @param _router
      */
     constructor(
         private _authenticationService: AuthenticationService,
-        private _dashboardService: DashboardService,
+        private dashboardService: DashboardService,
         private _coreConfigService: CoreConfigService,
         private _coreTranslationService: CoreTranslationService,
         private _router: Router,
-
     ) {
         this._authenticationService.currentUser.subscribe(x => (this.currentUser = x));
         this.isAdmin = this._authenticationService.isAdmin;
@@ -237,15 +230,31 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         };
         this.basicDPdata = DateUtils.getTodayAsNgbDateStruct();
         this.period = DateUtils.NgbDateToMonthPeriod(new NgbDate(this.basicDPdata.year, this.basicDPdata.month, this.basicDPdata.day));
-        this.getSalesStatistics();
-        this.getOperatingExpenses();
+        this.updateApiData();
+        // ng2-flatpickr options
+        this.DateRangeOptions = {
+            locale: Greek,
+            altInput: true,
+            altInputClass: 'form-control flat-picker bg-transparent border-0 shadow-none flatpickr-input',
+            defaultDate: new Date(),
+            shorthand: true,
+            dateFormat: 'm.y',
+            altFormat: 'F Y',
+            onClose: (selectedDates: any) => {
+                const [month, day, year] = selectedDates[0].toLocaleDateString().split('/');
+                this.period = DateUtils.NgbDateToMonthPeriod(new NgbDate(+year, +month, +day));
+                this.updateApiData();
+            },
+        };
+
     }
+
     /**
      * On init
      */
     ngOnInit(): void {
         // Get the dashboard service data
-        this._dashboardService.onApiDataChanged.subscribe(response => {
+        this.dashboardService.onApiDataChanged.subscribe(response => {
             this.data = response;
         });
     }
@@ -263,10 +272,10 @@ export class ResultsComponent implements OnInit, AfterViewInit {
             ) {
                 setTimeout(() => {
                     // if (this.currentUser.role === 'Admin') {
-                        // Get Dynamic Width for Charts
-                        this.isMenuToggled = true;
-                        this.personalWithdrawalsChartOptions.chart.width = this.personalWitdrawalsRef?.nativeElement.offsetWidth;
-                        this.eoppyAndConsumablesChartoptions.chart.width = this.eoppyAndConsumablesChartRef?.nativeElement.offsetWidth;
+                    // Get Dynamic Width for Charts
+                    this.isMenuToggled = true;
+                    this.personalWithdrawalsChartOptions.chart.width = this.personalWitdrawalsRef?.nativeElement.offsetWidth;
+                    this.eoppyAndConsumablesChartoptions.chart.width = this.eoppyAndConsumablesChartRef?.nativeElement.offsetWidth;
                     // }
                 }, 50);
 
@@ -274,234 +283,158 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         });
     }
 
-    getSalesStatistics() {
-        getSalesStatisticsByCriteria(
-            {
-                'userId': this.currentUser.id.toString(),
-                'dateFrom': this.period.dateFrom,
-                'dateTo': this.period.dateTo,
-            },
-            {
-                'Accept': 'application/json',
-                'Authorization': 'Bearer ' + this.currentUser.token
-            }
-        ).then(response => {
-            this.incomeOutcomeAnalysisDto = plainToInstance(IncomeOutcomeAnalysisDto, response);
-            this.isLoaded = true;
-            console.log(this.incomeOutcomeAnalysisDto);
-        }).catch((_: any) => {
-            localStorage.removeItem('currentUser');
-            this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
-        });
-    }
-
-    getOperatingExpenses() {
-        const transactionType = [
-            TransactionType.getIndexOf(TransactionType.RENT),
-            TransactionType.getIndexOf(TransactionType.INSURANCE_CONTRIBUTION),
-            TransactionType.getIndexOf(TransactionType.PAYROLL),
-            TransactionType.getIndexOf(TransactionType.EFKA),
-            TransactionType.getIndexOf(TransactionType.ACCOUNTANT),
-            TransactionType.getIndexOf(TransactionType.ELECTRICITY_BILL),
-            TransactionType.getIndexOf(TransactionType.PHONE_BILL),
-            TransactionType.getIndexOf(TransactionType.CONSUMABLES),
-            TransactionType.getIndexOf(TransactionType.BANK_CHARGES),
-            TransactionType.getIndexOf(TransactionType.WATER_SUPPLY),
-            TransactionType.getIndexOf(TransactionType.TAXES),
-            TransactionType.getIndexOf(TransactionType.OTHER_EXPENSES),
-        ];
-        getTransactionsByCriteria(
-            {
-                'userId': this.currentUser.id.toString(),
-                'dateFrom': this.period.dateFrom,
-                'dateTo': this.period.dateTo,
-                'transactionType': transactionType,
-                'supplierType': SupplierType.getIndexOf(SupplierType.NONE),
-                'paymentType': [PaymentType.getIndexOf(PaymentType.CASH)]
-            },
-            {
-                'Accept': 'application/json',
-                'Authorization': 'Bearer ' + this.currentUser.token
-            }
-        ).then((data) => {
-            console.log(data);
-            this.operatingExpensesData = [];
-            if (data.length !== 0) {
-                for (let i = 0; i < data.length; i++) {
-                    const transaction = plainToInstance(TransactionEntity, data[i]);
-                    this.operatingExpensesData = [...this.operatingExpensesData, {
-                        id: transaction.id,
-                        transactionType: transaction.transactionType,
-                        supplierType: SupplierType.NONE,
-                        cost: transaction.cost,
-                        createdAt: DateUtils.formatDbDate(transaction.createdAt),
-                        comment: transaction.comment,
-                        vat: VAT.NONE,
-                        paymentType: PaymentType.CASH,
-                    }];
-                    this.operatingExpensesData[i].transactionType = TransactionType.valueOf(transaction.transactionType);
-                    this.operatingExpensesData[i].createdAt = DateUtils.formatDbDate(transaction.createdAt);
-                }
-            }
-        }).catch((error: any) => {
-            console.log(error);
-            localStorage.removeItem('currentUser');
-            this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
-        });
-    }
-
-    onDateSelect(date: NgbDate) {
-        this.period = DateUtils.NgbDateToMonthPeriod(date);
-        this.getSalesStatistics();
-        this.getOperatingExpenses();
-    }
-
-    /**
-     * Filter By Roles
-     *
-     * @param event
-     */
-    filterByStatus(event) {
-        const filter = event ? event.value : '';
-    }
-
     totalSales() {
-        return this.incomeOutcomeAnalysisDto.income.totalPos
-            + this.incomeOutcomeAnalysisDto.income.totalCash
-            + this.incomeOutcomeAnalysisDto.income.totalOnAccount
-            + this.incomeOutcomeAnalysisDto.income.totalEOPPY
-            - this.incomeOutcomeAnalysisDto.income.totalPreviousMonths;
+        return this.dashboardService.totalSales(this.statistics, this.period.dateFrom);
     }
 
     totalSalesWithNoVat() {
-        let totalZNoVat = 0;
-        let totalZ = 0;
-        Object.keys(this.incomeOutcomeAnalysisDto.income.incomePerVat).forEach(key => {
-            const vat = +VAT.valueOf(+key) / 100;
-            totalZNoVat += this.incomeOutcomeAnalysisDto.income.incomePerVat[key] / (1 + vat);
-            totalZ += this.incomeOutcomeAnalysisDto.income.incomePerVat[key];
-        });
-        const extra = this.incomeOutcomeAnalysisDto.income.totalPos
-            + this.incomeOutcomeAnalysisDto.income.totalCash
-            - totalZ
-            + this.incomeOutcomeAnalysisDto.income.totalOnAccount
-            - this.incomeOutcomeAnalysisDto.income.totalPreviousMonths;
-        return totalZNoVat
-            + extra
-            + this.incomeOutcomeAnalysisDto.income.totalEOPPY / 1.06;
+        return this.dashboardService.totalSalesWithNoVat(this.statistics, this.period.dateFrom);
     }
 
     totalExpenses() {
-        let totalExpenses = 0;
-        Object.keys(this.incomeOutcomeAnalysisDto.outcome.outcomePerVat).forEach(key => {
-            totalExpenses += this.incomeOutcomeAnalysisDto.outcome.outcomePerVat[key];
-        });
-        return totalExpenses;
+        return this.dashboardService.totalExpenses(this.statistics, this.period.dateFrom);
     }
 
     totalExpensesWithNoVat() {
-        let totalExpensesNoVat = 0;
-        Object.keys(this.incomeOutcomeAnalysisDto.outcome.outcomePerVat).forEach(key => {
-            const vat = +VAT.valueOf(+key) / 100;
-            totalExpensesNoVat += this.incomeOutcomeAnalysisDto.outcome.outcomePerVat[key] / (1 + vat);
-        });
-        return totalExpensesNoVat;
+        return this.dashboardService.totalExpensesWithNoVat(this.statistics, this.period.dateFrom);
     }
 
-    totalMainSupplierSales() {
-        let total = 0;
-        Object.keys(this.incomeOutcomeAnalysisDto.outcome.suppliers.mainSupplier).forEach(key => {
-            total += this.incomeOutcomeAnalysisDto.outcome.suppliers.mainSupplier[key];
-        });
-        return total;
+    totalMainSupplierOutcome() {
+        return this.dashboardService.totalMainSupplierOutcome(this.statistics, this.period.dateFrom);
     }
 
-    totalOtherSupplierSales() {
-        let total = 0;
-        Object.keys(this.incomeOutcomeAnalysisDto.outcome.suppliers.otherSuppliers).forEach(key => {
-            total += this.incomeOutcomeAnalysisDto.outcome.suppliers.otherSuppliers[key];
-        });
-        return total;
+    totalOtherSupplierOutcome() {
+        return this.dashboardService.totalOtherSupplierOutcome(this.statistics, this.period.dateFrom);
     }
 
-    personalWithdrawals() {
-        return this.incomeOutcomeAnalysisDto.other[TransactionType.getIndexOf(TransactionType.PERSONAL_WITHDRAWALS)];
+    totalOtherSupplierOutcomeCash() {
+        return this.dashboardService.totalOtherSupplierOutcomeCash(this.statistics, this.period.dateFrom);
+    }
+
+    totalPersonalWithdrawals() {
+        return this.dashboardService.totalPersonalWithdrawals(this.statistics, this.period.dateFrom);
     }
 
     totalOperatingExpensesValue() {
-        let value = 0;
-        this.operatingExpensesData.forEach((row) => {
-            value += Number(row.cost);
-        });
-        return value;
+        return this.dashboardService.totalOperatingExpensesValue(this.statistics, this.period.dateFrom);
     }
 
     totalCash() {
-        return this.incomeOutcomeAnalysisDto.income.totalCash;
+        return this.dashboardService.totalCash(this.statistics, this.period.dateFrom);
     }
 
     totalPos() {
-        return this.incomeOutcomeAnalysisDto.income.totalPos;
+        return this.dashboardService.totalPos(this.statistics, this.period.dateFrom);
     }
 
     totalEOPPYIncludingVat() {
-        return this.incomeOutcomeAnalysisDto.income.totalEOPPY;
+        return this.dashboardService.totalEOPPYIncludingVat(this.statistics, this.period.dateFrom);
     }
 
     totalIncomeOnAccount() {
-        return this.incomeOutcomeAnalysisDto.income.totalOnAccount;
+        return this.dashboardService.totalIncomeOnAccount(this.statistics, this.period.dateFrom);
     }
 
     totalExchanges() {
-        return this.incomeOutcomeAnalysisDto.outcome.exchange;
+        return this.dashboardService.totalExchanges(this.statistics, this.period.dateFrom);
     }
 
     consumablesValue() {
-        return 0;
+        return this.dashboardService.consumablesValue(this.statistics, this.period.dateFrom);
     }
 
     totalEOPPYAndConsumablesWithoutVat() {
-        return this.incomeOutcomeAnalysisDto.income.totalEOPPY / 1.06 + this.consumablesValue();
+        return this.dashboardService.totalEOPPYAndConsumablesWithoutVat(this.statistics, this.period.dateFrom);
     }
 
     totalGrossProfitWithoutVat() {
-        return this.totalSalesWithNoVat() - this.totalExpensesWithNoVat() - this.totalInventoryChange();
+        return this.dashboardService.totalGrossProfitWithoutVat(this.statistics, this.period.dateFrom);
     }
 
     totalInventoryChange() {
-        return 0;
+        return this.dashboardService.totalInventoryChange(this.statistics, this.period.dateFrom);
     }
 
     totalCostOfSoldedItems() {
-        return this.totalExpensesWithNoVat() - this.totalInventoryChange();
+        return this.dashboardService.totalCostOfSoldedItems(this.statistics, this.period.dateFrom);
     }
 
     calculateMarkUp() {
-        return this.totalCostOfSoldedItems() > 0 ? (this.totalGrossProfitWithoutVat() / this.totalCostOfSoldedItems())*100 : 0;
+        return this.dashboardService.calculateMarkUp(this.statistics, this.period.dateFrom);
     }
 
     calculateGrossProfitMargin() {
-        return this.totalSalesWithNoVat() > 0 ? (this.totalGrossProfitWithoutVat() / this.totalSalesWithNoVat())*100 : 0;
+        return this.dashboardService.calculateGrossProfitMargin(this.statistics, this.period.dateFrom);
     }
 
     calculateNetProfitMargin() {
-        return this.totalSalesWithNoVat() > 0 ? (this.totalNetProfitWithoutTaxes() / this.totalSalesWithNoVat()) * 100: 0;
+        return this.dashboardService.calculateNetProfitMargin(this.statistics, this.period.dateFrom);
     }
 
     totalNetProfitWithoutTaxes() {
-        return this.totalGrossProfitWithoutVat() - this.totalOperatingExpensesValue() - this.calculateRebate();
+        return this.dashboardService.totalNetProfitWithoutTaxes(this.statistics, this.period.dateFrom);
     }
 
     calculateRebate() {
-        console.log(this.totalEOPPYIncludingVat());
-        return 0;
+        return this.dashboardService.calculateRebate(this.statistics, this.period.dateFrom);
     }
 
     totalNetProfitWithTaxes() {
-        return this.totalNetProfitWithoutTaxes() - this.totalTaxes();
+        return this.dashboardService.totalNetProfitWithTaxes(this.statistics, this.period.dateFrom);
     }
 
     totalTaxes() {
-        return 0;
+        return this.dashboardService.totalTaxes(this.statistics, this.period.dateFrom);
+    }
+
+    totalOperatingExpensesIncludingVat() {
+        return this.dashboardService.totalOperatingExpensesIncludingVat(this.statistics, this.period.dateFrom);
+    }
+
+    totalPreviousMonthsPaymentsToOtherSuppliers() {
+        return this.dashboardService.totalPreviousMonthsPaymentsToOtherSuppliers(this.statistics, this.period.dateFrom);
+    }
+
+    totalPreviousMonthsPaymentsToMainSupplier() {
+        return this.dashboardService.totalPreviousMonthsPaymentsToMainSupplier(this.statistics, this.period.dateFrom);
+    }
+
+    totalMonthIncome() {
+        return this.dashboardService.totalMonthIncome(this.statistics, this.period.dateFrom);
+    }
+
+    totalOpeningBalance() {
+        return this.dashboardService.totalOpeningBalance(this.statistics, this.period.dateFrom);
+    }
+
+    totalCashAvailable() {
+        return this.dashboardService.totalCashAvailable(this.statistics, this.period.dateFrom);
+    }
+
+    totalClosingBalance() {
+        return this.dashboardService.totalClosingBalance(this.statistics, this.period.dateFrom);
+    }
+
+    private updateApiData() {
+        this.dashboardService.getStatisticsData(String(this.currentUser.id), this.currentUser.token, this.period.dateFrom, 'monthly')
+            .then(response => {
+                const [year, month, day] = this.period.dateFrom.split('-');
+                this.period.dateFrom = year + '-' + +month + '-' + day;
+                this.statistics = plainToInstance(StatisticsDto, response);
+                this.operatingExpensesData = this.statistics[this.period.dateFrom].operatingExpenses;
+                this.isLoaded = true;
+            })
+            .catch((_: Error) => {
+                localStorage.removeItem('currentUser');
+                this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
+            });
+    }
+
+    getNameOfOperatingExpense(transactionType: any) {
+        return TransactionType.valueOf(transactionType);
+    }
+
+    parseDate(createdAt: any) {
+        return DateUtils.formatDbDate(createdAt);
     }
 }

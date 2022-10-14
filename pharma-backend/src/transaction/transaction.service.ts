@@ -2,18 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Transaction } from './transaction.entity';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository } from 'typeorm';
-import {
-    CommitTransactionDto,
-    CriteriaDto,
-    IncomeAnalysisDto,
-    IncomeOutcomeAnalysisDto,
-    OutcomeSupplierAnalysisDto,
-} from './dto';
-import { PaymentType, TransactionType, VAT } from './enums';
-import { plainToInstance } from 'class-transformer';
-import { OutcomeAnalysisDto } from './dto/outcome-analysis.dto';
-import { SupplierType } from './enums/supplier-type.enum';
+import { CommitTransactionDto } from './dto';
 import { UserService } from '../authbroker/users';
+import { CriteriaDto } from '../statistics/dto';
+import { getMonthRanges, getWeek } from '../common';
+import { RangeType } from '../statistics/enums/range-type.enum';
+import { PaymentType, SupplierType, TransactionType } from './enums';
 
 @Injectable()
 export class TransactionService {
@@ -64,15 +58,32 @@ export class TransactionService {
     async getAllTransactionsByCriteria(
         criteriaDto: CriteriaDto,
     ): Promise<Transaction[]> {
-        console.log(criteriaDto);
         const query = this.transactionRepository
             .createQueryBuilder('transaction')
             .where('transaction.userId = :userId ', {
                 userId: criteriaDto.userId,
-            })
-            .andWhere('CAST ("createdAt" AS DATE) >= :dateFrom ', {
-                dateFrom: criteriaDto.dateFrom,
             });
+        let dateRange;
+        if (criteriaDto.range == RangeType.WEEKLY) {
+            dateRange = getWeek(new Date(criteriaDto.date));
+            query
+                .andWhere('CAST ("createdAt" AS DATE) >= :dateFrom ', {
+                    dateFrom: dateRange.dateFrom,
+                })
+                .andWhere('CAST ("createdAt" AS DATE) <= :dateTo ', {
+                    dateTo: dateRange.dateTo,
+                });
+        } else if (criteriaDto.range == RangeType.MONTHLY) {
+            dateRange = getMonthRanges(criteriaDto.range, criteriaDto.date);
+            query
+                .andWhere('CAST ("createdAt" AS DATE) >= :dateFrom ', {
+                    dateFrom: dateRange[0].dateFrom,
+                })
+                .andWhere('CAST ("createdAt" AS DATE) <= :dateTo ', {
+                    dateTo: dateRange[0].dateTo,
+                });
+        }
+
         if (criteriaDto.transactionType) {
             query.andWhere(
                 'transaction.transactionType in (:...transactionType) ',
@@ -91,196 +102,28 @@ export class TransactionService {
                 paymentType: criteriaDto.paymentType,
             });
         }
-
-        if (criteriaDto.dateTo !== undefined) {
-            query.andWhere('CAST ("createdAt" AS DATE) <= :dateTo ', {
-                dateTo: criteriaDto.dateTo,
-            });
-        }
         return query.getMany();
     }
 
-    async getSalesStatisticsByCriteria(
+    async getAllOperatingExpensesByDateRange(
         criteria: CriteriaDto,
-    ): Promise<IncomeOutcomeAnalysisDto> {
-        const incomeOutcomeAnalysisDto = new IncomeOutcomeAnalysisDto();
-        incomeOutcomeAnalysisDto.income = plainToInstance(IncomeAnalysisDto, {
-            incomePerVat: await this.getIncomePerVatType(criteria),
-            totalCash: await this.getTotalCash(criteria),
-            totalPos: await this.getTotalPos(criteria),
-            totalEOPPY: await this.getTotalEOPPY(criteria),
-            totalOnAccount: await this.getTotalOnAccount(criteria),
-            totalPreviousMonths: await this.getTotalPreviousMonths(criteria),
-        });
-        incomeOutcomeAnalysisDto.outcome = plainToInstance(OutcomeAnalysisDto, {
-            outcomePerVat: await this.getOutcomePerVatType(criteria),
-            suppliers: plainToInstance(OutcomeSupplierAnalysisDto, {
-                mainSupplier: await this.getOutcomeForMainSupplier(criteria),
-                otherSuppliers: await this.getOutcomeForOtherSuppliers(
-                    criteria,
-                ),
-            }),
-            exchange: await this.getExchanges(criteria),
-        });
-        incomeOutcomeAnalysisDto.other = await this.getOtherTransactionValues(
-            criteria,
-        );
-        return incomeOutcomeAnalysisDto;
-    }
-
-    createAndExecuteCriteriaQuery(criteria: CriteriaDto) {
-        const query = this.transactionRepository
-            .createQueryBuilder('transaction')
-            .select('sum(cast (cost as numeric)) as total')
-            .where('transaction.userId = :userId ', {
-                userId: criteria.userId,
-            })
-            .andWhere('CAST ("createdAt" AS DATE) >= :dateFrom ', {
-                dateFrom: criteria.dateFrom,
-            })
-            .andWhere('transaction.transactionType in (:...transactionType) ', {
-                transactionType: criteria.transactionType,
-            })
-            .andWhere('transaction.paymentType in (:...paymentType) ', {
-                paymentType: criteria.paymentType,
-            })
-            .andWhere('CAST ("createdAt" AS DATE) <= :dateTo ', {
-                dateTo: criteria.dateTo,
-            });
-        if (criteria.supplierType) {
-            query.andWhere('transaction.supplierType= :supplierType ', {
-                supplierType: criteria.supplierType,
-            });
-        }
-        return query.getRawOne().then((rs) => {
-            if (rs.total == null) {
-                return 0;
-            } else {
-                return +rs.total;
-            }
-        });
-    }
-
-    private getTotalCash(criteria: CriteriaDto) {
-        criteria.transactionType = [TransactionType.INCOME];
-        criteria.paymentType = [PaymentType.CASH];
-        return this.createAndExecuteCriteriaQuery(criteria);
-    }
-
-    private async getTotalPos(criteria: CriteriaDto) {
-        criteria.transactionType = [TransactionType.INCOME];
-        criteria.paymentType = [PaymentType.POS];
-        return this.createAndExecuteCriteriaQuery(criteria);
-    }
-
-    private async getTotalEOPPY(criteria: CriteriaDto) {
-        criteria.transactionType = [TransactionType.EOPPY];
-        criteria.paymentType = [PaymentType.ON_ACCOUNT];
-        return this.createAndExecuteCriteriaQuery(criteria);
-    }
-
-    private async getTotalOnAccount(criteria: CriteriaDto) {
-        criteria.transactionType = [TransactionType.INCOME];
-        criteria.paymentType = [PaymentType.ON_ACCOUNT];
-        return this.createAndExecuteCriteriaQuery(criteria);
-    }
-
-    private getIncomePerVatType(criteria: CriteriaDto): Record<string, number> {
-        criteria.transactionType = [TransactionType.INCOME];
-        criteria.paymentType = [PaymentType.NONE];
-        const query = this.createPerVatTypeQuery(criteria);
-        const values: Partial<Record<VAT, number>> = {};
-        query.getRawMany().then((rs) => {
-            rs.forEach((totalAndVat) => {
-                values[totalAndVat.vat] = +totalAndVat.total;
-            });
-        });
-        return values;
-    }
-
-    private async getTotalPreviousMonths(criteria: CriteriaDto) {
-        criteria.transactionType = [TransactionType.INCOME];
-        criteria.paymentType = [PaymentType.PREVIOUS_MONTHS_RECEIPTS];
-        return this.createAndExecuteCriteriaQuery(criteria);
-    }
-
-    private async getOutcomePerVatType(criteria: CriteriaDto) {
-        criteria.transactionType = [TransactionType.EXPENSE];
-        criteria.paymentType = [PaymentType.CASH, PaymentType.ON_ACCOUNT];
-        const query = this.createPerVatTypeQuery(criteria);
-        const values: Partial<Record<VAT, number>> = {};
-        query.getRawMany().then((rs) => {
-            rs.forEach((totalAndVat) => {
-                values[totalAndVat.vat] = +totalAndVat.total;
-            });
-        });
-        console.log(values);
-        return values;
-    }
-
-    private createPerVatTypeQuery(criteria: CriteriaDto) {
-        return this.transactionRepository
-            .createQueryBuilder('transaction')
-            .select('sum(cast (cost as numeric)) as total, vat')
-            .where('transaction.userId = :userId ', {
-                userId: criteria.userId,
-            })
-            .andWhere('CAST ("createdAt" AS DATE) >= :dateFrom ', {
-                dateFrom: criteria.dateFrom,
-            })
-            .andWhere('transaction.transactionType in (:...transactionType) ', {
-                transactionType: criteria.transactionType,
-            })
-            .andWhere('transaction.paymentType in (:...paymentType) ', {
-                paymentType: criteria.paymentType,
-            })
-            .andWhere('CAST ("createdAt" AS DATE) <= :dateTo ', {
-                dateTo: criteria.dateTo,
-            })
-            .groupBy('vat');
-    }
-
-    private async getExchanges(criteria: CriteriaDto) {
-        return 0;
-    }
-
-    private async getOutcomeForOtherSuppliers(criteria: CriteriaDto) {
-        const values: Partial<
-            Record<PaymentType.CASH | PaymentType.ON_ACCOUNT, number>
-        > = {};
-
-        criteria.transactionType = [TransactionType.EXPENSE];
-        criteria.supplierType = SupplierType.OTHER;
-
-        criteria.paymentType = [PaymentType.CASH];
-        values[PaymentType.CASH] = await this.createAndExecuteCriteriaQuery(
-            criteria,
-        );
-
-        criteria.paymentType = [PaymentType.ON_ACCOUNT];
-        values[PaymentType.ON_ACCOUNT] =
-            await this.createAndExecuteCriteriaQuery(criteria);
-        return values;
-    }
-
-    private async getOutcomeForMainSupplier(criteria: CriteriaDto) {
-        const values: Partial<Record<PaymentType.ON_ACCOUNT, number>> = {};
-
-        criteria.transactionType = [TransactionType.EXPENSE];
-        criteria.supplierType = SupplierType.MAIN;
-        criteria.paymentType = [PaymentType.ON_ACCOUNT];
-        values[PaymentType.ON_ACCOUNT] =
-            await this.createAndExecuteCriteriaQuery(criteria);
-        return values;
-    }
-
-    private async getOtherTransactionValues(criteria: CriteriaDto) {
-        const values: Partial<Record<TransactionType, number>> = {};
-        criteria.transactionType = [TransactionType.PERSONAL_WITHDRAWALS];
-        criteria.paymentType = [PaymentType.CASH, PaymentType.BANK];
-        criteria.supplierType = SupplierType.NONE;
-        values[TransactionType.PERSONAL_WITHDRAWALS] =
-            await this.createAndExecuteCriteriaQuery(criteria);
-        return values;
+        dateFrom: string,
+    ) {
+        criteria.date = dateFrom;
+        criteria.range = RangeType.MONTHLY;
+        criteria.transactionType = [
+            TransactionType.RENT,
+            TransactionType.INSURANCE_CONTRIBUTION,
+            TransactionType.PAYROLL,
+            TransactionType.EFKA,
+            TransactionType.ACCOUNTANT,
+            TransactionType.ELECTRICITY_BILL,
+            TransactionType.PHONE_BILL,
+            TransactionType.CONSUMABLES,
+            TransactionType.BANK_CHARGES,
+            TransactionType.WATER_SUPPLY,
+            TransactionType.OTHER_EXPENSES,
+        ];
+        return this.getAllTransactionsByCriteria(criteria);
     }
 }

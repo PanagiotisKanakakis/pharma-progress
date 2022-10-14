@@ -1,11 +1,14 @@
 import {
     IsArray,
+    IsIn,
     IsNotEmpty,
     IsNumberString,
     IsOptional,
     IsString,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { RangeType } from '../enums/range-type.enum';
+import { Type } from 'class-transformer';
 
 export class CriteriaDto {
     @ApiProperty()
@@ -13,15 +16,20 @@ export class CriteriaDto {
     @IsNumberString()
     userId: string;
 
-    @ApiPropertyOptional()
+    @ApiProperty()
     @IsString()
-    @IsOptional()
-    dateFrom?: string;
+    @Type(() => String)
+    @IsIn([
+        RangeType.DAILY,
+        RangeType.MONTHLY,
+        RangeType.YEARLY,
+        RangeType.WEEKLY,
+    ])
+    range: string;
 
-    @ApiPropertyOptional()
+    @ApiProperty()
     @IsString()
-    @IsOptional()
-    dateTo?: string;
+    date: string;
 
     @ApiProperty()
     @IsOptional()

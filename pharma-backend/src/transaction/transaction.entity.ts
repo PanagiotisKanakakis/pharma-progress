@@ -13,7 +13,7 @@ import { TransactionType } from './enums';
 import { PaymentType } from './enums';
 import type { User } from '../authbroker/users';
 import { Exclude } from 'class-transformer';
-import { SupplierType } from './enums/supplier-type.enum';
+import { SupplierType } from './enums';
 
 @Entity()
 export class Transaction {

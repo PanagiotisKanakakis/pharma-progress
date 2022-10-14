@@ -141,8 +141,8 @@ export class OutcomeComponent implements OnInit {
         getTransactionsByCriteria(
             {
                 'userId': this.currentUser.id.toString(),
-                'dateFrom': this.dates[0].queryFormattedDate.toString(),
-                'dateTo': this.dates[6].queryFormattedDate,
+                'date': this.dates[0].queryFormattedDate.toString(),
+                'range': 'weekly',
                 'transactionType': [TransactionType.getIndexOf(TransactionType.EXPENSE)],
                 'paymentType': [this.getPaymentType()],
                 'supplierType': this.getSupplierType(),

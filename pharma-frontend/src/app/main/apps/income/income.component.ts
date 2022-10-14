@@ -21,6 +21,7 @@ import {TransactionCell} from '../../../common/utils/interfaces/transaction-cell
 import {SupplierType} from '../../../api/transaction/enums/supplier-type.enum';
 import {AuthenticationService} from '../../../auth/service';
 import {FormControl, Validators} from '@angular/forms';
+import {Greek} from 'flatpickr/dist/l10n/gr';
 
 @Component({
     selector: 'income-datatable',
@@ -51,6 +52,7 @@ export class IncomeComponent implements OnInit {
     public currentUser: User;
     public type = '';
     public numberFormControl: any[][] = [];
+    DateRangeOptions: any;
 
     constructor(private _coreTranslationService: CoreTranslationService,
                 private _authenticationService: AuthenticationService,
@@ -76,23 +78,32 @@ export class IncomeComponent implements OnInit {
     ngOnInit() {
         this.route.paramMap.subscribe(params => {
             this.type = params.get('type');
-            this.initCalendar(DateUtils.getMonday(new Date()));
+            this.dates = DateUtils.initWeek(DateUtils.getMonday(new Date()));
             this.initTransactions();
             this.initTableRows();
             this.initNumberFormControl();
             this.initEmptyCells();
             this.initCellValues();
         });
-    }
-
-    onDateSelect(date: NgbDate) {
-        this.dates = DateUtils.initSpecificWeek(date);
-        this.initEmptyCells();
-        this.initCellValues();
-    }
-
-    initCalendar(date: Date) {
-        this.dates = DateUtils.initWeek(date);
+        // ng2-flatpickr options
+        this.DateRangeOptions = {
+            weekNumbers: true,
+            locale: Greek,
+            altInput: true,
+            mode: 'range',
+            altInputClass: 'form-control flat-picker bg-transparent border-0 shadow-none flatpickr-input',
+            defaultDate: [this.dates[0].queryFormattedDate, this.dates[this.dates.length-1].queryFormattedDate],
+            altFormat: 'j-n-Y',
+            onClose: (selectedDates: any) => {
+                const [month, day, year] = selectedDates[0].toLocaleDateString().split('/');
+                this.dates = DateUtils.initSpecificWeek(new NgbDate(+year,+month,+day));
+                this.initEmptyCells();
+                this.initCellValues();
+            },
+            // parseDate: (selectedDates: any) => {
+            //     console.log(selectedDates)
+            // }
+        };
     }
 
     initTableRows() {
@@ -124,19 +135,6 @@ export class IncomeComponent implements OnInit {
 
             }
         });
-        // if (this.type === 'z') {
-        //     this.rows.push({
-        //         type: 'footer',
-        //         name: 'Σύνολο Ζ',
-        //         cost: 0
-        //     });
-        // } else {
-        //     this.rows.push({
-        //         type: 'footer',
-        //         name: 'Σύνολο εισπράξεων',
-        //         cost: 0
-        //     });
-        // }
     }
 
     initCellValues() {
@@ -150,8 +148,8 @@ export class IncomeComponent implements OnInit {
         getTransactionsByCriteria(
             {
                 'userId': this.currentUser.id.toString(),
-                'dateFrom': this.dates[0].queryFormattedDate.toString(),
-                'dateTo': this.dates[6].queryFormattedDate,
+                'date': this.dates[0].queryFormattedDate.toString(),
+                'range': 'weekly',
                 'transactionType': [TransactionType.getIndexOf(TransactionType.INCOME)],
                 'paymentType': paymentType
             },

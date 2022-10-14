@@ -84,3 +84,15 @@
   width: 100%;
   text-align: center;
 }
+
+.dark-layout .flatpickr-calendar {
+  background: white !important;
+  border-color: #33557e;
+  box-shadow: none;
+}
+
+.dark-layout .flatpickr-calendar .flatpickr-day.inRange, .flatpickr-calendar .flatpickr-day.inRange:hover {
+  background: #f3f2fe !important;
+  border-color: #f3f2fe !important;
+  box-shadow: -5px 0 0 #f3f2fe, 5px 0 0 #f3f2fe !important;
+}

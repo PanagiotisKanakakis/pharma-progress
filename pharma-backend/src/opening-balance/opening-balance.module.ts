@@ -6,16 +6,26 @@ import { OpeningBalanceController } from './opening-balance.controller';
 import { OpeningBalanceService } from './opening-balance.service';
 import { User, UserService } from '../authbroker/users';
 import { AuthBrokerModule } from '../authbroker/authbroker.module';
+import { StatisticsService } from '../statistics/statistics.service';
+import { StatisticsModule } from '../statistics/statistics.module';
+import { Transaction } from '../transaction';
+import { TransactionService } from '../transaction/transaction.service';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([User, OpeningBalance]),
+        TypeOrmModule.forFeature([User, OpeningBalance, Transaction]),
         BullModule.registerQueue({
             name: 'opening-balance-queue',
         }),
         AuthBrokerModule,
+        StatisticsModule,
     ],
-    providers: [OpeningBalanceService, UserService],
+    providers: [
+        OpeningBalanceService,
+        UserService,
+        StatisticsService,
+        TransactionService,
+    ],
     controllers: [OpeningBalanceController],
     exports: [OpeningBalanceService],
 })

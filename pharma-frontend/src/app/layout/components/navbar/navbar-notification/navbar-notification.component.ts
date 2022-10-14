@@ -88,8 +88,8 @@ export class NavbarNotificationComponent implements OnInit {
     getTransactionsByCriteria(
         {
           'userId': this.currentUser.id.toString(),
-          'dateFrom': this.period.dateFrom,
-          'dateTo': this.period.dateTo,
+          'date': this.period.dateFrom,
+          'range': 'monthly',
           'transactionType': transactionType,
           'supplierType': SupplierType.getIndexOf(SupplierType.NONE),
           'paymentType': [PaymentType.getIndexOf(PaymentType.CASH)]
@@ -108,7 +108,6 @@ export class NavbarNotificationComponent implements OnInit {
         const nonPaidOperatingExpenses = this.getDifference(transactionType,paidOperatingExpenses)
         this.notifications.messages = [];
         nonPaidOperatingExpenses.forEach((value) => {
-          console.log(TransactionType.valueOf(value))
           this.notifications.messages.push({
             heading: '<span class="font-weight-bolder">Η ακόλουθη συναλλαγή δεν έχει καταχωρηθεί</span>',
             text: TransactionType.valueOf(value)
