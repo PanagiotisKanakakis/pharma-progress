@@ -48,10 +48,12 @@
                                             </div>
                                         </td>
                                         <td style="text-align: center">
-                                            {{this.dashboardService.totalSales(this.statistics, dateToDictionaryFormat(month)).toFixed(1)}}€
+                                            {{this.dashboardService.totalSales(this.statistics, dateToDictionaryFormat(month)).toFixed(1)}}
+                                            €
                                         </td>
                                         <td style="text-align: center">
-                                            {{this.dashboardService.totalExpenses(this.statistics,dateToDictionaryFormat(month)).toFixed(1)}}€
+                                            {{this.dashboardService.totalExpenses(this.statistics, dateToDictionaryFormat(month)).toFixed(1)}}
+                                            €
                                         </td>
                                         <td style="text-align: center">
                                             {{this.dashboardService.totalEOPPYIncludingVat(this.statistics, dateToDictionaryFormat(month)).toFixed(1)}}
@@ -142,11 +144,12 @@
                                             </div>
                                         </td>
                                         <td style="text-align: center">
-                                            {{this.dashboardService.totalSalesWithNoVat(this.statistics,dateToDictionaryFormat(month)).toFixed(1)}}
+                                            {{this.dashboardService.totalSalesWithNoVat(this.statistics, dateToDictionaryFormat(month)).toFixed(1)}}
                                             €
                                         </td>
                                         <td style="text-align: center">
-                                            {{this.dashboardService.totalCostOfSoldedItems(this.statistics,dateToDictionaryFormat(month)).toFixed(1)}}€
+                                            {{this.dashboardService.totalCostOfSoldedItems(this.statistics, dateToDictionaryFormat(month)).toFixed(1)}}
+                                            €
                                         </td>
                                     </tr>
                                     </tbody>
@@ -201,7 +204,8 @@
                                             </div>
                                         </td>
                                         <td style="text-align: center">
-                                            {{this.dashboardService.totalPersonalWithdrawals(this.statistics,dateToDictionaryFormat(month)).toFixed(1)}}€
+                                            {{this.dashboardService.totalPersonalWithdrawals(this.statistics, dateToDictionaryFormat(month)).toFixed(1)}}
+                                            €
                                         </td>
                                     </tr>
                                     </tbody>
@@ -270,10 +274,12 @@
                                             </div>
                                         </td>
                                         <td style="text-align: center">
-                                            {{this.dashboardService.totalGrossProfitWithoutVat(this.statistics, dateToDictionaryFormat(month)).toFixed(1)}}€
+                                            {{this.dashboardService.totalGrossProfitWithoutVat(this.statistics, dateToDictionaryFormat(month)).toFixed(1)}}
+                                            €
                                         </td>
                                         <td style="text-align: center">
-                                            {{this.dashboardService.totalOperatingExpensesValue(this.statistics,dateToDictionaryFormat(month)).toFixed(1)}}€
+                                            {{this.dashboardService.totalOperatingExpensesValue(this.statistics, dateToDictionaryFormat(month)).toFixed(1)}}
+                                            €
                                         </td>
                                         <td style="text-align: center">
                                             {{this.dashboardService.calculateRebate(this.statistics, dateToDictionaryFormat(month)).toFixed(1)}}
@@ -282,8 +288,8 @@
                                         <td style="text-align: center">
                                             {{
                                             (this.dashboardService.totalGrossProfitWithoutVat(this.statistics, dateToDictionaryFormat(month))
-                                            - this.dashboardService.totalOperatingExpensesValue(this.statistics,dateToDictionaryFormat(month))
-                                            - this.dashboardService.calculateRebate(this.statistics, dateToDictionaryFormat(month))).toFixed(1)
+                                                - this.dashboardService.totalOperatingExpensesValue(this.statistics, dateToDictionaryFormat(month))
+                                                - this.dashboardService.calculateRebate(this.statistics, dateToDictionaryFormat(month))).toFixed(1)
                                             }}€
                                         </td>
                                     </tr>
@@ -368,23 +374,24 @@
                                             </div>
                                         </td>
                                         <td style="text-align: center">
-                                            {{this.dashboardService.calculateMarkUp(this.statistics, dateToDictionaryFormat(month)).toFixed(1)}}€
+                                            {{this.dashboardService.calculateMarkUp(this.statistics, dateToDictionaryFormat(month)).toFixed(1)}}
+                                            €
                                         </td>
                                         <td style="text-align: center"
-                                            *ngIf = "
+                                            *ngIf="
                                                ( this.dashboardService.totalGrossProfitWithoutVat(this.statistics, dateToDictionaryFormat(month))
                                                 - this.dashboardService.totalOperatingExpensesValue(this.statistics,dateToDictionaryFormat(month))
                                                 - this.dashboardService.calculateRebate(this.statistics, dateToDictionaryFormat(month)) )> 0"
-                                            >
+                                        >
                                             {{
                                             ((this.dashboardService.calculateMarkUp(this.statistics, dateToDictionaryFormat(month))
-                                            /((this.dashboardService.totalGrossProfitWithoutVat(this.statistics, dateToDictionaryFormat(month))
-                                                - this.dashboardService.totalOperatingExpensesValue(this.statistics,dateToDictionaryFormat(month))
-                                                - this.dashboardService.calculateRebate(this.statistics, dateToDictionaryFormat(month))))).toLocaleString('el-GR'))
+                                                / ((this.dashboardService.totalGrossProfitWithoutVat(this.statistics, dateToDictionaryFormat(month))
+                                                    - this.dashboardService.totalOperatingExpensesValue(this.statistics, dateToDictionaryFormat(month))
+                                                    - this.dashboardService.calculateRebate(this.statistics, dateToDictionaryFormat(month))))).toLocaleString('el-GR'))
                                             }}%
                                         </td>
                                         <td style="text-align: center"
-                                            *ngIf = "
+                                            *ngIf="
                                                ( this.dashboardService.totalGrossProfitWithoutVat(this.statistics, dateToDictionaryFormat(month))
                                                 - this.dashboardService.totalOperatingExpensesValue(this.statistics,dateToDictionaryFormat(month))
                                                 - this.dashboardService.calculateRebate(this.statistics, dateToDictionaryFormat(month)) ) ==  0">
@@ -432,7 +439,87 @@
             </div>
         </section>
 
-
+        <section id="bar-and-hori-bar-charts">
+            <div class="row match-height">
+                <div class="col-xl-12 col-12">
+                    <div class="card card-company-table">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-dark table-borderless">
+                                    <thead>
+                                    <tr>
+                                        <th style="background-color: #3A697B !important; color: white!important;text-align: center">
+                                        </th>
+                                        <th style="background-color: #3A697B !important; color: white!important;text-align: center"
+                                            *ngFor="let expense of this.operatingExpenses">
+                                            {{expense.toString()}}
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let month of this.tableLabels">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div>
+                                                    <div class="font-weight-bolder ml-1">
+                                                        {{month}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="text-align: center" *ngFor="let expense of this.operatingExpenses">
+                                            {{this.getValueOfOperatingExpense(expense, dateToDictionaryFormat(month)).toFixed(1)}}
+                                            €
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <td style="background-color: #3A697B !important; color: white!important;text-align: center">
+                                            Σύνολα
+                                        </td>
+                                        <td style="background-color: #3A697B !important; color: white!important;text-align: center"
+                                            *ngFor="let expense of this.operatingExpenses">
+                                            {{this.operatingExpensesSummaryColumn(expense).toFixed(1)}}€
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color: #3A697B !important; color: white!important;text-align: center">
+                                            M.O.
+                                        </td>
+                                        <td style="background-color: #3A697B !important; color: white!important;text-align: center"
+                                            *ngFor="let expense of this.operatingExpenses">
+                                            {{this.operatingExpensesAvgColumn(expense).toFixed(1)}}€
+                                        </td>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row match-height">
+                <div class="col-χλ-12 col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Λειτουργικα εξοδα</h4>
+                        </div>
+                        <div class="card-body">
+                            <canvas
+                                    baseChart
+                                    class="polar-area-chart-ex chartjs"
+                                    height="350"
+                                    [datasets]="polarAreaChart.datasets"
+                                    [labels]="polarAreaChart.labels"
+                                    [options]="polarAreaChart.options"
+                                    [chartType]="polarAreaChart.chartType"
+                            ></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
     </div>
 </div>

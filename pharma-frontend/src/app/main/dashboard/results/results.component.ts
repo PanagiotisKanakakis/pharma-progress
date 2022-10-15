@@ -54,7 +54,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     private $eoppyAndConsumablesWarning = '#5af542';
     private statistics: StatisticsDto;
     DateRangeOptions: any;
-    operatingExpensesData: any;
+    operatingExpensesData = [];
 
 
     /**
@@ -421,7 +421,11 @@ export class ResultsComponent implements OnInit, AfterViewInit {
                 const [year, month, day] = this.period.dateFrom.split('-');
                 this.period.dateFrom = year + '-' + +month + '-' + day;
                 this.statistics = plainToInstance(StatisticsDto, response);
-                this.operatingExpensesData = this.statistics[this.period.dateFrom].operatingExpenses;
+                Object.keys(this.statistics[this.period.dateFrom].operatingExpenses).forEach((key) => {
+                    this.statistics[this.period.dateFrom].operatingExpenses[key].forEach((transaction) => {
+                        this.operatingExpensesData.push(transaction)
+                    })
+                });
                 this.isLoaded = true;
             })
             .catch((_: Error) => {

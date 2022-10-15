@@ -25,7 +25,7 @@ export class StatisticsDto {
                 payment: Partial<Record<PaymentType.CASH, number>>;
             };
         };
-        operatingExpenses: TransactionEntity[];
+        operatingExpenses: Partial<Record<TransactionType, number>>;
         exchange: number;
         other: Partial<Record<TransactionType, number>>;
     };

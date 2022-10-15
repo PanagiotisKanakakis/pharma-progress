@@ -134,10 +134,13 @@ export class DashboardService {
 
     totalOperatingExpensesValue( payload , date ) {
         let value = 0;
-        payload[date].operatingExpenses.forEach((row) => {
-            value += Number(row.cost)/(1 + Number(VAT.valueOf(row.vat))/100);
+        Object.keys(payload[date].operatingExpenses).forEach((key) => {
+            payload[date].operatingExpenses[key].forEach((transaction) => {
+                value += Number(transaction.cost)/(1 + Number(VAT.valueOf(transaction.vat))/100);
+            })
         });
         return value;
+
     }
 
     totalCash( payload , date ) {
@@ -221,11 +224,12 @@ export class DashboardService {
 
     totalOperatingExpensesIncludingVat( payload , date ) {
         let value = 0;
-        payload[date].operatingExpenses.forEach((row) => {
-            value += Number(row.cost);
+        Object.keys(payload[date].operatingExpenses).forEach((key) => {
+            payload[date].operatingExpenses[key].forEach((transaction) => {
+                value += Number(transaction.cost);
+            })
         });
         return value;
-
     }
 
     totalPreviousMonthsPaymentsToOtherSuppliers( payload , date ) {

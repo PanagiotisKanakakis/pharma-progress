@@ -29,7 +29,7 @@ export class StatisticsDto {
                 payment: Partial<Record<PaymentType.CASH, number>>;
             };
         };
-        operatingExpenses: Transaction[];
+        operatingExpenses: Partial<Record<TransactionType, Transaction[]>>;
         exchange: number;
         other: Partial<Record<TransactionType, number>>;
     };

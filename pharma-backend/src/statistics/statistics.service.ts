@@ -69,7 +69,7 @@ export class StatisticsService {
                     dateTo,
                 ),
                 operatingExpenses:
-                    await this.transactionService.getAllOperatingExpensesByDateRange(
+                    await this.getAllOperatingExpensesByDateRange(
                         criteria,
                         dateFrom,
                     ),
@@ -423,5 +423,28 @@ export class StatisticsService {
         criteria.transactionType = [TransactionType.INCOME];
         criteria.paymentType = [PaymentType.CASH, PaymentType.POS];
         return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
+    }
+
+    private async getAllOperatingExpensesByDateRange(
+        criteria: CriteriaDto,
+        dateFrom: string,
+    ) {
+        const transactions =
+            await this.transactionService.getAllOperatingExpensesByDateRange(
+                criteria,
+                dateFrom,
+            );
+        const operatingExpenses: Partial<
+            Record<TransactionType, Transaction[]>
+        > = {};
+
+        transactions.forEach((transaction) => {
+            if (operatingExpenses[transaction.transactionType] == undefined) {
+                operatingExpenses[transaction.transactionType] = [];
+            }
+            operatingExpenses[transaction.transactionType].push(transaction);
+        });
+
+        return operatingExpenses;
     }
 }
