@@ -23,7 +23,7 @@ export const menu: CoreMenu[] = [
                 translate: 'MENU.DASHBOARD.RESULTS',
                 type: 'item',
                 // role: ['Admin'], //? To set multiple role: ['Admin', 'Client']
-                icon: 'circle',
+                icon: 'target',
                 url: 'dashboard/results'
             },
             {

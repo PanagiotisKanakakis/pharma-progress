@@ -1,6 +1,7 @@
 export const environment = {
   production: false,
   hmr: true,
+  HTTP_SCHEME: 'http',
   apiUrl: 'http://localhost:4000',
   CURRENT_DOMAIN: 'pharma.test',
   KEYCLOAK_REALM: 'pharma',

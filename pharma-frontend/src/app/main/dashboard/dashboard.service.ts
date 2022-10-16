@@ -201,6 +201,7 @@ export class DashboardService {
 
     calculateRebate( payload , date ) {
         let total = this.totalEOPPYAndConsumablesWithoutVat( payload , date );
+        console.log(total);
         if(total <= 3000){
             return 0;
         }else if(total <= 10000){
