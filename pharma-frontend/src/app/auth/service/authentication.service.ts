@@ -72,7 +72,7 @@ export class AuthenticationService {
             {
                 headers: {
                     'Accept': 'application/json',
-                    'Authorization': 'Bearer ' + accessToken
+                    'Authorization': 'Bearer ' + accessToken,
                 }
             })
             .then((userInfo) => {
@@ -110,7 +110,7 @@ export class AuthenticationService {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + accessToken
+                    'Authorization': 'Bearer ' + accessToken,
                 }
             })
             .then((response) => {
@@ -145,7 +145,6 @@ export class AuthenticationService {
             {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'Access-Control-Allow-Origin': '*'
                 }
             }).then((response) => {
             return response.data.access_token;
@@ -165,7 +164,6 @@ export class AuthenticationService {
             {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'Access-Control-Allow-Origin': '*'
                 }
             }).then((response) => {
             return response.data.access_token;
