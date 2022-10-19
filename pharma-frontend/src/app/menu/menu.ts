@@ -1,33 +1,22 @@
 import {CoreMenu} from '@core/types';
 
-//? DOC: http://localhost:7777/demo/vuexy-angular-admin-dashboard-template/documentation/guide/development/navigation-menus.html#interface
-
 export const menu: CoreMenu[] = [
-    // Dashboard
     {
         id: 'dashboard',
         title: 'Dashboard',
         translate: 'MENU.DASHBOARD.COLLAPSIBLE',
         type: 'collapsible',
-        // role: ['Admin'], //? To hide collapsible based on user role
         icon: 'home',
-        // badge: {
-        //   title: '2',
-        //   translate: 'MENU.DASHBOARD.BADGE',
-        //   classes: 'badge-light-warning badge-pill'
-        // },
         children: [
             {
                 id: 'results',
                 title: 'Αποτελέσματα',
                 translate: 'MENU.DASHBOARD.RESULTS',
                 type: 'item',
-                // role: ['Admin'], //? To set multiple role: ['Admin', 'Client']
                 icon: 'target',
                 url: 'dashboard/results'
             },
             {
-                // If role is not assigned will be display to all
                 id: 'forecasting',
                 title: 'Προβλέψεις',
                 translate: 'MENU.DASHBOARD.FORECASTING',
@@ -36,7 +25,6 @@ export const menu: CoreMenu[] = [
                 url: 'dashboard/forecasting'
             },
             {
-                // If role is not assigned will be display to all
                 id: 'charts',
                 title: 'Γραφήματα',
                 translate: 'MENU.DASHBOARD.CHARTS',
@@ -234,12 +222,12 @@ export const menu: CoreMenu[] = [
                 url: 'apps/prescript'
             },
             {
-                id: 'prescript',
+                id: 'break_even_point',
                 title: 'Νεκρό σημείο πωλήσεων',
                 translate: 'MENU.APPS.BREAK_EVEN_POINT',
                 type: 'item',
                 icon: 'file-text',
-                url: 'apps/prescript'
+                url: 'apps/break-even-point'
             },
             {
                 id: 'prescript',

@@ -66,6 +66,10 @@ const routes: Routes = [
     path: 'payment',
     loadChildren: () => import('./payment/payment.module').then(m => m.PaymentModule)
   },
+  {
+    path: 'break-even-point',
+    loadChildren: () => import('./break-even-point/break-even-point.module').then(m => m.BreakEvenPointModule)
+  },
 ];
 
 FullCalendarModule.registerPlugins([dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]);
