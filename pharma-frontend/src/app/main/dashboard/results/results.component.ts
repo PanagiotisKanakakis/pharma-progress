@@ -429,7 +429,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
                 this.isLoaded = true;
             })
             .catch((_: Error) => {
-                localStorage.removeItem('currentUser');
+                this._authenticationService.logout();
                 this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
             });
     }

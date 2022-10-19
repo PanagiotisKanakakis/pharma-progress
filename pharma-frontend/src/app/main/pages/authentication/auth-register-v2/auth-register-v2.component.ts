@@ -88,7 +88,7 @@ export class AuthRegisterV2Component implements OnInit {
     if (this.registerForm.invalid) {
       return;
     }
-
+    console.log(this.f.firstname.value)
     // Login
     this.loading = true
     this._authenticationService
@@ -97,7 +97,9 @@ export class AuthRegisterV2Component implements OnInit {
             this.f.surname.value,
             this.f.username.value,
             this.f.password.value,
-            this.f.email.value
+            this.f.email.value,
+            this.f.business_type.value,
+            this.f.opening_balance.value,
         )
         .catch((error) => {
           this.error = error;
@@ -117,7 +119,9 @@ export class AuthRegisterV2Component implements OnInit {
       surname: ['', [Validators.required]],
       username: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
+      business_type: ['', Validators.required],
+      opening_balance: ['', Validators.required],
     });
 
     // Subscribe to config changes

@@ -2,14 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PageDto } from '../../common';
 import { Like, Repository, UpdateResult } from 'typeorm';
-import {
-    afmToUsername,
-    CreateUserDto,
-    QueryUserDto,
-    UpdateUserDto,
-} from '../index';
+import { CreateUserDto, QueryUserDto, UpdateUserDto } from '../index';
 import { User } from './user.entity';
 import { KeycloakUsersService } from '../index';
+import { OpeningBalance } from 'src/opening-balance/opening-balance.entity';
 
 @Injectable()
 export class UserService {
@@ -24,24 +20,34 @@ export class UserService {
     async create(createUserDto: CreateUserDto): Promise<User> {
         const { id: keycloakId } =
             await this.keycloakUsersService.getOrCreateUserByAfm(createUserDto);
-        let user = await this.findOneByAfm(createUserDto.afm);
+        let user = await this.findOneByUsername(createUserDto.username);
+
         if (!user) {
             user = new User();
         }
         user.afm = createUserDto.afm;
         user.keycloakId = keycloakId;
-        user.username = await afmToUsername(createUserDto.afm);
+        user.username = createUserDto.username;
         user.email = createUserDto.email;
         user.firstName = createUserDto.firstName;
         user.lastName = createUserDto.lastName;
+
+        const openingBalance = new OpeningBalance();
+        openingBalance.value = createUserDto.openingBalance;
+        user.openingBalances = [];
+        user.openingBalances.push(openingBalance);
+        user.businessType = createUserDto.businessType;
         return this.usersRepository.save(user);
     }
 
-    update(id: number, dto: UpdateUserDto): Promise<UpdateResult> {
-        const user = new User();
-        user.firstName = dto.firstName;
-        user.lastName = dto.lastName;
-        return this.usersRepository.update({ id }, user);
+    update(username: string, dto: UpdateUserDto): Promise<UpdateResult> {
+        return this.findOneByUsernameOrFail(username).then((user) => {
+            const openingBalance = new OpeningBalance();
+            openingBalance.value = dto.openingBalance;
+            user.openingBalances.push(openingBalance);
+            user.businessType = dto.businessType;
+            return this.usersRepository.update({ username }, user);
+        });
     }
 
     async getAllUserIds(): Promise<string[]> {
@@ -131,6 +137,12 @@ export class UserService {
     findOneByAfm(afm: string): Promise<User> {
         return this.usersRepository.findOne({
             where: { afm: afm },
+        });
+    }
+
+    findOneByUsername(username: string): Promise<User> {
+        return this.usersRepository.findOne({
+            where: { username: username },
         });
     }
 

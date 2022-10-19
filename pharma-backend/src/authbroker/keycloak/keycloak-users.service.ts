@@ -17,17 +17,16 @@ export class KeycloakUsersService {
     public async getOrCreateUserByAfm(
         dto: CreateUserDto,
     ): Promise<{ id: string }> {
-        console.log(dto);
         // const username = await afmToUsername(dto.afm);
 
         const user = await this.keycloakAdminService.getUserByUsername(
             dto.username,
         );
+
         // if found return
         if (typeof user !== 'undefined') {
             return { id: user.id };
         }
-
         // user not found, create in keycloak
         const payload: UserRepresentation = {
             username: dto.username,

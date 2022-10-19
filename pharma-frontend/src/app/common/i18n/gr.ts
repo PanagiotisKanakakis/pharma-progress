@@ -47,7 +47,15 @@ export const locale = {
         EMAIL: 'Email',
         PASSWORD: 'Κωδικός',
         ACCOUNT_EXISTS: 'Έχετε ήδη λογαριασμό?',
-        SIGN_IN_INSTEAD: 'Κάντε είσοδο'
+        SIGN_IN_INSTEAD: 'Κάντε είσοδο',
+        BUSINESS_TYPE: {
+          SELECT: 'Επιλογή είδους επιχείρησης',
+          PERSONAL: 'Ατομική επιχείρηση',
+          COMPANY: 'Εταιρεία'
+        },
+        OPENING_BALANCE: 'Υπόλοιπο έναρξης',
+        SIGN_UP_MESSAGE: 'Παρακαλώ εγγραφείτε!',
+        WELCOME_MESSAGE: 'Καλως ήρθατε στο Pharma Progress! 👋'
       },
       LOGIN: {
         USERNAME: 'Όνομα χρήστη',

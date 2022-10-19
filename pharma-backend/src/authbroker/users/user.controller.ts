@@ -45,7 +45,7 @@ export class UserController {
         return this.usersService.create(createUserDto);
     }
 
-    @Put(':id')
+    @Put(':username')
     @ApiResponse({
         status: 200,
         description: 'Update user',
@@ -54,10 +54,10 @@ export class UserController {
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     @ApiBearerAuth()
     update(
-        @Param('id') id: number,
+        @Param('username') username: string,
         @Body() dto: UpdateUserDto,
     ): Promise<UpdateResult> {
-        return this.usersService.update(id, dto);
+        return this.usersService.update(username, dto);
     }
 
     @Get()

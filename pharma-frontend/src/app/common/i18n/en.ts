@@ -47,7 +47,15 @@ export const locale = {
         EMAIL: 'Email',
         PASSWORD: 'Password',
         ACCOUNT_EXISTS: 'Already have an account?',
-        SIGN_IN_INSTEAD: 'Sign in instead'
+        SIGN_IN_INSTEAD: 'Sign in instead',
+        BUSINESS_TYPE: {
+          SELECT: 'Select company type',
+          PERSONAL: 'Personal company',
+          COMPANY: 'Company'
+        },
+        OPENING_BALANCE: 'Opening balance',
+        SIGN_UP_MESSAGE: 'Please sign-up!',
+        WELCOME_MESSAGE: 'Welcome to Pharma Progress! 👋'
       },
       LOGIN: {
         USERNAME: 'Username',

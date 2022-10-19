@@ -201,7 +201,6 @@ export class DashboardService {
 
     calculateRebate( payload , date ) {
         let total = this.totalEOPPYAndConsumablesWithoutVat( payload , date );
-        console.log(total);
         if(total <= 3000){
             return 0;
         }else if(total <= 10000){
@@ -211,7 +210,21 @@ export class DashboardService {
         }else if (total <= 40000){
             return 7000*0.02 + 20000*0.03 + (total - 30000)*0.05;
         }else{
-            return 7000*0.02 + 20000*0.03 + 10000*0.05 + (total - 40000)*0.06;
+            return 7000*0.02 + 20000*0.03 + 10000*0.05 + (total - 40000)*0.06 + this.calculateAdditionalRebate(total);
+        }
+    }
+
+    calculateAdditionalRebate( total ){
+        if(total <= 50000){
+            return (total - 50000) * (0.5/100);
+        }else if(total <= 60000){
+            return 10000 * (0.5/100) + (total - 50000) * (1.25/100);
+        }else if (total <= 80000){
+            return 10000*(0.5/100) + 10000*(1.25/100) + (total - 60000)*(2.25/100);
+        }else if (total <= 100000){
+            return 10000*(0.5/100) + 10000*(1.25/100) + 20000*(2.25/100) + (total - 80000) * (3.5/100);
+        }else {
+            return 10000*(0.5/100) + 10000*(1.25/100) + 20000*(2.25/100) + 20000 * (3.5/100) + (total - 100000)*0.05;
         }
     }
 

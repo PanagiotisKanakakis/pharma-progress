@@ -23,6 +23,7 @@ import DateUtils from '../../../common/utils/date';
 import {FormControl, Validators} from '@angular/forms';
 import {DatePeriod} from '../../../common/utils/interfaces/date-period.interface';
 import {SupplierType} from '../../../api/transaction/enums/supplier-type.enum';
+import {AuthenticationService} from '../../../auth/service';
 
 @Component({
     selector: 'national-health-datatable',
@@ -49,10 +50,12 @@ export class NationalHealthComponent implements OnInit {
 
     constructor(private _coreTranslationService: CoreTranslationService,
                 private _router: Router,
+                private _authenticationService: AuthenticationService,
                 private route: ActivatedRoute) {
         this._unsubscribeAll = new Subject();
         this._coreTranslationService.translate(english, greek);
-        this.currentUser = plainToInstance(User, JSON.parse(localStorage.getItem('currentUser')));
+        this._authenticationService.currentUser.subscribe(x => (this.currentUser = x));
+
     }
 
     ngOnInit() {
@@ -99,7 +102,7 @@ export class NationalHealthComponent implements OnInit {
                             'Authorization': 'Bearer ' + this.currentUser.token
                         }
                     ).then(r => this.rows[rowIndex].id = r[0].id).catch((_: any) => {
-                        localStorage.removeItem('currentUser');
+                        this._authenticationService.logout();
                         this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
                     });
                 }
@@ -124,7 +127,7 @@ export class NationalHealthComponent implements OnInit {
                             'Authorization': 'Bearer ' + this.currentUser.token
                         }
                     ).catch((_: any) => {
-                        localStorage.removeItem('currentUser');
+                        this._authenticationService.logout();
                         this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
                     });
                 }
@@ -248,7 +251,7 @@ export class NationalHealthComponent implements OnInit {
                 this.summaryColumn();
             }
         }).catch((_: any) => {
-            localStorage.removeItem('currentUser');
+            this._authenticationService.logout();
             this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
         });
     }
@@ -279,13 +282,13 @@ export class NationalHealthComponent implements OnInit {
                             'Authorization': 'Bearer ' + this.currentUser.token
                         }
                     ).catch((_: any) => {
-                        localStorage.removeItem('currentUser');
+                        this._authenticationService.logout();
                         this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
                     });
                 }
             }
         }).catch((_: any) => {
-            localStorage.removeItem('currentUser');
+            this._authenticationService.logout();
             this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
         });
     }

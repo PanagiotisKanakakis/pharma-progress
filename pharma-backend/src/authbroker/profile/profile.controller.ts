@@ -26,7 +26,7 @@ export class ProfileController {
         return this.profileService.getUserInfo(user);
     }
 
-    @Put(':id')
+    @Put(':username')
     @ApiResponse({
         status: 200,
         description: 'Update user profile',
@@ -35,9 +35,9 @@ export class ProfileController {
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     @ApiBearerAuth()
     async updateUserInfo(
-        @Param('id') id: number,
+        @Param('username') username: string,
         @Body() updateUserInfoDto: UpdateUserInfoDto,
     ): Promise<UpdateResult> {
-        return this.profileService.update(id, updateUserInfoDto);
+        return this.profileService.update(username, updateUserInfoDto);
     }
 }

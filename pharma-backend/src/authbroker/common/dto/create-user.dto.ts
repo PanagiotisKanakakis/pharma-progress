@@ -15,15 +15,23 @@ export class CreateUserDto {
     @ApiProperty()
     email: string;
 
-    @IsOptional()    
+    @IsOptional()
     @ApiProperty()
     firstName: string;
 
-    @IsOptional()    
+    @IsOptional()
     @ApiProperty()
     lastName: string;
 
-    @IsOptional()    
+    @IsOptional()
     @ApiProperty()
     password: string;
+
+    @IsNumberString()
+    @ApiProperty()
+    openingBalance: string;
+
+    @IsOptional()
+    @ApiProperty()
+    businessType: string;
 }

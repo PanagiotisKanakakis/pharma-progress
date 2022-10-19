@@ -23,8 +23,8 @@
     <!-- Register-->
     <div class="d-flex col-lg-4 align-items-center auth-bg px-2 p-lg-5">
       <div class="col-12 col-sm-8 col-md-6 col-lg-12 px-xl-2 mx-auto">
-        <h2 class="card-title font-weight-bold mb-1">Adventure starts here 🚀</h2>
-        <p class="card-text mb-2" style="color: white">Make your app management easy and fun!</p>
+        <h3 class="card-title font-weight-bold mb-1">{{'FORM.REGISTER.WELCOME_MESSAGE' | translate}}</h3>
+        <p style="color: white" class="card-text mb-2">{{'FORM.REGISTER.SIGN_UP_MESSAGE' | translate}}</p>
         <form class="auth-register-form mt-2" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
           <div class="form-group">
             <label for="register-firstname" class="form-label">{{'FORM.REGISTER.NAME' | translate}}</label>
@@ -75,9 +75,45 @@
             </div>
           </div>
           <div class="form-group">
+            <label for="register-business-type" class="form-label">{{'FORM.REGISTER.BUSINESS_TYPE.SELECT' | translate}}</label>
+            <select class="form-control form-control-lg block btn-btn-primary accent-4"
+                    formControlName="business_type"
+                    class="form-control"
+                    aria-describedby="register-business-type"
+                    tabindex="1"
+                    autofocus
+                    [ngClass]="{ 'is-invalid': submitted && f.username.errors }">
+              <option value="{{'FORM.REGISTER.BUSINESS_TYPE.PERSONAL' | translate}}"
+                      selected="selected">{{'FORM.REGISTER.BUSINESS_TYPE.PERSONAL' | translate}}</option>
+              <option value="{{'FORM.REGISTER.BUSINESS_TYPE.COMPANY' | translate}}"
+                      selected="selected">{{'FORM.REGISTER.BUSINESS_TYPE.COMPANY' | translate}}</option>
+            </select>
+            <div *ngIf="submitted && f.business_type.errors" class="invalid-feedback">
+              <div *ngIf="f.business_type.errors.required">{{'FORM.ERROR.FIELD_REQUIRED' | translate}}</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="register-opening-balance" class="form-label">{{'FORM.REGISTER.OPENING_BALANCE' | translate}}</label>
+            <input
+                    type="number"
+                    formControlName="opening_balance"
+                    class="form-control"
+                    placeholder="johndoe"
+                    aria-describedby="register-opening-balance"
+                    tabindex="1"
+                    autofocus
+                    [ngClass]="{ 'is-invalid': submitted && f.opening_balance.errors }"
+            />
+            <div *ngIf="submitted && f.opening_balance.errors" class="invalid-feedback">
+              <div *ngIf="f.opening_balance.errors.required">{{'FORM.ERROR.FIELD_REQUIRED' | translate}}</div>
+            </div>
+          </div>
+
+          <div class="form-group">
             <label for="register-email" class="form-label">{{'FORM.REGISTER.EMAIL' | translate}}</label>
             <input
-              type="text"
+              type="email"
               formControlName="email"
               class="form-control"
               placeholder="john@example.com"
@@ -125,31 +161,13 @@
               <div *ngIf="f.password.errors.required">{{'FORM.ERROR.FIELD_REQUIRED' | translate}}</div>
             </div>
           </div>
-<!--          <div class="form-group">-->
-<!--            <div class="custom-control custom-checkbox">-->
-<!--              <input class="custom-control-input" type="checkbox" id="register-privacy-policy" tabindex="4" />-->
-<!--              <label class="custom-control-label" for="register-privacy-policy">-->
-<!--                I agree to <a href="javascript:void(0);">privacy policy & terms</a>-->
-<!--              </label>-->
-<!--            </div>-->
-<!--          </div>-->
           <button class="btn btn-primary btn-block" tabindex="5" rippleEffect>{{'BUTTON.SIGN_UP' | translate}}</button>
         </form>
         <p class="text-center mt-2">
           <span style="color: white">{{'FORM.REGISTER.ACCOUNT_EXISTS' | translate}}</span
           ><a routerLink="/pages/authentication/login-v2"><span>&nbsp;{{'FORM.REGISTER.SIGN_IN_INSTEAD' | translate}}</span></a>
         </p>
-<!--        <div class="divider my-2">-->
-<!--          <div class="divider-text">or</div>-->
-<!--        </div>-->
-<!--        <div class="auth-footer-btn d-flex justify-content-center">-->
-<!--          <a class="btn btn-facebook" href="javascript:void(0)"><i data-feather="facebook"></i></a-->
-<!--          ><a class="btn btn-twitter white" href="javascript:void(0)"><i data-feather="twitter"></i></a-->
-<!--          ><a class="btn btn-google" href="javascript:void(0)"><i data-feather="mail"></i></a-->
-<!--          ><a class="btn btn-github" href="javascript:void(0)"><i data-feather="github"></i></a>-->
-<!--        </div>-->
       </div>
     </div>
-    <!-- /Register-->
   </div>
 </div>

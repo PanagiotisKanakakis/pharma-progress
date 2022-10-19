@@ -733,6 +733,36 @@
           }
         },
         {
+          "id": "9213ec45-9e25-40be-8d5f-35af206a419c",
+          "name": "Business Type Mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "businessType",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "claim.name": "businessType",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "id": "9213ec45-9e25-40be-8d5f-35af206a419d",
+          "name": "Opening Balance Mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "openingBalance",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "claim.name": "openingBalance",
+            "jsonType.label": "String"
+          }
+        },
+        {
           "id": "a9f43810-8afe-4faa-ab24-62f8f2928a9d",
           "name": "Client Host",
           "protocol": "openid-connect",

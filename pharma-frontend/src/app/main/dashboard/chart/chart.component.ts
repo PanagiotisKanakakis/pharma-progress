@@ -452,7 +452,7 @@ export class ChartComponent implements OnInit {
                 this.polarAreaChart.datasets[0].data = this.totalSummaryPerOperatingExpense();
             })
             .catch((_: Error) => {
-                localStorage.removeItem('currentUser');
+                this._authenticationService.logout();
                 this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
             });
     }

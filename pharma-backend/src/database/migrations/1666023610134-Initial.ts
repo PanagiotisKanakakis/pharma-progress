@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class Initial1665410442856 implements MigrationInterface {
-    name = 'Initial1665410442856'
+export class Initial1666023610134 implements MigrationInterface {
+    name = 'Initial1666023610134'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -92,8 +92,8 @@ export class Initial1665410442856 implements MigrationInterface {
                 "email" character varying,
                 "firstName" character varying,
                 "lastName" character varying,
+                "businessType" character varying,
                 CONSTRAINT "UQ_7c4efc5ecbdbcb378b7a43fa011" UNIQUE ("keycloakId"),
-                CONSTRAINT "UQ_4e5d62363abdbbad9e7f7686ade" UNIQUE ("afm"),
                 CONSTRAINT "UQ_fe0bb3f6520ee0469504521e710" UNIQUE ("username"),
                 CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id")
             )

@@ -21,10 +21,15 @@ import {
     ShortAccessTokenService,
 } from './shortaccesstoken';
 import { User, UserController, UserService } from './users';
+import { OpeningBalance } from '../opening-balance';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([User, ShortAccessTokenEntity]),
+        TypeOrmModule.forFeature([
+            User,
+            ShortAccessTokenEntity,
+            OpeningBalance,
+        ]),
         HttpModule,
     ],
     providers: [

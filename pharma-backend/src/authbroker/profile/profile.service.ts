@@ -43,6 +43,10 @@ export class ProfileService {
             createUserDto.lastName = userFromKeycloak.lastName;
             createUserDto.username = userFromKeycloak.username;
             createUserDto.email = userFromKeycloak.email;
+            createUserDto.openingBalance =
+                userFromKeycloak.attributes.openingBalance[0];
+            createUserDto.businessType =
+                userFromKeycloak.attributes.businessType[0];
             userEntity = await this.usersService.create(createUserDto);
             this.logger.log(
                 `Created user ${userEntity.id} associated with ${user.sub}.`,
@@ -62,20 +66,18 @@ export class ProfileService {
     }
 
     async update(
-        id: number,
+        username: string,
         updateUserInfoDto: UpdateUserInfoDto,
     ): Promise<UpdateResult> {
         const updateUserDto = new UpdateUserDto();
-        updateUserDto.firstName = updateUserInfoDto.firstName;
-        updateUserDto.lastName = updateUserInfoDto.lastName;
         this.logger.log(
             'About to update User ' +
-                id +
+                username +
                 ' with new firstName: ' +
                 updateUserInfoDto.firstName +
                 ' and new lastName: ' +
                 updateUserInfoDto.lastName,
         );
-        return this.usersService.update(id, updateUserDto);
+        return this.usersService.update(username, updateUserDto);
     }
 }

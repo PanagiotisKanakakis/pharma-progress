@@ -176,7 +176,7 @@ export class IncomeComponent implements OnInit {
                 this.initEmptyCells();
             }
         }).catch((_: any) => {
-            localStorage.removeItem('currentUser');
+            this._authenticationService.logout();
             this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
         });
     }
@@ -331,7 +331,7 @@ export class IncomeComponent implements OnInit {
             transactionCell.id = r[0].id;
         }).catch((error: any) => {
             // if (error.response.status === 401) {
-            localStorage.removeItem('currentUser');
+            this._authenticationService.logout();
             this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
             // }
         });

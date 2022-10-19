@@ -190,7 +190,7 @@ export class PersonalWithdrawalsComponent implements OnInit {
                 this.summaryColumn();
             }
         }).catch((_: any) => {
-            localStorage.removeItem('currentUser');
+            this._authenticationService.logout();
             this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
         });
     }
@@ -215,8 +215,7 @@ export class PersonalWithdrawalsComponent implements OnInit {
             )
                 .then(r => row.id = r[0].id)
                 .catch((error: any) => {
-                    console.log(error);
-                    localStorage.removeItem('currentUser');
+                    this._authenticationService.logout();
                     this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
                 });
         }
@@ -247,8 +246,7 @@ export class PersonalWithdrawalsComponent implements OnInit {
         )
             .then()
             .catch((error: any) => {
-                console.log(error);
-                localStorage.removeItem('currentUser');
+                this._authenticationService.logout();
                 this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
             });
     }

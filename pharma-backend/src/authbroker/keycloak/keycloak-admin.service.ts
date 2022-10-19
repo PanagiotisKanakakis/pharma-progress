@@ -316,7 +316,6 @@ export class KeycloakAdminService {
             this.logger.debug(
                 'Acquiring new client service account access token',
             );
-            console.log(this.clientCredentials)
             await this.kcAdminClient.auth(this.clientCredentials);
             this.accessToken = await this.kcAdminClient.getAccessToken();
         }

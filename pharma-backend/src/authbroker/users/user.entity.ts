@@ -29,11 +29,16 @@ export class User extends AbstractEntity {
     @Column({ nullable: true })
     public lastName: string;
 
+    @Column({ nullable: true })
+    public businessType: string;
+
     @OneToMany(() => Transaction, (transaction) => transaction.user)
     @Exclude()
     public transactions: Transaction[];
 
-    @OneToMany(() => OpeningBalance, (openingBalance) => openingBalance.user)
+    @OneToMany(() => OpeningBalance, (openingBalance) => openingBalance.user, {
+        cascade: ['insert', 'update'],
+    })
     @Exclude()
     public openingBalances: OpeningBalance[];
 }

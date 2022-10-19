@@ -7,12 +7,13 @@ import {
     KEYCLOAK_ADMIN_TOKEN_URL,
     KEYCLOAK_REGISTER_USER_URL,
     KEYCLOAK_USER_TOKEN_URL,
-    USER_PROFILE_URL
+    USER_PROFILE_URL, USER_UPDATE_URL
 } from '../../api/auth/auth.config';
 import {ActivatedRoute, Router} from '@angular/router';
 import axios, {AxiosResponse} from 'axios';
 import {plainToInstance} from 'class-transformer';
 import {environment} from '../../../environments/environment';
+import {UpdateUserDto} from '../../api/user/dto/update-user.dto';
 
 
 @Injectable({providedIn: 'root'})
@@ -89,7 +90,8 @@ export class AuthenticationService {
             });
     }
 
-    async register(firstname: string, lastname: string, username: string , password: string, email: string) {
+    async register(firstname: string, lastname: string, username: string , password: string, email: string
+                   ,business_type: string, opening_balance: string) {
         const accessToken = await this.acquireAdminToken();
         return axios.post<any>(KEYCLOAK_REGISTER_USER_URL,
             JSON.stringify({
@@ -100,6 +102,10 @@ export class AuthenticationService {
                 groups: [],
                 enabled: 'false',
                 username: username,
+                attributes: {
+                    openingBalance: opening_balance,
+                    businessType: business_type,
+                },
                 credentials: [{
                     type: 'password',
                     value: password,
@@ -115,11 +121,37 @@ export class AuthenticationService {
             })
             .then((response) => {
                 console.log(response);
+                setTimeout(() => {
+                    this._toastrService.success(
+                        'Η εγγραφή σας ήταν επιτυχής! Θα ειδοποιηθείτε μόλις ο διαχειριστής ενεργοποιήσει το λογαριασμό σας!',
+                        '👋 Καλώς ήρθατε!',
+                        {toastClass: 'toast ngx-toastr', closeButton: true}
+                    );
+                },2500);
+                // this.updateUser(accessToken, username, business_type, opening_balance);
             })
             .catch((error) => {
                 console.log(error);
                 return error;
             });
+    }
+
+    async updateUser(accessToken : string,username: string, business_type: string, opening_balance: string){
+        return await axios.put<any>(
+            USER_UPDATE_URL+'/'+username,
+            JSON.stringify({
+                openingBalance: opening_balance,
+                businessType: business_type
+            }).toString(),
+            {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + accessToken,
+                }
+            }).then((response) => {
+            return response.data.access_token;
+        });
     }
 
     /**

@@ -21,6 +21,7 @@ export const OAUTH2_USER_INFO_PATH = '/oauth2/userinfo';
 // USER PROFILE
 export const USER_PROFILE_PATH = '/auth/profile';
 export const USER_PROFILE_URL = `${environment.API_BASE_URL}${USER_PROFILE_PATH}`;
+export const USER_UPDATE_URL = `${environment.API_BASE_URL}/auth/users`;
 
 export const KEYCLOAK_ADMIN_TOKEN_URL = `${environment.KEYCLOAK_URL}/realms/master/protocol/openid-connect/token`;
 export const KEYCLOAK_USER_TOKEN_URL = `${environment.KEYCLOAK_URL}/realms/${environment.KEYCLOAK_REALM}/protocol/openid-connect/token`;
