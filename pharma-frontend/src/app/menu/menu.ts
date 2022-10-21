@@ -21,7 +21,7 @@ export const menu: CoreMenu[] = [
                 title: 'Προβλέψεις',
                 translate: 'MENU.DASHBOARD.FORECASTING',
                 type: 'item',
-                icon: 'circle',
+                icon: 'target',
                 url: 'dashboard/forecasting'
             },
             {
@@ -29,7 +29,7 @@ export const menu: CoreMenu[] = [
                 title: 'Γραφήματα',
                 translate: 'MENU.DASHBOARD.CHARTS',
                 type: 'item',
-                icon: 'circle',
+                icon: 'target',
                 url: 'dashboard/chart'
             }
         ]
@@ -53,7 +53,7 @@ export const menu: CoreMenu[] = [
                         title: 'Εισπράξεις Ζ',
                         translate: 'MENU.APPS.INCOME_Z',
                         type: 'item',
-                        icon: 'circle',
+                        icon: 'target',
                         url: '/apps/income/z',
                         children: [],
                     },
@@ -62,7 +62,7 @@ export const menu: CoreMenu[] = [
                         title: 'Πραγμ. Εισπράξεις',
                         translate: 'MENU.APPS.INCOME_REAL',
                         type: 'item',
-                        icon: 'circle',
+                        icon: 'target',
                         url: '/apps/income/real',
                         children: [],
                     },
@@ -71,14 +71,14 @@ export const menu: CoreMenu[] = [
                         title: 'ΕΟΠΠΥ',
                         translate: 'MENU.APPS.EOPPY',
                         type: 'collapsible',
-                        icon: 'circle',
+                        icon: 'target',
                         children: [
                             {
                                 id: 'eoppy_on_account',
                                 title: 'Επί πιστώσει',
                                 translate: 'MENU.APPS.EOPPY_ON_ACCOUNT',
                                 type: 'item',
-                                icon: 'circle',
+                                icon: 'target',
                                 url: 'apps/nationalHealth/onAccount',
                                 children: [],
                             }, {
@@ -86,7 +86,7 @@ export const menu: CoreMenu[] = [
                                 title: 'Είσπραξη',
                                 translate: 'MENU.APPS.EOPPY_INCOME',
                                 type: 'item',
-                                icon: 'circle',
+                                icon: 'target',
                                 url: 'apps/nationalHealth/income',
                                 children: [],
                             },
@@ -106,13 +106,13 @@ export const menu: CoreMenu[] = [
                         title: 'Κύριος Προμηθευτής',
                         translate: 'MENU.APPS.MAIN_SUPPLIER',
                         type: 'collapsible',
-                        icon: 'circle',
+                        icon: 'target',
                         children: [{
                             id: 'expenses_on_account_main',
                             title: 'Επί πιστώσει',
                             translate: 'MENU.APPS.EXPENSES_ON_ACCOUNT_MAIN_COMPANY',
                             type: 'item',
-                            icon: 'circle',
+                            icon: 'target',
                             url: '/apps/outcome/supplier/main/payment/onAccount',
                             children: [],
                         }],
@@ -122,13 +122,13 @@ export const menu: CoreMenu[] = [
                         title: 'Άλλοι προμηθευτές',
                         translate: 'MENU.APPS.OTHER_SUPPLIER',
                         type: 'collapsible',
-                        icon: 'circle',
+                        icon: 'target',
                         children: [{
                             id: 'expenses_cash',
                             title: 'Μετρητά',
                             translate: 'MENU.APPS.EXPENSES_CASH',
                             type: 'item',
-                            icon: 'circle',
+                            icon: 'target',
                             url: '/apps/outcome/supplier/other/payment/cash',
                             children: [],
                         },
@@ -137,7 +137,7 @@ export const menu: CoreMenu[] = [
                                 title: 'Επί πιστώσει',
                                 translate: 'MENU.APPS.EXPENSES_ON_ACCOUNT_OTHER_COMPANY',
                                 type: 'item',
-                                icon: 'circle',
+                                icon: 'target',
                                 url: '/apps/outcome/supplier/other/payment/onAccount',
                                 children: [],
                             }],
@@ -156,7 +156,7 @@ export const menu: CoreMenu[] = [
                         title: 'Κύριος Προμηθευτής',
                         translate: 'MENU.APPS.MAIN_SUPPLIER',
                         type: 'item',
-                        icon: 'circle',
+                        icon: 'target',
                         url: '/apps/payment/main'
                     },
                     {
@@ -164,10 +164,18 @@ export const menu: CoreMenu[] = [
                         title: 'Άλλοι προμηθευτές',
                         translate: 'MENU.APPS.OTHER_SUPPLIER',
                         type: 'item',
-                        icon: 'circle',
+                        icon: 'target',
                         url: '/apps/payment/other'
                     }
                 ]
+            },
+            {
+                id: 'payment',
+                title: 'Πληρωμή φόρου',
+                translate: 'MENU.APPS.TAXES',
+                type: 'item',
+                icon: 'file-text',
+                url: '/apps/payment/taxes'
             },
             {
                 id: 'operating_expenses',
@@ -189,7 +197,7 @@ export const menu: CoreMenu[] = [
                         title: 'Τράπεζα',
                         translate: 'MENU.APPS.WITHDRAWALS_BANK',
                         type: 'item',
-                        icon: 'circle',
+                        icon: 'target',
                         url: '/apps/withdrawals/source/bank',
                         children: [],
                     },
@@ -198,7 +206,7 @@ export const menu: CoreMenu[] = [
                         title: 'Μετρητά',
                         translate: 'MENU.APPS.WITHDRAWALS_POS',
                         type: 'item',
-                        icon: 'circle',
+                        icon: 'target',
                         url: '/apps/withdrawals/source/cash',
                         children: [],
                     },
@@ -299,7 +307,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Authentication',
     //           translate: 'MENU.PAGES.AUTH.COLLAPSIBLE',
     //           type: 'collapsible',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           children: [
     //             {
     //               id: 'login-v1',
@@ -372,7 +380,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Account Settings',
     //           translate: 'MENU.PAGES.ACCOUNTSETTINGS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'pages/account-settings'
     //         },
     //         {
@@ -380,7 +388,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Profile',
     //           translate: 'MENU.PAGES.PROFILE',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'pages/profile'
     //           // collapsed: true
     //         },
@@ -389,7 +397,7 @@ export const menu: CoreMenu[] = [
     //           title: 'FAQ',
     //           translate: 'MENU.PAGES.FAQ',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'pages/faq'
     //         },
     //         {
@@ -397,7 +405,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Knowledge Base',
     //           translate: 'MENU.PAGES.KB',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'pages/knowledge-base'
     //         },
     //         {
@@ -405,7 +413,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Pricing',
     //           translate: 'MENU.PAGES.PRICING',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'pages/pricing'
     //         },
     //
@@ -414,7 +422,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Blog',
     //           translate: 'MENU.PAGES.BLOG.COLLAPSIBLE',
     //           type: 'collapsible',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           children: [
     //             {
     //               id: 'blog-list',
@@ -445,7 +453,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Mail Template',
     //           translate: 'MENU.PAGES.MAIL.COLLAPSIBLE',
     //           type: 'collapsible',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           children: [
     //             {
     //               id: 'mail-welcome',
@@ -509,7 +517,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Miscellaneous',
     //           translate: 'MENU.PAGES.MISC.COLLAPSIBLE',
     //           type: 'collapsible',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           children: [
     //             {
     //               id: 'misc-comingsoon',
@@ -560,7 +568,7 @@ export const menu: CoreMenu[] = [
     //           title: 'List',
     //           translate: 'MENU.APPS.INVOICE.LIST',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'apps/invoice/list'
     //         },
     //         {
@@ -568,7 +576,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Preview',
     //           translate: 'MENU.APPS.INVOICE.PREVIEW',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'apps/invoice/preview'
     //         },
     //         {
@@ -576,7 +584,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Edit',
     //           translate: 'MENU.APPS.INVOICE.EDIT',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'apps/invoice/edit'
     //         },
     //         {
@@ -584,7 +592,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Add',
     //           translate: 'MENU.APPS.INVOICE.ADD',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'apps/invoice/add'
     //         }
     //       ]
@@ -601,7 +609,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Shop',
     //           translate: 'MENU.APPS.ECOMMERCE.SHOP',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'apps/e-commerce/shop'
     //         },
     //         {
@@ -609,7 +617,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Details',
     //           translate: 'MENU.APPS.ECOMMERCE.DETAIL',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'apps/e-commerce/details'
     //         },
     //         {
@@ -617,7 +625,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Wish List',
     //           translate: 'MENU.APPS.ECOMMERCE.WISHLIST',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'apps/e-commerce/wishlist'
     //         },
     //         {
@@ -625,7 +633,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Checkout',
     //           translate: 'MENU.APPS.ECOMMERCE.CHECKOUT',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'apps/e-commerce/checkout'
     //         }
     //       ]
@@ -642,7 +650,7 @@ export const menu: CoreMenu[] = [
     //           title: 'List',
     //           translate: 'MENU.APPS.USER.LIST',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'apps/user/user-list'
     //         },
     //         {
@@ -650,7 +658,7 @@ export const menu: CoreMenu[] = [
     //           title: 'View',
     //           translate: 'MENU.APPS.USER.VIEW',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'apps/user/user-view'
     //         },
     //         {
@@ -658,7 +666,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Edit',
     //           translate: 'MENU.APPS.USER.EDIT',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'apps/user/user-edit'
     //         }
     //       ]
@@ -714,7 +722,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Basic',
     //           translate: 'MENU.UI.CARDS.BASIC',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'ui/card/card-basic'
     //         },
     //         {
@@ -722,7 +730,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Advance',
     //           translate: 'MENU.UI.CARDS.ADVANCE',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'ui/card/advance'
     //         },
     //         {
@@ -730,7 +738,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Statistics',
     //           translate: 'MENU.UI.CARDS.STATISTICS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'ui/card/statistics'
     //         },
     //         {
@@ -738,7 +746,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Analytics',
     //           translate: 'MENU.UI.CARDS.ANALYTICS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'ui/card/analytics'
     //         },
     //         {
@@ -746,7 +754,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Actions',
     //           translate: 'MENU.UI.CARDS.ACTIONS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'ui/card/actions'
     //         }
     //       ]
@@ -763,7 +771,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Alerts',
     //           translate: 'MENU.UI.COMPONENTS.ALERTS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/alerts'
     //         },
     //         {
@@ -771,7 +779,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Avatar',
     //           translate: 'MENU.UI.COMPONENTS.AVATAR',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/avatar'
     //         },
     //         {
@@ -779,7 +787,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Badges',
     //           translate: 'MENU.UI.COMPONENTS.BADGES',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/badges'
     //         },
     //         {
@@ -787,7 +795,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Breadcrumbs',
     //           translate: 'MENU.UI.COMPONENTS.BREADCRUMBS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/breadcrumbs'
     //         },
     //         {
@@ -795,7 +803,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Buttons',
     //           translate: 'MENU.UI.COMPONENTS.BUTTONS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/buttons'
     //         },
     //         {
@@ -803,7 +811,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Carousel',
     //           translate: 'MENU.UI.COMPONENTS.CAROUSEL',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/carousel'
     //         },
     //         {
@@ -811,7 +819,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Collapse',
     //           translate: 'MENU.UI.COMPONENTS.COLLAPSE',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/collapse'
     //         },
     //         {
@@ -819,7 +827,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Divider',
     //           translate: 'MENU.UI.COMPONENTS.DIVIDER',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/divider'
     //         },
     //         {
@@ -827,7 +835,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Dropdowns',
     //           translate: 'MENU.UI.COMPONENTS.DROPDOWNS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/dropdowns'
     //         },
     //         {
@@ -835,7 +843,7 @@ export const menu: CoreMenu[] = [
     //           title: 'List Group',
     //           translate: 'MENU.UI.COMPONENTS.GROUP',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/list-group'
     //         },
     //         {
@@ -843,7 +851,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Media Objects',
     //           translate: 'MENU.UI.COMPONENTS.OBJECTS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/media-objects'
     //         },
     //         {
@@ -851,7 +859,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Modals',
     //           translate: 'MENU.UI.COMPONENTS.MODALS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/modals'
     //         },
     //         {
@@ -859,7 +867,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Navs',
     //           translate: 'MENU.UI.COMPONENTS.COMPONENT',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/navs'
     //         },
     //         {
@@ -867,7 +875,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Pagination',
     //           translate: 'MENU.UI.COMPONENTS.PAGINATION',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/pagination'
     //         },
     //         {
@@ -875,7 +883,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Pill Badges',
     //           translate: 'MENU.UI.COMPONENTS.PBADGES',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/pill-badges'
     //         },
     //         {
@@ -883,7 +891,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Pills',
     //           translate: 'MENU.UI.COMPONENTS.PILLS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/pills'
     //         },
     //         {
@@ -891,7 +899,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Popovers',
     //           translate: 'MENU.UI.COMPONENTS.POPOVERS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/popovers'
     //         },
     //         {
@@ -899,7 +907,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Progress',
     //           translate: 'MENU.UI.COMPONENTS.PROGRESS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/progress'
     //         },
     //         {
@@ -907,7 +915,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Ratings',
     //           translate: 'MENU.UI.COMPONENTS.RATINGS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/ratings'
     //         },
     //         {
@@ -915,7 +923,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Spinner',
     //           translate: 'MENU.UI.COMPONENTS.SPINNER',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/spinner'
     //         },
     //         {
@@ -923,7 +931,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Tabs',
     //           translate: 'MENU.UI.COMPONENTS.TABS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/tabs'
     //         },
     //         {
@@ -931,7 +939,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Timeline',
     //           translate: 'MENU.UI.COMPONENTS.TIMELINE',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/timeline'
     //         },
     //         {
@@ -939,7 +947,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Toasts',
     //           translate: 'MENU.UI.COMPONENTS.TOASTS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/toasts'
     //         },
     //         {
@@ -947,7 +955,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Tooltips',
     //           translate: 'MENU.UI.COMPONENTS.TOOLTIPS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'components/tooltips'
     //         }
     //       ]
@@ -957,13 +965,13 @@ export const menu: CoreMenu[] = [
     //       title: 'Extension',
     //       translate: 'MENU.UI.EX.COLLAPSIBLE',
     //       type: 'collapsible',
-    //       icon: 'plus-circle',
+    //       icon: 'plus-target',
     //       children: [
     //         {
     //           id: 'ex-sweet-alerts',
     //           title: 'Sweet Alerts',
     //           translate: 'MENU.UI.EX.SWEET_ALERTS',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: '/extensions/sweet-alerts'
     //         },
@@ -971,7 +979,7 @@ export const menu: CoreMenu[] = [
     //           id: 'ex-blockui',
     //           title: 'BlockUI',
     //           translate: 'MENU.UI.EX.BLOCKUI',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: 'extensions/blockui'
     //         },
@@ -979,7 +987,7 @@ export const menu: CoreMenu[] = [
     //           id: 'ex-toastr',
     //           title: 'Toastr',
     //           translate: 'MENU.UI.EX.TOASTER',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: 'extensions/toastr'
     //         },
@@ -987,7 +995,7 @@ export const menu: CoreMenu[] = [
     //           id: 'ex-noui-slider',
     //           title: 'Slider',
     //           translate: 'MENU.UI.EX.SLIDER',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: '/extensions/noui-slider'
     //         },
@@ -995,7 +1003,7 @@ export const menu: CoreMenu[] = [
     //           id: 'ex-drag-drop',
     //           title: 'Drag & Drop',
     //           translate: 'MENU.UI.EX.DRAGDROP',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: 'extensions/drag-drop'
     //         },
@@ -1003,7 +1011,7 @@ export const menu: CoreMenu[] = [
     //           id: 'ex-tour',
     //           title: 'Tour',
     //           translate: 'MENU.UI.EX.TOUR',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: 'extensions/tour'
     //         },
@@ -1011,7 +1019,7 @@ export const menu: CoreMenu[] = [
     //           id: 'ex-clip-board',
     //           title: 'Clipboard',
     //           translate: 'MENU.UI.EX.CLIPBOARD',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: 'extensions/clipboard'
     //         },
@@ -1019,7 +1027,7 @@ export const menu: CoreMenu[] = [
     //           id: 'ex-media-player',
     //           title: 'Media Player',
     //           translate: 'MENU.UI.EX.MEDIAPLAYER',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: 'extensions/media-player'
     //         },
@@ -1027,7 +1035,7 @@ export const menu: CoreMenu[] = [
     //           id: 'ex-content-menu',
     //           title: 'Context Menu',
     //           translate: 'MENU.UI.EX.CONTEXTMENU',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: 'extensions/context-menu'
     //         },
@@ -1035,7 +1043,7 @@ export const menu: CoreMenu[] = [
     //           id: 'ex-swiper',
     //           title: 'Swiper',
     //           translate: 'MENU.UI.EX.SWIPER',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: 'extensions/swiper'
     //         },
@@ -1043,7 +1051,7 @@ export const menu: CoreMenu[] = [
     //           id: 'ex-tree-view',
     //           title: 'Tree View',
     //           translate: 'MENU.UI.EX.TREEVIEW',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: 'extensions/tree-view'
     //         },
@@ -1051,7 +1059,7 @@ export const menu: CoreMenu[] = [
     //           id: 'i18n',
     //           title: 'I18n',
     //           translate: 'MENU.UI.EX.I18N',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: '/extensions/i18n'
     //         }
@@ -1068,7 +1076,7 @@ export const menu: CoreMenu[] = [
     //           id: 'layout-collapsed-menu',
     //           title: 'Collapsed Menu',
     //           translate: 'MENU.UI.LAYOUTS.COLLAPSED_MENU',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: 'ui/page-layouts/collapsed-menu'
     //         },
@@ -1076,7 +1084,7 @@ export const menu: CoreMenu[] = [
     //           id: 'layout-boxed',
     //           title: 'Boxed Layout',
     //           translate: 'MENU.UI.LAYOUTS.BOXED_LAYOUT',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: 'ui/page-layouts/boxed-layout'
     //         },
@@ -1084,7 +1092,7 @@ export const menu: CoreMenu[] = [
     //           id: 'layout-without-menu',
     //           title: 'Without Menu',
     //           translate: 'MENU.UI.LAYOUTS.WITHOUT_MENU',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: 'ui/page-layouts/without-menu'
     //         },
@@ -1092,7 +1100,7 @@ export const menu: CoreMenu[] = [
     //           id: 'layout-empty',
     //           title: 'Layout Empty',
     //           translate: 'MENU.UI.LAYOUTS.LAYOUT_EMPTY',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: 'ui/page-layouts/layout-empty'
     //         },
@@ -1100,7 +1108,7 @@ export const menu: CoreMenu[] = [
     //           id: 'layout-blank',
     //           title: 'Layout Blank',
     //           translate: 'MENU.UI.LAYOUTS.LAYOUT_BLANK',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: 'ui/page-layouts/layout-blank'
     //         }
@@ -1128,7 +1136,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Input',
     //           translate: 'MENU.FT.ELEMENT.INPUT',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'forms/form-elements/input'
     //         },
     //         {
@@ -1136,7 +1144,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Input Groups',
     //           translate: 'MENU.FT.ELEMENT.INPUTGROUPS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'forms/form-elements/input-groups'
     //         },
     //         {
@@ -1144,7 +1152,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Input Mask',
     //           translate: 'MENU.FT.ELEMENT.INPUTMASK',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'forms/form-elements/input-mask'
     //         },
     //         {
@@ -1152,7 +1160,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Textarea',
     //           translate: 'MENU.FT.ELEMENT.TEXTAREA',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'forms/form-elements/textarea'
     //         },
     //         {
@@ -1160,7 +1168,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Checkbox',
     //           translate: 'MENU.FT.ELEMENT.CHECKBOX',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'forms/form-elements/checkbox'
     //         },
     //         {
@@ -1168,7 +1176,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Radio',
     //           translate: 'MENU.FT.ELEMENT.RADIO',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'forms/form-elements/radio'
     //         },
     //         {
@@ -1176,7 +1184,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Switch',
     //           translate: 'MENU.FT.ELEMENT.SWITCH',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'forms/form-elements/switch'
     //         },
     //         {
@@ -1184,7 +1192,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Select',
     //           translate: 'MENU.FT.ELEMENT.SELECT',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'forms/form-elements/select'
     //         },
     //         {
@@ -1192,14 +1200,14 @@ export const menu: CoreMenu[] = [
     //           title: 'Number Input',
     //           translate: 'MENU.FT.ELEMENT.NUMBERINPUT',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'forms/form-elements/number-input'
     //         },
     //         {
     //           id: 'form-elements-file-uploader',
     //           title: 'File Uploader',
     //           translate: 'MENU.FT.ELEMENT.FILEUPLOADER',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: 'forms/form-elements/file-uploader'
     //         },
@@ -1207,7 +1215,7 @@ export const menu: CoreMenu[] = [
     //           id: 'form-elements-quill-editor',
     //           title: 'Quill Editor',
     //           translate: 'MENU.FT.ELEMENT.QUILLEDITOR',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: 'forms/form-elements/quill-editor'
     //         },
@@ -1216,7 +1224,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Flatpicker',
     //           translate: 'MENU.FT.ELEMENT.FLATPICKER',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'forms/form-elements/flatpickr'
     //         },
     //         {
@@ -1224,7 +1232,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Date & Time Picker',
     //           translate: 'MENU.FT.ELEMENT.DATETIMEPICKER',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'forms/form-elements/date-time-picker'
     //         }
     //       ]
@@ -1250,7 +1258,7 @@ export const menu: CoreMenu[] = [
     //       title: 'Form Validations',
     //       translate: 'MENU.FT.VALIDATION',
     //       type: 'item',
-    //       icon: 'check-circle',
+    //       icon: 'check-target',
     //       url: 'forms/form-validation'
     //     },
     //     {
@@ -1304,7 +1312,7 @@ export const menu: CoreMenu[] = [
     //           title: 'Apex',
     //           translate: 'MENU.CM.CHARTS.APEX',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'charts-and-maps/apex'
     //         },
     //         {
@@ -1312,7 +1320,7 @@ export const menu: CoreMenu[] = [
     //           title: 'ChartJS',
     //           translate: 'MENU.CM.CHARTS.CHARTJS',
     //           type: 'item',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           url: 'charts-and-maps/chartjs'
     //         }
     //       ]
@@ -1346,7 +1354,7 @@ export const menu: CoreMenu[] = [
     //           id: 'second-level',
     //           title: 'Second Level',
     //           translate: 'MENU.OTHERS.LEVELS.SECOND',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'item',
     //           url: '#'
     //         },
@@ -1354,7 +1362,7 @@ export const menu: CoreMenu[] = [
     //           id: 'second-level1',
     //           title: 'Second Level',
     //           translate: 'MENU.OTHERS.LEVELS.SECOND1.COLLAPSIBLE',
-    //           icon: 'circle',
+    //           icon: 'target',
     //           type: 'collapsible',
     //           children: [
     //             {

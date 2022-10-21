@@ -347,12 +347,20 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
-        const values: Partial<Record<PaymentType.CASH, number>> = {};
+        const values: Partial<
+            Record<PaymentType.CASH | PaymentType.BANK, number>
+        > = {};
 
         criteria.transactionType = [TransactionType.PAYMENT];
         criteria.supplierType = SupplierType.OTHER;
         criteria.paymentType = [PaymentType.CASH];
         values[PaymentType.CASH] = await this.createAndExecuteCriteriaQuery(
+            criteria,
+            dateFrom,
+            dateTo,
+        );
+        criteria.paymentType = [PaymentType.BANK];
+        values[PaymentType.BANK] = await this.createAndExecuteCriteriaQuery(
             criteria,
             dateFrom,
             dateTo,
@@ -384,12 +392,20 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
-        const values: Partial<Record<PaymentType.CASH, number>> = {};
+        const values: Partial<
+            Record<PaymentType.CASH | PaymentType.BANK, number>
+        > = {};
 
         criteria.transactionType = [TransactionType.PAYMENT];
         criteria.supplierType = SupplierType.MAIN;
         criteria.paymentType = [PaymentType.CASH];
         values[PaymentType.CASH] = await this.createAndExecuteCriteriaQuery(
+            criteria,
+            dateFrom,
+            dateTo,
+        );
+        criteria.paymentType = [PaymentType.BANK];
+        values[PaymentType.BANK] = await this.createAndExecuteCriteriaQuery(
             criteria,
             dateFrom,
             dateTo,

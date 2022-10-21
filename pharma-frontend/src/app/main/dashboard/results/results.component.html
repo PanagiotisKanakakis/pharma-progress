@@ -153,7 +153,7 @@
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div class="font-weight-bolder ml-1">Μεικτά κέρδη</div>
+                                                                <div class="font-weight-bolder ml-1">Μικτά κέρδη</div>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -226,7 +226,8 @@
                                     </div>
                                     <div class="media-body my-auto">
                                         <h2 class="font-weight-bolder mb-0"
-                                            style="color: #1e1e1e">{{calculateNetProfitMargin().toLocaleString('el-GR')}}%</h2>
+                                            style="color: #1e1e1e">{{calculateNetProfitMargin().toLocaleString('el-GR')}}
+                                            %</h2>
                                         <p class="font-weight-bolder mb-0">Καθαρό περιθώριο κέρδους</p>
                                     </div>
                                 </div>
@@ -384,18 +385,50 @@
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div class="font-weight-bolder ml-1">Επι πιστώσει</div>
+                                                                <div class="font-weight-bolder ml-1">Απαιτήσεις πληρωμης
+                                                                    πελατών
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalIncomeOnAccount().toLocaleString('el-GR')}}
-                                                                    €</span>
+                                                                <span class="font-weight-bolder mb-25">
+                                                                    {{totalIncomeOnAccount().toLocaleString('el-GR')}}€</span>
                                                         </div>
                                                     </td>
                                                 </tr>
                                                 </tbody>
+                                                <tfoot style="border-top: 2px solid #1e1e1e; ">
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="avatar bg-light-primary rounded">
+                                                                <div class="avatar-content">
+                                                                    <i data-feather="pocket"
+                                                                       class="avatar-icon font-medium-3"></i>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <div class="font-weight-bolder ml-1">
+                                                                    Σύνολο πωλήσεων
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                                <span class="font-weight-bolder mb-25">
+                                                                    {{ ( totalCash() +
+                                                                         totalPos() +
+                                                                         totalEOPPYIncludingVat() +
+                                                                         totalIncomeOnAccount()).toLocaleString('el-GR')
+                                                                    }}€
+                                                                </span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                </tfoot>
                                             </table>
                                         </div>
                                     </div>
@@ -436,7 +469,9 @@
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div class="font-weight-bolder ml-1">ΠΕΙΦΑΣΥΝ</div>
+                                                                <div class="font-weight-bolder ml-1">Κύριος
+                                                                    Προμηθευτής
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -469,6 +504,8 @@
                                                         </div>
                                                     </td>
                                                 </tr>
+                                                </tbody>
+                                                <tfoot style="border-top: 2px solid #1e1e1e; ">
                                                 <tr>
                                                     <td>
                                                         <div class="d-flex align-items-center">
@@ -479,18 +516,21 @@
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div class="font-weight-bolder ml-1">Ανταλλαγές</div>
+                                                                <div class="font-weight-bolder ml-1">
+                                                                    Σύνολο αγορών
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalExchanges().toLocaleString('el-GR')}}
-                                                                    €</span>
+                                                                <span class="font-weight-bolder mb-25">
+                                                                    {{totalOutcome().toLocaleString('el-GR')}}€
+                                                                </span>
                                                         </div>
                                                     </td>
                                                 </tr>
-                                                </tbody>
+                                                </tfoot>
                                             </table>
                                         </div>
                                     </div>
@@ -503,7 +543,7 @@
         </div>
 
         <div class="row match-height">
-            <div class="col-xl-10 col-md-6 col-12">
+            <div class="col-xl-9 col-md-6 col-12">
                 <div class="card card-statistics">
                     <div class="card-header font-weight-bolder mr-1">
                         <h4 class="card-title font-weight-bolder" style="color: #1e1e1e">Λειτουργικά Έξοδα</h4>
@@ -561,14 +601,28 @@
                                                     </td>
                                                 </tr>
                                                 </tbody>
-                                                <!--                                                <tfoot>-->
-                                                <!--                                                    <tr>-->
-                                                <!--                                                        <td style="padding: 5px 10px; font-weight: bold; font-size: medium">-->
-                                                <!--                                                            Σύνολο:  {{ summaryColumn() }}-->
-                                                <!--                                                            €-->
-                                                <!--                                                        </td>-->
-                                                <!--                                                    </tr>-->
-                                                <!--                                                </tfoot>-->
+                                                <tfoot *ngIf="operatingExpensesData.length > 0"
+                                                       style="border-top: 2px solid #1e1e1e; ">
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div>
+                                                                <div class="font-weight-bolder ml-1">
+                                                                    Σύνολο λειτουργικών εξόδων
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                                <span class="font-weight-bolder mb-25">
+                                                                    {{totalOperatingExpensesIncludingVat().toLocaleString('el-GR')}}
+                                                                    €
+                                                                </span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                </tfoot>
                                             </table>
                                         </div>
                                     </div>
@@ -578,24 +632,28 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-2 col-md-3 col-6">
-                <div class="card">
-                    <div class="card card-tiny-line-stats">
-                        <div class="card-header d-flex flex-column align-items-start pb-0">
-                            <div class="avatar bg-light p-50 m-0">
-                                <div class="avatar-content" style="color: #9042f5">
-                                    <i data-feather="package" class="font-medium-5"></i>
+            <div class="col-xl-3 col-md-3 col-6">
+                <div class="row match-height">
+                    <div class="col-xl-12 col-md-3 col-6">
+                        <div class="card">
+                            <div class="card card-tiny-line-stats">
+                                <div class="card-header d-flex flex-column align-items-start pb-0">
+                                    <div class="avatar bg-light p-50 m-0">
+                                        <div class="avatar-content" style="color: #9042f5">
+                                            <i data-feather="package" class="font-medium-5"></i>
+                                        </div>
+                                    </div>
+                                    <h4 class="font-weight-bolder mt-1"
+                                        style="color: #1e1e1e">{{totalOperatingExpensesIncludingVat().toLocaleString('el-GR')}}
+                                        €</h4>
+                                    <h5 class="font-weight-bolder" style="color: #1e1e1e">Σύνολο Λειτουργικών
+                                        Εξόδων</h5>
                                 </div>
-                            </div>
-                            <h4 class="font-weight-bolder mt-1"
-                                style="color: #1e1e1e">{{totalOperatingExpensesValue().toLocaleString('el-GR')}}€</h4>
-                            <h5 class="font-weight-bolder" style="color: #1e1e1e">Σύνολο Λειτουργικών Εξόδων (Χωρίς ΦΠΑ)</h5>
-                        </div>
-                        <!-- Apexchart component-->
-                        <div id="orderChartoptions" #orderChartRef>
-                            <apx-chart
-                                    [series]="data.ordersRecevied.series"
-                                    [chart]="{
+                                <!-- Apexchart component-->
+                                <div id="orderChartoptions" #orderChartRef>
+                                    <apx-chart
+                                            [series]="data.ordersRecevied.series"
+                                            [chart]="{
                                     height: 100,
                                     width: isMenuToggled === true ? orderChartRef.offsetWidth : operatingExpensesOrderChartoptions.chart.width,
                                     type: 'area',
@@ -606,12 +664,54 @@
                                       enabled: true
                                     }
                                   }"
-                                    [stroke]="operatingExpensesOrderChartoptions.stroke"
-                                    [fill]="operatingExpensesOrderChartoptions.fill"
-                                    [tooltip]="operatingExpensesOrderChartoptions.tooltip"
-                                    [colors]="operatingExpensesOrderChartoptions.colors"
-                                    [dataLabels]="operatingExpensesOrderChartoptions.dataLabels"
-                            ></apx-chart>
+                                            [stroke]="operatingExpensesOrderChartoptions.stroke"
+                                            [fill]="operatingExpensesOrderChartoptions.fill"
+                                            [tooltip]="operatingExpensesOrderChartoptions.tooltip"
+                                            [colors]="operatingExpensesOrderChartoptions.colors"
+                                            [dataLabels]="operatingExpensesOrderChartoptions.dataLabels"
+                                    ></apx-chart>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-12 col-md-3 col-6">
+                        <div class="card">
+                            <div class="card card-tiny-line-stats">
+                                <div class="card-header d-flex flex-column align-items-start pb-0">
+                                    <div class="avatar bg-light p-50 m-0">
+                                        <div class="avatar-content" style="color: #9042f5">
+                                            <i data-feather="package" class="font-medium-5"></i>
+                                        </div>
+                                    </div>
+                                    <h4 class="font-weight-bolder mt-1"
+                                        style="color: #1e1e1e">{{totalOperatingExpensesValue().toLocaleString('el-GR')}}
+                                        €</h4>
+                                    <h5 class="font-weight-bolder" style="color: #1e1e1e">Σύνολο Λειτουργικών Εξόδων
+                                        (Χωρίς ΦΠΑ)</h5>
+                                </div>
+                                <!-- Apexchart component-->
+                                <div id="orderChartoptions" #orderChartRef>
+                                    <apx-chart
+                                            [series]="data.ordersRecevied.series"
+                                            [chart]="{
+                                    height: 100,
+                                    width: isMenuToggled === true ? orderChartRef.offsetWidth : operatingExpensesOrderChartoptions.chart.width,
+                                    type: 'area',
+                                    toolbar: {
+                                      show: false
+                                    },
+                                    sparkline: {
+                                      enabled: true
+                                    }
+                                  }"
+                                            [stroke]="operatingExpensesOrderChartoptions.stroke"
+                                            [fill]="operatingExpensesOrderChartoptions.fill"
+                                            [tooltip]="operatingExpensesOrderChartoptions.tooltip"
+                                            [colors]="operatingExpensesOrderChartoptions.colors"
+                                            [dataLabels]="operatingExpensesOrderChartoptions.dataLabels"
+                                    ></apx-chart>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -650,7 +750,7 @@
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div class="font-weight-bolder ml-1">Μεικτά Κέρδη</div>
+                                                                <div class="font-weight-bolder ml-1">Μικτά Κέρδη</div>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -786,7 +886,7 @@
             </div>
             <div class="col-lg-4 col-12">
                 <div class="row match-height">
-                    <div class="col-lg-6 col-md-3 col-6">
+                    <div class="col-lg-12 col-md-3 col-6">
                         <div class="card">
                             <div class="card card-tiny-line-stats">
                                 <div class="card-header d-flex flex-column align-items-start pb-0">
@@ -824,7 +924,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-3 col-6">
+                    <div class="col-lg-12 col-md-3 col-6">
                         <div class="card">
                             <div class="card card-tiny-line-stats">
                                 <div class="card-header d-flex flex-column align-items-start pb-0">
@@ -834,7 +934,8 @@
                                         </div>
                                     </div>
                                     <h4 class="font-weight-bolder mt-1"
-                                        style="color: #1e1e1e">{{totalEOPPYAndConsumablesWithoutVat().toLocaleString('el-GR')}}€</h4>
+                                        style="color: #1e1e1e">{{totalEOPPYAndConsumablesWithoutVat().toLocaleString('el-GR')}}
+                                        €</h4>
                                     <h5 class="font-weight-bolder" style="color: #1e1e1e">ΕΟΠΠΥ & Αναλωσιμα (χωρις
                                         ΦΠΑ)</h5>
                                 </div>
@@ -934,7 +1035,8 @@
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div class="font-weight-bolder ml-1">Υπόλοιπο Έναρξης</div>
+                                                                <div class="font-weight-bolder ml-1">Υπόλοιπο Έναρξης
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -955,15 +1057,16 @@
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div class="font-weight-bolder ml-1">Ρευστά Διαθέσιμα (Cash & Pos)
+                                                                <div class="font-weight-bolder ml-1">ΕΟΠΠΥ
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalMonthIncome().toLocaleString('el-GR')}}
-                                                                    €</span>
+                                                            <span class="font-weight-bolder mb-25">
+                                                                {{totalEOPPYIncludingVat().toLocaleString('el-GR')}}€
+                                                            </span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -977,14 +1080,67 @@
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div class="font-weight-bolder ml-1">Πληρωμές προηγ. μηνών (άλλοι προμηθευτές)</div>
+                                                                <div class="font-weight-bolder ml-1">Ρευστά Διαθέσιμα
+                                                                    (Cash & Pos)
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalPreviousMonthsPaymentsToOtherSuppliers().toLocaleString('el-GR')}}
-                                                                    €</span>
+                                                            <span class="font-weight-bolder mb-25">
+                                                                {{totalMonthIncome().toLocaleString('el-GR')}}€
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <tr style="border-top: 2px solid #1e1e1e;border-bottom: 2px solid #1e1e1e; ">
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="avatar bg-light-primary rounded">
+                                                                <div class="avatar-content">
+                                                                    <i data-feather="pocket"
+                                                                       class="avatar-icon font-medium-3"></i>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <div class="font-weight-bolder ml-1">
+                                                                    Σύνολο ρευστών διαθέσιμων
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <span class="font-weight-bolder mb-25">
+                                                                {{totalCashAvailable().toLocaleString('el-GR')}}€
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="avatar bg-light-primary rounded">
+                                                                <div class="avatar-content">
+                                                                    <i data-feather="pocket"
+                                                                       class="avatar-icon font-medium-3"></i>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <div class="font-weight-bolder ml-1">Πληρωμές προηγ.
+                                                                    μηνών (άλλοι προμηθευτές)
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <span class="font-weight-bolder mb-25">
+                                                                {{totalPreviousMonthsPaymentsToOtherSuppliers().toLocaleString('el-GR')}}€
+                                                            </span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -998,37 +1154,17 @@
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div class="font-weight-bolder ml-1">Πληρωμές προηγ. μηνών (κύριος προμηθευτής)
+                                                                <div class="font-weight-bolder ml-1">
+                                                                    Πληρωμές προηγ. μηνών (κύριος προμηθευτής)
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalPreviousMonthsPaymentsToMainSupplier().toLocaleString('el-GR')}}
-                                                                    €</span>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="avatar bg-light-primary rounded">
-                                                                <div class="avatar-content">
-                                                                    <i data-feather="pocket"
-                                                                       class="avatar-icon font-medium-3"></i>
-                                                                </div>
-                                                            </div>
-                                                            <div>
-                                                                <div class="font-weight-bolder ml-1">Αγορές μετρητοίς (άλλες εταιρείες)
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalOtherSupplierOutcomeCash().toLocaleString('el-GR')}}
-                                                                    €</span>
+                                                            <span class="font-weight-bolder mb-25">
+                                                                {{totalPreviousMonthsPaymentsToMainSupplier().toLocaleString('el-GR')}}€
+                                                            </span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -1042,15 +1178,17 @@
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div class="font-weight-bolder ml-1">Λειτουργικά Έξοδα (Με ΦΠΑ)
+                                                                <div class="font-weight-bolder ml-1">
+                                                                    Φόροι
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalOperatingExpensesIncludingVat().toLocaleString('el-GR')}}
-                                                                    €</span>
+                                                            <span class="font-weight-bolder mb-25">
+                                                                {{totalTaxes().toLocaleString('el-GR')}}€
+                                                            </span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -1064,15 +1202,65 @@
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div class="font-weight-bolder ml-1">Προσωπικές αναλήψεις
+                                                                <div class="font-weight-bolder ml-1">
+                                                                    Αγορές μετρητοίς (άλλες εταιρείες)
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalPersonalWithdrawals().toLocaleString('el-GR')}}
-                                                                    €</span>
+                                                            <span class="font-weight-bolder mb-25">
+                                                                {{totalOtherSupplierOutcomeCash().toLocaleString('el-GR')}}€
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="avatar bg-light-primary rounded">
+                                                                <div class="avatar-content">
+                                                                    <i data-feather="pocket"
+                                                                       class="avatar-icon font-medium-3"></i>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <div class="font-weight-bolder ml-1">
+                                                                    Λειτουργικά Έξοδα (Με ΦΠΑ)
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <span class="font-weight-bolder mb-25">
+                                                                {{totalOperatingExpensesIncludingVat().toLocaleString('el-GR')}}€
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="avatar bg-light-primary rounded">
+                                                                <div class="avatar-content">
+                                                                    <i data-feather="pocket"
+                                                                       class="avatar-icon font-medium-3"></i>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <div class="font-weight-bolder ml-1">
+                                                                    Προσωπικές αναλήψεις
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <span class="font-weight-bolder mb-25">
+                                                                {{totalPersonalWithdrawals().toLocaleString('el-GR')}}€
+                                                            </span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -1088,37 +1276,17 @@
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div class="font-weight-bolder ml-1">Σύνολο ρευστών διαθέσιμων
+                                                                <div class="font-weight-bolder ml-1">
+                                                                    Υπόλοιπο λήξης
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalCashAvailable().toLocaleString('el-GR')}}
-                                                                    €</span>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="avatar bg-light-primary rounded">
-                                                                <div class="avatar-content">
-                                                                    <i data-feather="pocket"
-                                                                       class="avatar-icon font-medium-3"></i>
-                                                                </div>
-                                                            </div>
-                                                            <div>
-                                                                <div class="font-weight-bolder ml-1">Υπόλοιπο λήξης
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalClosingBalance().toLocaleString('el-GR')}}
-                                                                    €</span>
+                                                            <span class="font-weight-bolder mb-25">
+                                                                {{totalClosingBalance().toLocaleString('el-GR')}}€
+                                                            </span>
                                                         </div>
                                                     </td>
                                                 </tr>

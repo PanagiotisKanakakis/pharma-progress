@@ -1,43 +1,34 @@
 <div class="content-wrapper container-xxl p-0">
     <div class="content-body">
-        <!--        <app-spinner></app-spinner>-->
-
-        <!-- Inline Editing Datatables -->
         <section id="ngx-datatable-inline-editing">
-            <!-- Basic Date Picker -->
-            <div class="row">
-                <div class="col-lg-8">
-                    <form class="form-inline" style="margin-bottom:15px;">
-                        <div class="form-group">
-                            <div class="input-group">
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary feather icon-calendar custom-placeholder"
-                                            (click)="basicDP.toggle()"
-                                            style="background-color: #33557e; color: white"
-                                            type="button" rippleEffect></button>
-                                </div>
-                                <input class="form-control font-weight-bolder" placeholder="dd-mm-yyyy" name="Basic Date Picker"
-                                       [(ngModel)]="basicDPdata"
-                                       ngbDatepicker #basicDP="ngbDatepicker" (dateSelect)="onDateSelect($event)">
-
+            <div class="card">
+                <div class="row  mb-50">
+                    <div class="col-lg-8">
+                        <div class="card-header d-flex justify-content-between align-items-sm-center align-items-start flex-md-row flex-column">
+                            <div class="header-right d-flex align-items-center mt-sm-0 mt-1"
+                                 style="width: -webkit-fill-available;">
+                                <i class="font-medium-5" data-feather="calendar"></i>
+                                <ng2-flatpickr class="font-weight-bolder" [config]="DateRangeOptions"
+                                               style="width: inherit"
+                                               name="DateRange"></ng2-flatpickr>
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="col-lg-4" *ngIf="this.supplier === 'main'">
-                    <fieldset class="form-group">
-                        <div class="custom-file">
-                            <input
-                                    class="custom-file-input"
-                                    type="file"
-                                    ng2FileSelect
-                                    [uploader]="uploader"
-                                    multiple
-                                    id="file-upload-multiple"
-                            />
-                            <label class="custom-file-label">{{ 'BUTTON.IMPORT_FILE' | translate }}</label>
-                        </div>
-                    </fieldset>
+                    </div>
+                    <div class="col-lg-4" *ngIf="this.supplier === 'main'">
+                        <fieldset class="form-group">
+                            <div class="custom-file">
+                                <input
+                                        class="custom-file-input"
+                                        type="file"
+                                        ng2FileSelect
+                                        [uploader]="uploader"
+                                        multiple
+                                        id="file-upload-multiple"
+                                />
+                                <label class="custom-file-label">{{ 'BUTTON.IMPORT_FILE' | translate }}</label>
+                            </div>
+                        </fieldset>
+                    </div>
                 </div>
             </div>
 

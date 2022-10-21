@@ -100,6 +100,7 @@ export class OperatingExpensesComponent implements OnInit {
                 && e !== TransactionType.EXPENSE
                 && e !== TransactionType.PAYMENT
                 && e !== TransactionType.EOPPY
+                && e !== TransactionType.TAXES
                 && !e.toString().includes('function')) {
                 this.operatingExpenses.push(e);
             }
@@ -181,7 +182,6 @@ export class OperatingExpensesComponent implements OnInit {
             TransactionType.getIndexOf(TransactionType.CONSUMABLES),
             TransactionType.getIndexOf(TransactionType.BANK_CHARGES),
             TransactionType.getIndexOf(TransactionType.WATER_SUPPLY),
-            TransactionType.getIndexOf(TransactionType.TAXES),
             TransactionType.getIndexOf(TransactionType.OTHER_EXPENSES),
         ];
         getTransactionsByCriteria(
@@ -222,7 +222,7 @@ export class OperatingExpensesComponent implements OnInit {
             tr.userId = this.currentUser.id;
             tr.transactionType = TransactionType.getIndexOf(row.transactionType);
             tr.paymentType = PaymentType.getIndexOf(row.paymentType);
-            tr.vat = VAT.getIndexOf(row.vat);
+            tr.vat = VAT.getIndexOf(this.calculateVat(row.transactionType));
             tr.createdAt = DateUtils.queryFormattedDate(DateUtils.toDate(row.createdAt));
             tr.cost = row.cost;
             tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);

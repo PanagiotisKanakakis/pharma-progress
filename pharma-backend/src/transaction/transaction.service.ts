@@ -82,6 +82,10 @@ export class TransactionService {
                 .andWhere('CAST ("createdAt" AS DATE) <= :dateTo ', {
                     dateTo: dateRange[0].dateTo,
                 });
+        } else if (criteriaDto.range == RangeType.DAILY) {
+            query.andWhere('CAST ("createdAt" AS DATE) = :dateFrom ', {
+                dateFrom: criteriaDto.date,
+            });
         }
 
         if (criteriaDto.transactionType) {

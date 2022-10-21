@@ -20,13 +20,17 @@ export class StatisticsDto {
                 outcome: Partial<
                     Record<PaymentType.CASH | PaymentType.ON_ACCOUNT, number>
                 >;
-                payment: Partial<Record<PaymentType.CASH, number>>;
+                payment: Partial<
+                    Record<PaymentType.CASH | PaymentType.BANK, number>
+                >;
             };
             otherSuppliers: {
                 outcome: Partial<
                     Record<PaymentType.CASH | PaymentType.ON_ACCOUNT, number>
                 >;
-                payment: Partial<Record<PaymentType.CASH, number>>;
+                payment: Partial<
+                    Record<PaymentType.CASH | PaymentType.BANK, number>
+                >;
             };
         };
         operatingExpenses: Partial<Record<TransactionType, Transaction[]>>;

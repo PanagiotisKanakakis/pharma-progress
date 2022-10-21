@@ -36,7 +36,8 @@ export const locale = {
       DATE_END: 'Expiration date',
       COMPANY: 'Company',
       PRESCRIPT: 'Prescript',
-      STATUS: 'Status'
+      STATUS: 'Status',
+      PAYMENT_TYPE: 'Payment Type'
     },
     INCOME: 'Income',
     FORM: {

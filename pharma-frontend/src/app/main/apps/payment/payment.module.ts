@@ -14,6 +14,7 @@ import {CoreCardModule} from '../../../../@core/components/core-card/core-card.m
 import {CoreDirectivesModule} from '../../../../@core/directives/directives';
 import {PaymentComponent} from './payment.component';
 import {NgbdateCustomParserFormatterYearMonth} from '../../../common/utils/ngbdate-custom-parser-formatter-year-month';
+import {Ng2FlatpickrModule} from 'ng2-flatpickr';
 
 const routes: Routes = [
     {
@@ -23,6 +24,10 @@ const routes: Routes = [
     {
         path: 'main',
         redirectTo: '/apps/payment/main'
+    },
+    {
+        path: 'taxes',
+        redirectTo: '/apps/payment/taxes'
     },
     {
         path: ':type',
@@ -49,7 +54,8 @@ const routes: Routes = [
         NgSelectModule,
         TranslateModule,
         CoreDirectivesModule,
-        NgbDropdownModule
+        NgbDropdownModule,
+        Ng2FlatpickrModule
     ],
     providers: [
         {

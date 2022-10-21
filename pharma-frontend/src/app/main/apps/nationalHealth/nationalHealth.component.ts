@@ -76,9 +76,10 @@ export class NationalHealthComponent implements OnInit {
         this.addNewRow(undefined, 0, '', '');
     }
 
-    inlineEditingUpdateValue(event, rowIndex) {
+    async inlineEditingUpdateValue(event, rowIndex) {
         if (this.numberFormControl[rowIndex].valid) {
             this.editingValue[rowIndex] = false;
+            let oldValue = this.rows[rowIndex].cost;
             this.rows[rowIndex].cost = event.target.value;
 
             let transactions = [];
@@ -106,31 +107,38 @@ export class NationalHealthComponent implements OnInit {
                         this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
                     });
                 }
-                /*
+
+
+                if (await this.previousMonthTransactionExists(this.rows[rowIndex].createdAt) == true) {
+                    this.updatePreviousMonthsIncome(this.rows[rowIndex].createdAt, oldValue, this.rows[rowIndex].cost);
+                } else {
+                    /*
                 * in case we have an income from EOPPY we create an extra transaction
                 * for income of previous months
                 * */
-                if (this.type === 'income') {
-                    let tr = new TransactionEntity();
-                    tr.userId = this.currentUser.id;
-                    tr.transactionType = TransactionType.getIndexOf(TransactionType.INCOME);
-                    tr.paymentType = PaymentType.getIndexOf(PaymentType.PREVIOUS_MONTHS_RECEIPTS);
-                    tr.vat = VAT.getIndexOf(VAT.NONE);
-                    tr.createdAt = DateUtils.queryFormattedDate(DateUtils.toDate(this.rows[rowIndex].createdAt));
-                    tr.cost = this.rows[rowIndex].cost;
-                    tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
-                    tr.comment = this.rows[rowIndex].comment;
-                    submitTransactions(
-                        {'transactions': [tr]},
-                        {
-                            'Accept': 'application/json',
-                            'Authorization': 'Bearer ' + this.currentUser.token
-                        }
-                    ).catch((_: any) => {
-                        this._authenticationService.logout();
-                        this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
-                    });
+                    if (this.type === 'income') {
+                        let tr = new TransactionEntity();
+                        tr.userId = this.currentUser.id;
+                        tr.transactionType = TransactionType.getIndexOf(TransactionType.INCOME);
+                        tr.paymentType = PaymentType.getIndexOf(PaymentType.PREVIOUS_MONTHS_RECEIPTS);
+                        tr.vat = VAT.getIndexOf(VAT.NONE);
+                        tr.createdAt = DateUtils.queryFormattedDate(DateUtils.toDate(this.rows[rowIndex].createdAt));
+                        tr.cost = this.rows[rowIndex].cost;
+                        tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
+                        tr.comment = this.rows[rowIndex].comment;
+                        submitTransactions(
+                            {'transactions': [tr]},
+                            {
+                                'Accept': 'application/json',
+                                'Authorization': 'Bearer ' + this.currentUser.token
+                            }
+                        ).catch((_: any) => {
+                            this._authenticationService.logout();
+                            this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
+                        });
+                    }
                 }
+
             } else {
                 if (this.dateFormControl[rowIndex].valid) {
                     transactions.push(tr);
@@ -147,7 +155,7 @@ export class NationalHealthComponent implements OnInit {
                    * the income of previous months for that day
                    * */
                     if (this.type === 'income') {
-                        this.updatePreviousMonthsIncome(this.rows[rowIndex].createdAt, this.rows[rowIndex].cost);
+                        this.updatePreviousMonthsIncome(this.rows[rowIndex].createdAt, oldValue, this.rows[rowIndex].cost);
                     }
                 }
             }
@@ -256,12 +264,12 @@ export class NationalHealthComponent implements OnInit {
         });
     }
 
-    private updatePreviousMonthsIncome(createdAt, cost) {
+    private updatePreviousMonthsIncome(createdAt, oldValue, cost) {
         getTransactionsByCriteria(
             {
                 'userId': this.currentUser.id.toString(),
                 'date': DateUtils.queryFormattedDate(DateUtils.toDate(createdAt)),
-                'range': 'monthly',
+                'range': 'daily',
                 'transactionType': [TransactionType.getIndexOf(TransactionType.INCOME)],
                 'paymentType': [PaymentType.getIndexOf(PaymentType.PREVIOUS_MONTHS_RECEIPTS)],
             },
@@ -270,23 +278,41 @@ export class NationalHealthComponent implements OnInit {
                 'Authorization': 'Bearer ' + this.currentUser.token
             }
         ).then((data) => {
-            if (data.length !== 0) {
-                for (let i = 0; i < data.length; i++) {
-                    const transaction = plainToInstance(TransactionEntity, data[i]);
-                    transaction.cost -= cost;
-                    console.log(transaction)
-                    updateTransactions(
-                        {'transactions': [transaction]},
-                        {
-                            'Accept': 'application/json',
-                            'Authorization': 'Bearer ' + this.currentUser.token
-                        }
-                    ).catch((_: any) => {
-                        this._authenticationService.logout();
-                        this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
-                    });
-                }
+            for (let i = 0; i < data.length; i++) {
+                const transaction = plainToInstance(TransactionEntity, data[i]);
+                transaction.cost = +transaction.cost -  +oldValue + +cost;
+                updateTransactions(
+                    {'transactions': [transaction]},
+                    {
+                        'Accept': 'application/json',
+                        'Authorization': 'Bearer ' + this.currentUser.token
+                    }
+                ).catch((_: any) => {
+                    this._authenticationService.logout();
+                    this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
+                });
             }
+        }).catch((_: any) => {
+            this._authenticationService.logout();
+            this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
+        });
+    }
+
+    private previousMonthTransactionExists(createdAt: string) : Promise<boolean | void>{
+        return getTransactionsByCriteria(
+            {
+                'userId': this.currentUser.id.toString(),
+                'date': DateUtils.queryFormattedDate(DateUtils.toDate(createdAt)),
+                'range': 'daily',
+                'transactionType': [TransactionType.getIndexOf(TransactionType.INCOME)],
+                'paymentType': [PaymentType.getIndexOf(PaymentType.PREVIOUS_MONTHS_RECEIPTS)],
+            },
+            {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + this.currentUser.token
+            }
+        ).then((data) => {
+            return data.length > 0;
         }).catch((_: any) => {
             this._authenticationService.logout();
             this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});

@@ -90,9 +90,8 @@ export class IncomeComponent implements OnInit {
             weekNumbers: true,
             locale: Greek,
             altInput: true,
-            mode: 'range',
             altInputClass: 'form-control flat-picker bg-transparent border-0 shadow-none flatpickr-input',
-            defaultDate: [this.dates[0].queryFormattedDate, this.dates[this.dates.length-1].queryFormattedDate],
+            defaultDate: new Date(),
             altFormat: 'j-n-Y',
             onClose: (selectedDates: any) => {
                 const [month, day, year] = selectedDates[0].toLocaleDateString().split('/');
@@ -282,6 +281,13 @@ export class IncomeComponent implements OnInit {
     searchData(paymentType: string, vat: string, date: string, data: any): TransactionEntity {
         for (let i = 0; i < data.length; i++) {
             const transaction = plainToInstance(TransactionEntity, data[i]);
+            if(transaction.cost == 2840 && date === '2022-10-19'){
+                console.log(paymentType,vat,date)
+                console.log(transaction)
+                console.log(vat)
+                console.log(PaymentType.getIndexOf(paymentType))
+                console.log(date)
+            }
             if (transaction.vat === VAT.getIndexOf(vat)
                 && transaction.paymentType === PaymentType.getIndexOf(paymentType)
                 && transaction.createdAt.toString().split('T')[0] === date) {

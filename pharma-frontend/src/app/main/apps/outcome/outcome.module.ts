@@ -16,6 +16,7 @@ import {CoreDirectivesModule} from '../../../../@core/directives/directives';
 import {OutcomeService} from './outcome.service';
 import {SpinnerModule} from '../../components/spinner/spinner.module';
 import {FileUploadModule} from 'ng2-file-upload';
+import {Ng2FlatpickrModule} from 'ng2-flatpickr';
 
 const routes: Routes = [
     {
@@ -58,6 +59,7 @@ const routes: Routes = [
         SpinnerModule,
         FileUploadModule,
         NgbTooltipModule,
+        Ng2FlatpickrModule,
     ],
     providers: [
         OutcomeService

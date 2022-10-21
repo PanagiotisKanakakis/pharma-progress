@@ -32,6 +32,7 @@ export const locale = {
         EXPENSES: 'Αγορές',
         MAIN_SUPPLIER: 'Κύριος Προμηθευτής',
         OTHER_SUPPLIER: 'Άλλοι προμηθευτές',
+        TAXES: 'Πληρωμή φόρου',
         EXPENSES_CASH: 'Μετρητά',
         EXPENSES_ON_ACCOUNT_MAIN_COMPANY: 'Επί πιστώσει',
         EXPENSES_ON_ACCOUNT_OTHER_COMPANY: 'Επί πιστώσει',

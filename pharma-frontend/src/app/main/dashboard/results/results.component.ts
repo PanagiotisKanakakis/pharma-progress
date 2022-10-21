@@ -441,4 +441,8 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     parseDate(createdAt: any) {
         return DateUtils.formatDbDate(createdAt);
     }
+
+    totalOutcome() {
+        return this.totalMainSupplierOutcome() + this.totalOtherSupplierOutcome()
+    }
 }

@@ -25,6 +25,7 @@ import {TransactionCell} from '../../../common/utils/interfaces/transaction-cell
 import {SupplierType} from '../../../api/transaction/enums/supplier-type.enum';
 import {AuthenticationService} from '../../../auth/service';
 import {FormControl, Validators} from '@angular/forms';
+import {Greek} from 'flatpickr/dist/l10n/gr';
 
 @Component({
     selector: 'outocome-datatable',
@@ -55,6 +56,7 @@ export class OutcomeComponent implements OnInit {
     info: any;
     public cells: TransactionCell[][] = [];
     public numberFormControl: any[][] = [];
+    DateRangeOptions: any;
 
     constructor(private _datatablesService: OutcomeService,
                 private _coreTranslationService: CoreTranslationService,
@@ -97,6 +99,24 @@ export class OutcomeComponent implements OnInit {
             this.initNumberFormControl();
             this.initEmptyCells();
             this.initCellValues();
+            // ng2-flatpickr options
+            this.DateRangeOptions = {
+                weekNumbers: true,
+                locale: Greek,
+                altInput: true,
+                altInputClass: 'form-control flat-picker bg-transparent border-0 shadow-none flatpickr-input',
+                defaultDate: new Date(),
+                altFormat: 'j-n-Y',
+                onClose: (selectedDates: any) => {
+                    const [month, day, year] = selectedDates[0].toLocaleDateString().split('/');
+                    this.dates = DateUtils.initSpecificWeek(new NgbDate(+year,+month,+day));
+                    this.initEmptyCells();
+                    this.initCellValues();
+                },
+            };
+
+
+
         });
     }
 

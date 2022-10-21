@@ -255,7 +255,7 @@ export class ChartComponent implements OnInit {
         datasets: [
             {
                 data: this.getGrossProfitWithoutVat(),
-                label: 'Μεικτά κέρδη',
+                label: 'Μικτά κέρδη',
                 borderColor: 'rgb(255, 99, 132)',
                 lineTension: 0.5,
                 pointStyle: 'circle',

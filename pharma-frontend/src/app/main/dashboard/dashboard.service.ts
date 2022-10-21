@@ -156,7 +156,7 @@ export class DashboardService {
     }
 
     totalIncomeOnAccount( payload , date ) {
-        return payload[date].totalOnAccount;
+        return payload[date].totalOnAccount - payload[date].totalPreviousMonths;
     }
 
     totalExchanges( payload , date ) {
@@ -247,11 +247,11 @@ export class DashboardService {
     }
 
     totalPreviousMonthsPaymentsToOtherSuppliers( payload , date ) {
-        return payload[date].suppliers.otherSuppliers.payment[0];
+        return payload[date].suppliers.otherSuppliers.payment[0] + payload[date].suppliers.otherSuppliers.payment[1];
     }
 
     totalPreviousMonthsPaymentsToMainSupplier( payload , date ) {
-        return payload[date].suppliers.mainSupplier.payment[0];
+        return payload[date].suppliers.mainSupplier.payment[0] + payload[date].suppliers.mainSupplier.payment[1];
     }
 
     totalMonthIncome( payload , date ) {
@@ -263,7 +263,7 @@ export class DashboardService {
     }
 
     totalCashAvailable( payload , date ) {
-        return this.totalOpeningBalance( payload , date ) + this.totalMonthIncome( payload , date );
+        return this.totalOpeningBalance( payload , date ) + this.totalMonthIncome( payload , date ) + this.totalEOPPYIncludingVat(payload,date);
     }
 
     totalClosingBalance( payload , date ) {

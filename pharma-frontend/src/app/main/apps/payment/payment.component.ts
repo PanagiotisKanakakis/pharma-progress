@@ -24,6 +24,7 @@ import {FormControl, Validators} from '@angular/forms';
 import {DatePeriod} from '../../../common/utils/interfaces/date-period.interface';
 import {SupplierType} from '../../../api/transaction/enums/supplier-type.enum';
 import {AuthenticationService} from '../../../auth/service';
+import {Greek} from 'flatpickr/dist/l10n/gr';
 
 @Component({
     selector: 'payment-datatable',
@@ -45,9 +46,10 @@ export class PaymentComponent implements OnInit {
     public dateFormControl = [];
     public period: DatePeriod;
     public contentHeader: object;
-    private type = '';
+    type = '';
     public regexPattern;
     public numberFormControl: any[] = [];
+    DateRangeOptions: any;
 
 
     constructor(private _coreTranslationService: CoreTranslationService,
@@ -62,12 +64,28 @@ export class PaymentComponent implements OnInit {
     ngOnInit() {
         this.route.paramMap.subscribe(params => {
             this.type = params.get('type');
+            console.log(this.type)
             this.rows = [];
             this.regexPattern = /^(0[1-9]|[12][0-9]|3[01])[\\-](0[1-9]|1[012])[\\-]\d{4}$/;
             this.dateFormControl[0] = new FormControl('',
                 [Validators.required, Validators.pattern(this.regexPattern)]);
             this.basicDPdata = DateUtils.getTodayAsNgbDateStruct();
             this.period = DateUtils.NgbDateToMonthPeriod(new NgbDate(this.basicDPdata.year, this.basicDPdata.month, this.basicDPdata.day));
+            // ng2-flatpickr options
+            this.DateRangeOptions = {
+                weekNumbers: true,
+                locale: Greek,
+                altInput: true,
+                altInputClass: 'form-control flat-picker bg-transparent border-0 shadow-none flatpickr-input',
+                defaultDate: new Date(),
+                dateFormat: 'm.y',
+                altFormat: 'F Y',
+                onClose: (selectedDates: any) => {
+                    const [month, day, year] = selectedDates[0].toLocaleDateString().split('/');
+                    this.period = DateUtils.NgbDateToMonthPeriod(new NgbDate(+year,+month,+day));
+                    this.getTransactions();
+                },
+            };
             this.getTransactions();
         });
 
@@ -98,9 +116,13 @@ export class PaymentComponent implements OnInit {
                 'userId': this.currentUser.id.toString(),
                 'date': this.period.dateFrom,
                 'range': 'monthly',
-                'transactionType': [TransactionType.getIndexOf(TransactionType.PAYMENT)],
+                'transactionType': [TransactionType.getIndexOf(this.getTransactionType())],
                 'supplierType': this.getSupplierType(),
-                'paymentType': [PaymentType.getIndexOf(PaymentType.ON_ACCOUNT)]
+                'paymentType': [
+                    PaymentType.getIndexOf(PaymentType.BANK),
+                    PaymentType.getIndexOf(PaymentType.CASH),
+                    PaymentType.getIndexOf(PaymentType.ON_ACCOUNT)
+                ]
             },
             {
                 'Accept': 'application/json',
@@ -112,8 +134,7 @@ export class PaymentComponent implements OnInit {
             if (data.length !== 0) {
                 for (let i = 0; i < data.length; i++) {
                     const transaction = plainToInstance(TransactionEntity, data[i]);
-                    console.log(SupplierType.valueOf(transaction.supplierType))
-                    this.addNewRow(transaction.id, transaction.cost, DateUtils.formatDbDate(transaction.createdAt));
+                    this.addNewRow(transaction.id, transaction.cost, DateUtils.formatDbDate(transaction.createdAt), transaction.paymentType);
                     this.rows[i].createdAt = DateUtils.formatDbDate(transaction.createdAt);
                 }
                 this.summaryColumn();
@@ -124,13 +145,8 @@ export class PaymentComponent implements OnInit {
         });
     }
 
-    onDateSelect(date: NgbDate) {
-        this.period = DateUtils.NgbDateToMonthPeriod(date);
-        this.getTransactions();
-    }
-
     initTransaction() {
-        this.addNewRow(undefined, 0, undefined);
+        this.addNewRow(undefined, 0, undefined, undefined);
     }
 
     parseDate(event, rowIndex: any) {
@@ -144,7 +160,7 @@ export class PaymentComponent implements OnInit {
     }
 
     onOptionsSelected(value: string, rowIndex: number) {
-        this.rows[rowIndex].transactionType = value;
+        this.rows[rowIndex].paymentType = value;
     }
 
     removeRow(rowIndex: any) {
@@ -174,7 +190,10 @@ export class PaymentComponent implements OnInit {
         return value;
     }
 
-    addNewRow(id: number | undefined, cost: number, date: string | undefined) {
+    addNewRow(id: number | undefined,
+              cost: number,
+              date: string | undefined,
+              paymentType: number | undefined) {
         this.dateFormControl[this.rows.length] = new FormControl('',
             [Validators.required, Validators.pattern(this.regexPattern)]);
         this.numberFormControl[this.rows.length] = new FormControl('',
@@ -185,41 +204,50 @@ export class PaymentComponent implements OnInit {
             date = DateUtils.formatDate(new Date());
         }
         this.rows = [...this.rows, {
+            category: this.getPaymentCategory(),
             id: id,
-            transactionType: TransactionType.PAYMENT,
+            transactionType: this.getTransactionType(),
             supplierType: this.getSupplierName(),
             cost: cost,
             createdAt: date,
             comment: '',
             vat: VAT.NONE,
-            paymentType: PaymentType.ON_ACCOUNT,
+            paymentType: PaymentType.valueOf(paymentType),
         }];
         console.log(this.rows);
     }
 
     getSupplierType() {
-        let supplierType = SupplierType.getIndexOf(SupplierType.OTHER);
+        let supplierType = SupplierType.getIndexOf(SupplierType.NONE);
         if (this.type === 'main') {
             supplierType = SupplierType.getIndexOf(SupplierType.MAIN);
+        }else if(this.type == 'other'){
+            supplierType = SupplierType.getIndexOf(SupplierType.OTHER);
         }
         return supplierType;
     }
 
     getSupplierName() {
-        let supplierType = SupplierType.OTHER;
+        let supplierType = SupplierType.NONE;
         if (this.type === 'main') {
             supplierType = SupplierType.MAIN;
+        }else if(this.type === 'other'){
+            supplierType = SupplierType.OTHER;
         }
         return supplierType;
     }
 
     submitTransaction(row, rowIndex) {
-        console.log(this.dateFormControl[rowIndex].valid);
         if (this.dateFormControl[rowIndex].valid) {
             const tr = new TransactionEntity();
             tr.userId = this.currentUser.id;
             tr.transactionType = TransactionType.getIndexOf(row.transactionType);
-            tr.paymentType = PaymentType.getIndexOf(row.paymentType);
+
+            if(this.type == 'taxes'){
+                tr.paymentType = PaymentType.getIndexOf(PaymentType.CASH);
+            }else{
+                tr.paymentType = PaymentType.getIndexOf(row.paymentType);
+            }
             tr.vat = VAT.getIndexOf(row.vat);
             tr.createdAt = DateUtils.queryFormattedDate(DateUtils.toDate(row.createdAt));
             tr.cost = row.cost;
@@ -234,7 +262,7 @@ export class PaymentComponent implements OnInit {
                 }
             )
                 .then(r => row.id = r[0].id)
-                .catch((error: any) => {
+                .catch((_: any) => {
                     this._authenticationService.logout();
                     this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
                 });
@@ -269,5 +297,21 @@ export class PaymentComponent implements OnInit {
                 this._authenticationService.logout();
                 this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
             });
+    }
+
+    private getTransactionType() {
+        if (this.type === 'taxes'){
+            return TransactionType.TAXES;
+        }
+        return TransactionType.PAYMENT;
+    }
+
+    private getPaymentCategory() {
+        if (this.type === 'main') {
+            return SupplierType.MAIN;
+        }else if(this.type === 'other'){
+            return SupplierType.OTHER;
+        }
+        return TransactionType.TAXES;
     }
 }

@@ -29,6 +29,7 @@ export const locale = {
       DESCRIPTION: 'Σχολιο',
       ACTION: 'Ενεργεια',
       OPTION_DEFAULT_SELECT: 'Επιλογη κατηγοριας',
+      OPTION_DEFAULT_PAYMENT_SELECT: 'Επιλογή τρ. πληρωμής',
       ACTIONS: 'Ενεργειες',
       SUMMARY: 'Σύνολο',
       MAIN_COMPANY: 'Κ.Ε.',
@@ -36,7 +37,8 @@ export const locale = {
       DATE_END: 'Ημ. ληξης',
       COMPANY: 'Εταιρεια',
       PRESCRIPT: 'Επιταγη',
-      STATUS: 'Κατασταση'
+      STATUS: 'Κατασταση',
+      PAYMENT_TYPE: 'Τρόπος πληρωμής'
     },
     INCOME: 'Πωλήσεις',
     FORM: {
