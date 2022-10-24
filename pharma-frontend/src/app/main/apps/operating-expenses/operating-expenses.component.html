@@ -111,7 +111,7 @@
                                                         <div title="Double click to edit" class="text-center"
                                                              (click)="editingValue[rowIndex] = true"
                                                              *ngIf="!editingValue[rowIndex]">
-                                                            {{row.cost}}€
+                                                            {{row.cost | number: '1.0-2':'gr'}}€
                                                         </div>
                                                         <input autofocus
                                                                class="form-control form-control-sm"
@@ -150,7 +150,7 @@
                                                 <tfoot>
                                                 <tr>
                                                     <td>
-                                                        Σύνολο:  {{ summaryColumn() }}€
+                                                        Σύνολο:  {{ summaryColumn() | number: '1.0-2':'gr' }}€
                                                     </td>
                                                 </tr>
                                                 </tfoot>

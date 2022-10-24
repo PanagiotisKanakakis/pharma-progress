@@ -53,7 +53,7 @@
                                                             <div title="Double click to edit" class="text-center"
                                                                  (click)="editingValue[rowIndex + '-' + j] = true"
                                                                  *ngIf="!editingValue[rowIndex + '-' + j]">
-                                                                {{cells[rowIndex][j].cost}}€
+                                                                {{cells[rowIndex][j].cost | number: '1.0-2':'gr'}}€
                                                             </div>
                                                             <input autofocus
                                                                    class="form-control form-control-sm"
@@ -86,7 +86,7 @@
                                                 <ng-container *ngFor="let date of dates;let j=index;">
                                                     <td>
                                                         <div class="text-center">
-                                                            {{ summaryFooterColumn(j) }}€
+                                                            {{ summaryFooterColumn(j) | number: '1.0-2':'gr'}}€
                                                         </div>
                                                     </td>
                                                 </ng-container>

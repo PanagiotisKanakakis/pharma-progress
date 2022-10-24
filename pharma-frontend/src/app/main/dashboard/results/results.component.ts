@@ -291,7 +291,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         return this.dashboardService.totalSalesWithNoVat(this.statistics, this.period.dateFrom);
     }
 
-    totalExpenses() {
+    totalExpenses(): number {
         return this.dashboardService.totalExpenses(this.statistics, this.period.dateFrom);
     }
 
@@ -422,8 +422,12 @@ export class ResultsComponent implements OnInit, AfterViewInit {
                 this.period.dateFrom = year + '-' + +month + '-' + day;
                 this.statistics = plainToInstance(StatisticsDto, response);
                 Object.keys(this.statistics[this.period.dateFrom].operatingExpenses).forEach((key) => {
-                    this.statistics[this.period.dateFrom].operatingExpenses[key].forEach((transaction) => {
-                        this.operatingExpensesData.push(transaction)
+                    const result = this.statistics[this.period.dateFrom].operatingExpenses[key].reduce((accumulator, transaction) => {
+                        return accumulator + +transaction.cost;
+                    }, 0);
+                    this.operatingExpensesData.push({
+                        transactionType: +key,
+                        cost: result
                     })
                 });
                 this.isLoaded = true;
@@ -434,7 +438,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
             });
     }
 
-    getNameOfOperatingExpense(transactionType: any) {
+    getNameOfOperatingExpense(transactionType: number) {
         return TransactionType.valueOf(transactionType);
     }
 

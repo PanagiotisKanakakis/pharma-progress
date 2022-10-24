@@ -3,7 +3,10 @@ import {getSalesStatisticsByCriteria, TransactionType, VAT} from '../../api/tran
 import {BehaviorSubject, Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
+import {registerLocaleData} from '@angular/common';
+import localeGr from '@angular/common/locales/el';
 
+registerLocaleData(localeGr, 'gr');
 @Injectable()
 export class DashboardService {
     public apiData: any;
@@ -91,8 +94,8 @@ export class DashboardService {
             + payload[date].totalEOPPY / 1.06;
     }
 
-    totalExpenses( payload , date ) {
-        let totalExpenses = 0;
+    totalExpenses( payload , date ): number {
+        let totalExpenses: number = 0;
         Object.keys(payload[date].outcomePerVat).forEach(key => {
             totalExpenses += payload[date].outcomePerVat[key];
         });

@@ -51,13 +51,13 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalExpenses().toLocaleString('el-GR')}}
+                                                                <span class="font-weight-bolder mb-25">{{totalExpenses() | number: '1.0-2':'gr'}}
                                                                     €</span>
                                                         </div>
                                                     </td>
                                                     <td class="text-nowrap">
                                                         <div class="d-flex flex-column">
-                                                                <span class="font-weight-bolder mb-25">{{totalExpensesWithNoVat().toLocaleString('el-GR')}}
+                                                                <span class="font-weight-bolder mb-25">{{totalExpensesWithNoVat()| number: '1.0-2':'gr'}}
                                                                     €</span>
                                                         </div>
                                                     </td>
@@ -84,7 +84,7 @@
                                                     </td>
                                                     <td class="text-nowrap">
                                                         <div class="d-flex flex-column">
-                                                            <span class="font-weight-bolder mb-25">{{totalInventoryChange().toLocaleString('el-GR')}}
+                                                            <span class="font-weight-bolder mb-25">{{totalInventoryChange()| number: '1.0-2':'gr'}}
                                                             </span>
                                                         </div>
                                                     </td>
@@ -111,7 +111,7 @@
                                                     </td>
                                                     <td class="text-nowrap">
                                                         <div class="d-flex flex-column">
-                                                            <span class="font-weight-bolder mb-25">{{totalCostOfSoldedItems().toLocaleString('el-GR')}}
+                                                            <span class="font-weight-bolder mb-25">{{totalCostOfSoldedItems()| number: '1.0-2':'gr'}}
                                                                 €</span>
                                                         </div>
                                                     </td>
@@ -132,13 +132,13 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalSales().toLocaleString('el-GR')}}
+                                                                <span class="font-weight-bolder mb-25">{{totalSales()| number: '1.0-2':'gr'}}
                                                                     €</span>
                                                         </div>
                                                     </td>
                                                     <td class="text-nowrap">
                                                         <div class="d-flex flex-column">
-                                                                <span class="font-weight-bolder mb-25">{{totalSalesWithNoVat().toLocaleString('el-GR')}}
+                                                                <span class="font-weight-bolder mb-25">{{totalSalesWithNoVat()| number: '1.0-2':'gr'}}
                                                                     €</span>
                                                         </div>
                                                     </td>
@@ -164,7 +164,7 @@
                                                     </td>
                                                     <td class="text-nowrap">
                                                         <div class="d-flex flex-column">
-                                                            <span class="font-weight-bolder mb-25">{{totalGrossProfitWithoutVat().toLocaleString('el-GR')}}
+                                                            <span class="font-weight-bolder mb-25">{{totalGrossProfitWithoutVat()| number: '1.0-2':'gr'}}
                                                                 €</span>
                                                         </div>
                                                     </td>
@@ -192,7 +192,7 @@
                                     </div>
                                     <div class="media-body my-auto">
                                         <h2 class="font-weight-bolder mb-0"
-                                            style="color: #1e1e1e">{{calculateMarkUp().toLocaleString('el-GR')}}%</h2>
+                                            style="color: #1e1e1e">{{calculateMarkUp()| number: '1.0-2':'gr'}}%</h2>
                                         <p class="font-weight-bolder mb-0">Mark up (%)</p>
                                     </div>
                                 </div>
@@ -206,7 +206,7 @@
                                     </div>
                                     <div class="media-body my-auto">
                                         <h2 class="font-weight-bolder mb-0"
-                                            style="color: #1e1e1e">{{calculateGrossProfitMargin().toLocaleString('el-GR')}}
+                                            style="color: #1e1e1e">{{calculateGrossProfitMargin()| number: '1.0-2':'gr'}}
                                             %</h2>
                                         <p class="font-weight-bolder mb-0">Μικτό περιθώριο κέρδους</p>
                                     </div>
@@ -226,7 +226,7 @@
                                     </div>
                                     <div class="media-body my-auto">
                                         <h2 class="font-weight-bolder mb-0"
-                                            style="color: #1e1e1e">{{calculateNetProfitMargin().toLocaleString('el-GR')}}
+                                            style="color: #1e1e1e">{{calculateNetProfitMargin()| number: '1.0-2':'gr'}}
                                             %</h2>
                                         <p class="font-weight-bolder mb-0">Καθαρό περιθώριο κέρδους</p>
                                     </div>
@@ -324,7 +324,7 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalCash().toLocaleString('el-GR')}}
+                                                                <span class="font-weight-bolder mb-25">{{totalCash()| number: '1.0-2':'gr'}}
                                                                     €</span>
                                                         </div>
                                                     </td>
@@ -347,7 +347,7 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalPos().toLocaleString('el-GR')}}
+                                                                <span class="font-weight-bolder mb-25">{{totalPos()| number: '1.0-2':'gr'}}
                                                                     €</span>
                                                         </div>
                                                     </td>
@@ -370,7 +370,7 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalEOPPYIncludingVat().toLocaleString('el-GR')}}
+                                                                <span class="font-weight-bolder mb-25">{{totalEOPPYIncludingVat()| number: '1.0-2':'gr'}}
                                                                     €</span>
                                                         </div>
                                                     </td>
@@ -394,7 +394,8 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                                 <span class="font-weight-bolder mb-25">
-                                                                    {{totalIncomeOnAccount().toLocaleString('el-GR')}}€</span>
+                                                                    {{totalIncomeOnAccount()| number: '1.0-2':'gr'}}
+                                                                    €</span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -419,10 +420,10 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                                 <span class="font-weight-bolder mb-25">
-                                                                    {{ ( totalCash() +
-                                                                         totalPos() +
-                                                                         totalEOPPYIncludingVat() +
-                                                                         totalIncomeOnAccount()).toLocaleString('el-GR')
+                                                                    {{ (totalCash() +
+                                                                    totalPos() +
+                                                                    totalEOPPYIncludingVat() +
+                                                                    totalIncomeOnAccount())| number: '1.0-2':'gr'
                                                                     }}€
                                                                 </span>
                                                         </div>
@@ -477,7 +478,7 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalMainSupplierOutcome().toLocaleString('el-GR')}}
+                                                                <span class="font-weight-bolder mb-25">{{totalMainSupplierOutcome()| number: '1.0-2':'gr'}}
                                                                     €</span>
                                                         </div>
                                                     </td>
@@ -499,7 +500,7 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalOtherSupplierOutcome().toLocaleString('el-GR')}}
+                                                                <span class="font-weight-bolder mb-25">{{totalOtherSupplierOutcome()| number: '1.0-2':'gr'}}
                                                                     €</span>
                                                         </div>
                                                     </td>
@@ -525,7 +526,7 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                                 <span class="font-weight-bolder mb-25">
-                                                                    {{totalOutcome().toLocaleString('el-GR')}}€
+                                                                    {{totalOutcome()| number: '1.0-2':'gr'}}€
                                                                 </span>
                                                         </div>
                                                     </td>
@@ -543,7 +544,7 @@
         </div>
 
         <div class="row match-height">
-            <div class="col-xl-9 col-md-6 col-12">
+            <div class="col-xl-6 col-md-6 col-12">
                 <div class="card card-statistics">
                     <div class="card-header font-weight-bolder mr-1">
                         <h4 class="card-title font-weight-bolder" style="color: #1e1e1e">Λειτουργικά Έξοδα</h4>
@@ -561,13 +562,7 @@
                                                         {{'TABLE.CATEGORY' | translate}}
                                                     </th>
                                                     <th style="background-color: #3A697B !important; color: white!important;text-align: center">
-                                                        {{'TABLE.DATE' | translate}}
-                                                    </th>
-                                                    <th style="background-color: #3A697B !important; color: white!important;text-align: center">
                                                         {{'TABLE.VALUE' | translate}}
-                                                    </th>
-                                                    <th style="background-color: #3A697B !important; color: white!important;text-align: center">
-                                                        {{'TABLE.DESCRIPTION' | translate}}
                                                     </th>
                                                 </tr>
                                                 </thead>
@@ -579,24 +574,9 @@
                                                             {{this.getNameOfOperatingExpense(row.transactionType)}}
                                                         </div>
                                                     </td>
-                                                    <td>
-                                                        <div class="font-weight-bolder mr-1" style="text-align: center">
-                                                            {{this.parseDate(row.createdAt)}}
-                                                        </div>
-                                                    </td>
                                                     <td class="text-nowrap">
                                                         <div class="font-weight-bolder mr-1" style="text-align: center">
-                                                            {{row.cost}} €
-                                                        </div>
-                                                    </td>
-                                                    <td class="text-nowrap">
-                                                        <div *ngIf="row.comment == ''" class="font-weight-bolder mr-1"
-                                                             style="text-align: center">
-                                                            -
-                                                        </div>
-                                                        <div *ngIf="row.comment !== ''" class="font-weight-bolder mr-1"
-                                                             style="text-align: center">
-                                                            {{row.comment}}
+                                                            {{row.cost | number: '1.0-2':'gr'}} €
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -616,7 +596,7 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                                 <span class="font-weight-bolder mb-25">
-                                                                    {{totalOperatingExpensesIncludingVat().toLocaleString('el-GR')}}
+                                                                    {{totalOperatingExpensesIncludingVat()| number: '1.0-2':'gr'}}
                                                                     €
                                                                 </span>
                                                         </div>
@@ -632,7 +612,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-3 col-6">
+            <div class="col-xl-6 col-md-3 col-6">
                 <div class="row match-height">
                     <div class="col-xl-12 col-md-3 col-6">
                         <div class="card">
@@ -644,7 +624,7 @@
                                         </div>
                                     </div>
                                     <h4 class="font-weight-bolder mt-1"
-                                        style="color: #1e1e1e">{{totalOperatingExpensesIncludingVat().toLocaleString('el-GR')}}
+                                        style="color: #1e1e1e">{{totalOperatingExpensesIncludingVat()| number: '1.0-2':'gr'}}
                                         €</h4>
                                     <h5 class="font-weight-bolder" style="color: #1e1e1e">Σύνολο Λειτουργικών
                                         Εξόδων</h5>
@@ -684,7 +664,7 @@
                                         </div>
                                     </div>
                                     <h4 class="font-weight-bolder mt-1"
-                                        style="color: #1e1e1e">{{totalOperatingExpensesValue().toLocaleString('el-GR')}}
+                                        style="color: #1e1e1e">{{totalOperatingExpensesValue()| number: '1.0-2':'gr'}}
                                         €</h4>
                                     <h5 class="font-weight-bolder" style="color: #1e1e1e">Σύνολο Λειτουργικών Εξόδων
                                         (Χωρίς ΦΠΑ)</h5>
@@ -756,8 +736,9 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalGrossProfitWithoutVat().toLocaleString('el-GR')}}
-                                                                    €</span>
+                                                            <span class="font-weight-bolder mb-25">
+                                                                {{totalGrossProfitWithoutVat()| number: '1.0-2':'gr'}}€
+                                                            </span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -771,15 +752,17 @@
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div class="font-weight-bolder ml-1">Λειτουργικά Έξοδα
+                                                                <div class="font-weight-bolder ml-1">
+                                                                    Λειτουργικά Έξοδα
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalOperatingExpensesValue().toLocaleString('el-GR')}}
-                                                                    €</span>
+                                                            <span class="font-weight-bolder mb-25">
+                                                                {{totalOperatingExpensesValue()| number: '1.0-2':'gr'}}€
+                                                            </span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -799,8 +782,9 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{calculateRebate().toLocaleString('el-GR')}}
-                                                                    €</span>
+                                                            <span class="font-weight-bolder mb-25">
+                                                                {{calculateRebate()| number: '1.0-2':'gr'}}€
+                                                            </span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -822,8 +806,9 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalNetProfitWithoutTaxes().toLocaleString('el-GR')}}
-                                                                    €</span>
+                                                            <span class="font-weight-bolder mb-25">
+                                                                {{totalNetProfitWithoutTaxes()| number: '1.0-2':'gr'}}€
+                                                            </span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -837,15 +822,17 @@
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div class="font-weight-bolder ml-1">Φόρος
+                                                                <div class="font-weight-bolder ml-1">
+                                                                    Φόρος
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalTaxes().toLocaleString('el-GR')}}
-                                                                    €</span>
+                                                            <span class="font-weight-bolder mb-25">
+                                                                {{totalTaxes()| number: '1.0-2':'gr'}}€
+                                                            </span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -869,8 +856,9 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalNetProfitWithTaxes().toLocaleString('el-GR')}}
-                                                                    €</span>
+                                                            <span class="font-weight-bolder mb-25">
+                                                                {{totalNetProfitWithTaxes()| number: '1.0-2':'gr'}}€
+                                                            </span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -896,7 +884,7 @@
                                         </div>
                                     </div>
                                     <h4 class="font-weight-bolder mt-1"
-                                        style="color: #1e1e1e">{{consumablesValue().toLocaleString('el-GR')}}€</h4>
+                                        style="color: #1e1e1e">{{consumablesValue()| number: '1.0-2':'gr'}}€</h4>
                                     <h5 class="font-weight-bolder" style="color: #1e1e1e">Αναλώσιμα</h5>
                                 </div>
                                 <!-- Apexchart component-->
@@ -934,7 +922,7 @@
                                         </div>
                                     </div>
                                     <h4 class="font-weight-bolder mt-1"
-                                        style="color: #1e1e1e">{{totalEOPPYAndConsumablesWithoutVat().toLocaleString('el-GR')}}
+                                        style="color: #1e1e1e">{{totalEOPPYAndConsumablesWithoutVat()| number: '1.0-2':'gr'}}
                                         €</h4>
                                     <h5 class="font-weight-bolder" style="color: #1e1e1e">ΕΟΠΠΥ & Αναλωσιμα (χωρις
                                         ΦΠΑ)</h5>
@@ -973,7 +961,7 @@
                                     </div>
                                 </div>
                                 <h4 class="font-weight-bolder mt-1"
-                                    style="color: #1e1e1e">{{totalPersonalWithdrawals().toLocaleString('el-GR')}}€</h4>
+                                    style="color: #1e1e1e">{{totalPersonalWithdrawals()| number: '1.0-2':'gr'}}€</h4>
                                 <h5 class="font-weight-bolder" style="color: #1e1e1e">Προσωπικές Αναλήψεις</h5>
                             </div>
                             <div id="orderChartoptions" #personalWitdrawalsRef>
@@ -1042,8 +1030,9 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalOpeningBalance().toLocaleString('el-GR')}}
-                                                                    €</span>
+                                                            <span class="font-weight-bolder mb-25">
+                                                                {{totalOpeningBalance()| number: '1.0-2':'gr'}}€
+                                                            </span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -1057,7 +1046,8 @@
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div class="font-weight-bolder ml-1">ΕΟΠΠΥ
+                                                                <div class="font-weight-bolder ml-1">
+                                                                    ΕΟΠΠΥ
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1065,7 +1055,7 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <span class="font-weight-bolder mb-25">
-                                                                {{totalEOPPYIncludingVat().toLocaleString('el-GR')}}€
+                                                                {{totalEOPPYIncludingVat()| number: '1.0-2':'gr'}}€
                                                             </span>
                                                         </div>
                                                     </td>
@@ -1089,7 +1079,7 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <span class="font-weight-bolder mb-25">
-                                                                {{totalMonthIncome().toLocaleString('el-GR')}}€
+                                                                {{totalMonthIncome()| number: '1.0-2':'gr'}}€
                                                             </span>
                                                         </div>
                                                     </td>
@@ -1114,7 +1104,7 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <span class="font-weight-bolder mb-25">
-                                                                {{totalCashAvailable().toLocaleString('el-GR')}}€
+                                                                {{totalCashAvailable()| number: '1.0-2':'gr'}}€
                                                             </span>
                                                         </div>
                                                     </td>
@@ -1139,7 +1129,8 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <span class="font-weight-bolder mb-25">
-                                                                {{totalPreviousMonthsPaymentsToOtherSuppliers().toLocaleString('el-GR')}}€
+                                                                {{totalPreviousMonthsPaymentsToOtherSuppliers()*(-1)| number: '1.0-2':'gr'}}
+                                                                €
                                                             </span>
                                                         </div>
                                                     </td>
@@ -1163,7 +1154,8 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <span class="font-weight-bolder mb-25">
-                                                                {{totalPreviousMonthsPaymentsToMainSupplier().toLocaleString('el-GR')}}€
+                                                                {{totalPreviousMonthsPaymentsToMainSupplier()*(-1)| number: '1.0-2':'gr'}}
+                                                                €
                                                             </span>
                                                         </div>
                                                     </td>
@@ -1187,7 +1179,7 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <span class="font-weight-bolder mb-25">
-                                                                {{totalTaxes().toLocaleString('el-GR')}}€
+                                                                {{totalTaxes()*(-1)| number: '1.0-2':'gr'}}€
                                                             </span>
                                                         </div>
                                                     </td>
@@ -1211,7 +1203,8 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <span class="font-weight-bolder mb-25">
-                                                                {{totalOtherSupplierOutcomeCash().toLocaleString('el-GR')}}€
+                                                                {{totalOtherSupplierOutcomeCash()*(-1)| number: '1.0-2':'gr'}}
+                                                                €
                                                             </span>
                                                         </div>
                                                     </td>
@@ -1235,7 +1228,8 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <span class="font-weight-bolder mb-25">
-                                                                {{totalOperatingExpensesIncludingVat().toLocaleString('el-GR')}}€
+                                                                {{totalOperatingExpensesIncludingVat()*(-1)| number: '1.0-2':'gr'}}
+                                                                €
                                                             </span>
                                                         </div>
                                                     </td>
@@ -1259,7 +1253,7 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <span class="font-weight-bolder mb-25">
-                                                                {{totalPersonalWithdrawals().toLocaleString('el-GR')}}€
+                                                                {{totalPersonalWithdrawals()*(-1)| number: '1.0-2':'gr'}}€
                                                             </span>
                                                         </div>
                                                     </td>
@@ -1285,7 +1279,7 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <span class="font-weight-bolder mb-25">
-                                                                {{totalClosingBalance().toLocaleString('el-GR')}}€
+                                                                {{totalClosingBalance()| number: '1.0-2':'gr'}}€
                                                             </span>
                                                         </div>
                                                     </td>

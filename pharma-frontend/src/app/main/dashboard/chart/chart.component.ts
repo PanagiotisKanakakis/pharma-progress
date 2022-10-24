@@ -42,6 +42,22 @@ export class ChartComponent implements OnInit {
     private grid_line_color = 'rgba(200, 200, 200, 0.2)'; // RGBA color helps in dark layout
     tableLabels = [];
     operatingExpenses = [];
+    netProfitMarginList: any[] = [];
+    netProfitLossesBeforeTaxesList: any[] = [];
+    salesWithoutVatList: any[] = [];
+    sales: any[] = [];
+    outcome: any[] = [];
+    eoppy: any[] = [];
+    cashAndPos: any[] = [];
+    grossProfitWithoutVat: number[] = [];
+    operatingExpensesValueList: any[] = [];
+    rebateList: any[] = [];
+    markUpList: any[] = [];
+    isLoaded: any;
+    costOfSoldedItems: any = [];
+    markUpAvg: any = [];
+    grossProfitOperatingExpensesRebateTableSummaryColumn: any = [];
+    grossProfitOperatingExpensesRebateTableAvgColumn: any = [];
 
     /**
      * Constructor
@@ -230,7 +246,7 @@ export class ChartComponent implements OnInit {
                 pointShadowColor: this.tooltipShadow
             },
             {
-                data: [80, 99, 82, 90, 133, 115, 74, 75, 130, 155, 125, 90, 140, 130, 180],
+                data: this.getCashAndPos(),
                 label: 'Ρευστά διαθέσιμα',
                 borderColor: 'rgb(54,235,96)',
                 lineTension: 0.5,
@@ -311,7 +327,7 @@ export class ChartComponent implements OnInit {
                 pointShadowColor: this.tooltipShadow
             },
             {
-                data: this.getNetProfitWithTaxes(),
+                data: this.getNetProfitLossesBeforeTaxes(),
                 label: 'Καθαρά κέρδη/ζημια προ φορων',
                 borderColor: 'rgb(54,235,96)',
                 lineTension: 0.5,
@@ -432,24 +448,45 @@ export class ChartComponent implements OnInit {
     getData() {
         this.dashboardService.getStatisticsData(String((this.currentUser.id)), this.currentUser.token, this.period.dateFrom, 'yearly')
             .then(response => {
-                this.statistics = plainToInstance(StatisticsDto, response);
-                console.log(this.statistics)
-                const [year, month, day] = this.period.dateFrom.split('-');
-                this.tableLabels = this.generateLabels(new Date(+year, +month - 1, +day));
-                this.lineChart.labels = this.generateLabels(new Date(+year, +month - 1, +day));
+                setTimeout(() => {
+                    this.statistics = plainToInstance(StatisticsDto, response);
+                    console.log(this.statistics)
+                    const [year, month, day] = this.period.dateFrom.split('-');
+                    this.tableLabels = this.generateLabels(new Date(+year, +month - 1, +day));
+                    this.lineChart.labels = this.generateLabels(new Date(+year, +month - 1, +day));
+                    this.netProfitLossesBeforeTaxesList = this.getNetProfitLossesBeforeTaxes();
+                    this.salesWithoutVatList = this.getSalesWithoutVat();
+                    this.sales = this.getSales();
+                    this.outcome = this.getOutcome();
+                    this.eoppy = this.getEOPPY();
+                    this.cashAndPos = this.getCashAndPos();
+                    this.grossProfitWithoutVat = this.getGrossProfitWithoutVat();
+                    this.operatingExpensesValueList = this.getOperatingExpensesValue();
+                    this.rebateList = this.getRebate();
+                    this.markUpList = this.getMarkUp();
+                    this.costOfSoldedItems = this.getCostOfSoldedItems();
+                    this.netProfitMarginList = this.netProfitMargin();
+                    this.markUpAvg = this.markUpTableAvgColumn();
+                    this.grossProfitOperatingExpensesRebateTableSummaryColumn = this.calculateGrossProfitOperatingExpensesRebateTableSummaryColumn();
+                    this.grossProfitOperatingExpensesRebateTableAvgColumn = this.calculateGrossProfitOperatingExpensesRebateTableAvgColumn();
+                    this.lineChart.datasets[0].data = this.sales;
+                    this.lineChart.datasets[1].data = this.outcome;
+                    this.lineChart.datasets[2].data = this.eoppy;
+                    this.lineChart.datasets[3].data = this.cashAndPos;
 
-                this.lineChart.datasets[0].data = this.getSales();
-                this.lineChart.datasets[1].data = this.getOutcome();
-                this.lineChart.datasets[2].data = this.getEOPPY();
 
-                this.grossProfitLineChart.datasets[0].data = this.getGrossProfitWithoutVat();
-                this.grossProfitLineChart.datasets[1].data = this.getOperatingExpensesValue();
-                this.grossProfitLineChart.datasets[2].data = this.getRebate();
-                this.grossProfitLineChart.datasets[3].data = this.getNetProfitWithTaxes();
+                    this.grossProfitLineChart.datasets[0].data = this.grossProfitWithoutVat;
+                    this.grossProfitLineChart.datasets[1].data = this.operatingExpensesValueList;
+                    this.grossProfitLineChart.datasets[2].data = this.rebateList;
+                    this.grossProfitLineChart.datasets[3].data = this.netProfitLossesBeforeTaxesList;
 
-                this.markUpLineChart.datasets[0].data = this.getMarkUp();
+                    this.markUpLineChart.datasets[0].data = this.markUpList;
 
-                this.polarAreaChart.datasets[0].data = this.totalSummaryPerOperatingExpense();
+                    this.polarAreaChart.datasets[0].data = this.totalSummaryPerOperatingExpense();
+
+                    this.isLoaded = true;
+                }, 500);
+
             })
             .catch((_: Error) => {
                 this._authenticationService.logout();
@@ -484,39 +521,35 @@ export class ChartComponent implements OnInit {
             labels.push(aDay.getMonth() + 1 + '/' + aDay.getFullYear());
             aDay.setMonth(aDay.getMonth() - 1);
         }
-        return labels.reverse();
+        return labels;
     }
 
     private getSales() {
-        let sales = [];
         for (let date in this.statistics) {
-            sales.push(this.dashboardService.totalSales(this.statistics, date));
+            this.sales.push(this.dashboardService.totalSales(this.statistics, date));
         }
-        return sales.reverse();
+        return this.sales;
     }
 
     private getSalesWithoutVat() {
-        let sales = [];
         for (let date in this.statistics) {
-            sales.push(this.dashboardService.totalSalesWithNoVat(this.statistics, date));
+            this.salesWithoutVatList.push(this.dashboardService.totalSalesWithNoVat(this.statistics, date));
         }
-        return sales.reverse();
+        return this.salesWithoutVatList;
     }
 
     private getOutcome() {
-        let outcome = [];
         for (let date in this.statistics) {
-            outcome.push(this.dashboardService.totalExpenses(this.statistics, date));
+            this.outcome.push(this.dashboardService.totalExpenses(this.statistics, date));
         }
-        return outcome.reverse();
+        return this.outcome;
     }
 
     private getEOPPY() {
-        let eoppy = [];
         for (let date in this.statistics) {
-            eoppy.push(this.dashboardService.totalEOPPYIncludingVat(this.statistics, date));
+            this.eoppy.push(this.dashboardService.totalEOPPYIncludingVat(this.statistics, date));
         }
-        return eoppy.reverse();
+        return this.eoppy;
     }
 
     private getTotalPersonalWithdrawals() {
@@ -524,10 +557,11 @@ export class ChartComponent implements OnInit {
         for (let date in this.statistics) {
             pw.push(this.dashboardService.totalPersonalWithdrawals(this.statistics, date));
         }
-        return pw.reverse();
+        return pw;
     }
 
     //convert from 10/2021 -> 2021-10-01
+
     dateToDictionaryFormat(monthYear: string) {
         const [month, year] = monthYear.split('/');
         return year + '-' + month + '-' + '01';
@@ -535,33 +569,49 @@ export class ChartComponent implements OnInit {
 
     lineChartTableSummaryColumn() {
         return [
-            this.getSales().reduce((partialSum, a) => partialSum + a, 0),
-            this.getOutcome().reduce((partialSum, a) => partialSum + a, 0),
-            this.getEOPPY().reduce((partialSum, a) => partialSum + a, 0),
-            0
+            this.sales.reduce((partialSum, a) => partialSum + a, 0),
+            this.outcome.reduce((partialSum, a) => partialSum + a, 0),
+            this.eoppy.reduce((partialSum, a) => partialSum + a, 0),
+            this.cashAndPos.reduce((partialSum, a) => partialSum + a, 0),
         ];
     }
 
     lineChartTableAvgColumn() {
         return [
-            this.getSales().reduce((partialSum, a) => partialSum + a, 0) / 12,
-            this.getOutcome().reduce((partialSum, a) => partialSum + a, 0) / 12,
-            this.getEOPPY().reduce((partialSum, a) => partialSum + a, 0) / 12,
-            0 / 12
+            this.calcGPA(this.sales),
+            this.calcGPA(this.outcome),
+            this.calcGPA(this.eoppy),
+            this.calcGPA(this.cashAndPos)
         ];
+    }
+
+    calcGPA(data) {
+        const filtered = data.filter(item => item !== 0);
+        if(filtered.length == 0){
+            return 0;
+        }
+        const sum = filtered.reduce((a, b) => a + b);
+        return sum / filtered.length ;
+    }
+
+    getCashAndPos(){
+        for (let date in this.statistics) {
+            this.cashAndPos.push(this.dashboardService.totalCash(this.statistics, date) + this.dashboardService.totalPos(this.statistics,date));
+        }
+        return this.cashAndPos;
     }
 
     totalSalesWithNoVatAndCostOfSoldedItemsSummaryColumn() {
         return [
-            this.getSalesWithoutVat().reduce((partialSum, a) => partialSum + a, 0),
-            this.getCostOfSoldedItems().reduce((partialSum, a) => partialSum + a, 0)
+            this.salesWithoutVatList.reduce((partialSum, a) => partialSum + a, 0),
+            this.costOfSoldedItems.reduce((partialSum, a) => partialSum + a, 0)
         ];
     }
 
     totalSalesWithNoVatAndCostOfSoldedItemsAvgColumn() {
         return [
-            this.getSalesWithoutVat().reduce((partialSum, a) => partialSum + a, 0) / 12,
-            this.getCostOfSoldedItems().reduce((partialSum, a) => partialSum + a, 0) / 12,
+            this.calcGPA(this.salesWithoutVatList),
+            this.calcGPA(this.costOfSoldedItems),
         ];
     }
 
@@ -573,97 +623,71 @@ export class ChartComponent implements OnInit {
 
     lineChartTablePersonalWithdrawalsAvgColumn() {
         return [
-            this.getTotalPersonalWithdrawals().reduce((partialSum, a) => partialSum + a, 0) / 12,
+            this.calcGPA(this.getTotalPersonalWithdrawals()),
         ];
     }
 
-    grossProfitOperatingExpensesRebateTableSummaryColumn() {
+    calculateGrossProfitOperatingExpensesRebateTableSummaryColumn() {
         return [
-            this.getGrossProfitWithoutVat().reduce((partialSum, a) => partialSum + a, 0),
-            this.getOperatingExpensesValue().reduce((partialSum, a) => partialSum + a, 0),
-            this.getRebate().reduce((partialSum, a) => partialSum + a, 0),
-            (this.getGrossProfitWithoutVat().reduce((partialSum, a) => partialSum + a, 0)
-                - this.getOperatingExpensesValue().reduce((partialSum, a) => partialSum + a, 0)
-                - this.getRebate().reduce((partialSum, a) => partialSum + a, 0))
+            this.grossProfitWithoutVat.reduce((partialSum, a) => partialSum + a, 0),
+            this.operatingExpensesValueList.reduce((partialSum, a) => partialSum + a, 0),
+            this.rebateList.reduce((partialSum, a) => partialSum + a, 0),
+            this.netProfitLossesBeforeTaxesList.reduce((partialSum, a) => partialSum + a, 0),
         ];
     }
 
-    grossProfitOperatingExpensesRebateTableAvgColumn() {
+    calculateGrossProfitOperatingExpensesRebateTableAvgColumn() {
         return [
-            this.getGrossProfitWithoutVat().reduce((partialSum, a) => partialSum + a, 0) / 12,
-            this.getOperatingExpensesValue().reduce((partialSum, a) => partialSum + a, 0) / 12,
-            this.getRebate().reduce((partialSum, a) => partialSum + a, 0) / 12,
-            (this.getGrossProfitWithoutVat().reduce((partialSum, a) => partialSum + a, 0) / 12
-                - this.getOperatingExpensesValue().reduce((partialSum, a) => partialSum + a, 0) / 12
-                - this.getRebate().reduce((partialSum, a) => partialSum + a, 0) / 12)
+            this.calcGPA(this.grossProfitWithoutVat),
+            this.calcGPA(this.operatingExpensesValueList),
+            this.calcGPA(this.rebateList),
+            this.calcGPA(this.netProfitLossesBeforeTaxesList)
         ];
     }
 
     private getGrossProfitWithoutVat() {
-        let total = [];
         for (let date in this.statistics) {
-            total.push(this.dashboardService.totalGrossProfitWithoutVat(this.statistics, date));
+            this.grossProfitWithoutVat.push(this.dashboardService.totalGrossProfitWithoutVat(this.statistics, date));
         }
-        return total.reverse();
+        return this.grossProfitWithoutVat;
     }
 
     private getOperatingExpensesValue() {
-        let total = [];
         for (let date in this.statistics) {
-            total.push(this.dashboardService.totalOperatingExpensesValue(this.statistics, date));
+            this.operatingExpensesValueList.push(this.dashboardService.totalOperatingExpensesValue(this.statistics, date));
         }
-        return total.reverse();
+        return this.operatingExpensesValueList;
     }
 
     private getRebate() {
-        let total = [];
         for (let date in this.statistics) {
-            total.push(this.dashboardService.calculateRebate(this.statistics, date));
+            this.rebateList.push(this.dashboardService.calculateRebate(this.statistics, date));
         }
-        return total.reverse();
+        return this.rebateList;
     }
-
-    private getNetProfitWithTaxes() {
-        let total = [];
-        for (let date in this.statistics) {
-            total.push((this.dashboardService.totalGrossProfitWithoutVat(this.statistics, date)
-                - this.dashboardService.totalOperatingExpensesValue(this.statistics, date)
-                - this.dashboardService.calculateRebate(this.statistics, date)));
-        }
-        return total.reverse();
-    }
-
 
     markUpTableAvgColumn() {
-        let sumGrossProfit = this.getGrossProfitWithoutVat().reduce((partialSum, a) => partialSum + a, 0);
-        let sumCostOfSoldedItems = this.getCostOfSoldedItems().reduce((partialSum, a) => partialSum + a, 0);
-
-
-        let sumNetProfitWithoutTaxes = (this.getGrossProfitWithoutVat().reduce((partialSum, a) => partialSum + a, 0)
-            - this.getOperatingExpensesValue().reduce((partialSum, a) => partialSum + a, 0)
-            - this.getRebate().reduce((partialSum, a) => partialSum + a, 0));
-        let sumSalesWithNoVat = this.getSalesWithoutVat().reduce((partialSum, a) => partialSum + a, 0);
-
-
+        let sumGrossProfit = this.grossProfitWithoutVat.reduce((partialSum, a) => partialSum + a, 0);
+        let sumCostOfSoldedItems = this.costOfSoldedItems.reduce((partialSum, a) => partialSum + a, 0);
+        let sumNetProfitWithoutTaxes = this.netProfitLossesBeforeTaxesList.reduce((partialSum, a) => partialSum + a, 0)
+        let sumSalesWithNoVat = this.salesWithoutVatList.reduce((partialSum, a) => partialSum + a, 0);
         return [
             (sumGrossProfit / sumCostOfSoldedItems), (sumNetProfitWithoutTaxes / sumSalesWithNoVat)
         ];
     }
 
     private getMarkUp() {
-        let total = [];
         for (let date in this.statistics) {
-            total.push(this.dashboardService.calculateMarkUp(this.statistics, date));
+            this.markUpList.push(this.dashboardService.calculateMarkUp(this.statistics, date));
         }
-        return total.reverse();
+        return this.markUpList;
     }
 
     private getCostOfSoldedItems() {
-        let total = [];
         for (let date in this.statistics) {
-            total.push(this.dashboardService.totalCostOfSoldedItems(this.statistics, date));
+            this.costOfSoldedItems.push(this.dashboardService.totalCostOfSoldedItems(this.statistics, date));
         }
-        return total.reverse();
+        return this.costOfSoldedItems;
     }
 
     createOperatingExpensesList() {
@@ -702,11 +726,11 @@ export class ChartComponent implements OnInit {
     }
 
     operatingExpensesAvgColumn(expense: string) {
-        let value = 0;
+        let values = [];
         this.tableLabels.forEach((date) => {
-            value += this.getValueOfOperatingExpense(expense, this.dateToDictionaryFormat(date));
+            values.push(this.getValueOfOperatingExpense(expense, this.dateToDictionaryFormat(date)));
         });
-        return value / 12;
+        return this.calcGPA(values);
     }
 
     private totalSummaryPerOperatingExpense() {
@@ -719,5 +743,30 @@ export class ChartComponent implements OnInit {
             values.push(value);
         });
         return values;
+    }
+
+    private getNetProfitLossesBeforeTaxes() {
+        for (let date in this.statistics) {
+            this.netProfitLossesBeforeTaxesList.push(
+                this.dashboardService.totalGrossProfitWithoutVat(this.statistics, date)
+                -
+                this.dashboardService.totalOperatingExpensesValue(this.statistics,date)
+                -
+                this.dashboardService.calculateRebate(this.statistics,date)
+            );
+        }
+        return this.netProfitLossesBeforeTaxesList;
+    }
+
+    netProfitMargin() {
+        for(let i=0;i<this.netProfitLossesBeforeTaxesList.length;i++){
+            if(this.salesWithoutVatList[i] > 0){
+                this.netProfitMarginList.push(this.netProfitLossesBeforeTaxesList[i]/this.salesWithoutVatList[i])
+            }else{
+                this.netProfitMarginList.push(0)
+            }
+        }
+        return this.netProfitMarginList;
+
     }
 }

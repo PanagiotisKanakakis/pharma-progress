@@ -11,7 +11,6 @@ import { Connection, Repository } from 'typeorm';
 import { CriteriaDto, StatisticsDto } from './dto';
 import { getMonthRanges } from '../common';
 import { TransactionService } from '../transaction/transaction.service';
-import { RangeType } from './enums/range-type.enum';
 
 @Injectable()
 export class StatisticsService {

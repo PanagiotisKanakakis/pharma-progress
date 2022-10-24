@@ -36,7 +36,10 @@ import {
     SubMenuCustomContextMenuComponent
 } from './main/extensions/context-menu/custom-context-menu/sub-menu-custom-context-menu/sub-menu-custom-context-menu.component';
 import {NgbDateCustomParserFormatter} from './common/utils/ngbdate-custom-parser-formatter';
+import {registerLocaleData} from '@angular/common';
+import localeGr from '@angular/common/locales/el';
 
+registerLocaleData(localeGr, 'gr');
 const appRoutes: Routes = [
     {
         path: 'dashboard',
