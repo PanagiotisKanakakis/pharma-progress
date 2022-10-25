@@ -72,7 +72,7 @@ export class DashboardService {
         return payload[date].totalPos
             + payload[date].totalCash
             + payload[date].totalOnAccount
-            + payload[date].totalEOPPY
+            + payload[date].totalEOPPYOnAccount
             - payload[date].totalPreviousMonths;
     }
 
@@ -91,7 +91,7 @@ export class DashboardService {
             - payload[date].totalPreviousMonths;
         return totalZNoVat
             + extra
-            + payload[date].totalEOPPY / 1.06;
+            + payload[date].totalEOPPYOnAccount / 1.06;
     }
 
     totalExpenses( payload , date ): number {
@@ -154,8 +154,8 @@ export class DashboardService {
         return payload[date].totalPos;
     }
 
-    totalEOPPYIncludingVat( payload , date ) {
-        return payload[date].totalEOPPY;
+    totalEOPPYOnAccountIncludingVat(payload , date ) {
+        return payload[date].totalEOPPYOnAccount;
     }
 
     totalIncomeOnAccount( payload , date ) {
@@ -170,8 +170,16 @@ export class DashboardService {
         return 0;
     }
 
-    totalEOPPYAndConsumablesWithoutVat( payload , date ) {
-        return payload[date].totalEOPPY / 1.06 + this.consumablesValue( payload , date );
+    totalEOPPYAndConsumablesOnAccountWithoutVat(payload , date ) {
+        return payload[date].totalEOPPYOnAccount / 1.06 + this.consumablesValue( payload , date );
+    }
+
+    totalEOPPYAndConsumablesIncomeWithoutVat(payload, date) {
+        return payload[date].totalEOPPYIncome / 1.06 + this.consumablesValue( payload , date );
+    }
+
+    totalEOPPYAndConsumablesIncomeWithVat(payload, date) {
+        return payload[date].totalEOPPYIncome  + this.consumablesValue( payload , date );
     }
 
     totalGrossProfitWithoutVat( payload , date ) {
@@ -203,7 +211,7 @@ export class DashboardService {
     }
 
     calculateRebate( payload , date ) {
-        let total = this.totalEOPPYAndConsumablesWithoutVat( payload , date );
+        let total = this.totalEOPPYAndConsumablesOnAccountWithoutVat( payload , date );
         if(total <= 3000){
             return 0;
         }else if(total <= 10000){
@@ -266,7 +274,7 @@ export class DashboardService {
     }
 
     totalCashAvailable( payload , date ) {
-        return this.totalOpeningBalance( payload , date ) + this.totalMonthIncome( payload , date ) + this.totalEOPPYIncludingVat(payload,date);
+        return this.totalOpeningBalance( payload , date ) + this.totalMonthIncome( payload , date ) + this.totalEOPPYOnAccountIncludingVat(payload,date);
     }
 
     totalClosingBalance( payload , date ) {
@@ -277,6 +285,4 @@ export class DashboardService {
             - this.totalOperatingExpensesIncludingVat( payload , date )
             - this.totalPersonalWithdrawals( payload , date );
     }
-
-
 }

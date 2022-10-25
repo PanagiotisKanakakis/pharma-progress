@@ -109,13 +109,13 @@ export class NationalHealthComponent implements OnInit {
                 }
 
 
-                if (await this.previousMonthTransactionExists(this.rows[rowIndex].createdAt) == true) {
+               /* if (await this.previousMonthTransactionExists(this.rows[rowIndex].createdAt) == true) {
                     this.updatePreviousMonthsIncome(this.rows[rowIndex].createdAt, oldValue, this.rows[rowIndex].cost);
                 } else {
-                    /*
+                    /!*
                 * in case we have an income from EOPPY we create an extra transaction
                 * for income of previous months
-                * */
+                * *!/
                     if (this.type === 'income') {
                         let tr = new TransactionEntity();
                         tr.userId = this.currentUser.id;
@@ -137,7 +137,7 @@ export class NationalHealthComponent implements OnInit {
                             this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
                         });
                     }
-                }
+                }*/
 
             } else {
                 if (this.dateFormControl[rowIndex].valid) {
@@ -154,9 +154,9 @@ export class NationalHealthComponent implements OnInit {
                    * in case we have update an income from EOPPY we need to update
                    * the income of previous months for that day
                    * */
-                    if (this.type === 'income') {
+                   /* if (this.type === 'income') {
                         this.updatePreviousMonthsIncome(this.rows[rowIndex].createdAt, oldValue, this.rows[rowIndex].cost);
-                    }
+                    }*/
                 }
             }
         }

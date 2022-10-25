@@ -47,7 +47,12 @@ export class StatisticsService {
                 ),
                 totalCash: await this.getTotalCash(criteria, dateFrom, dateTo),
                 totalPos: await this.getTotalPos(criteria, dateFrom, dateTo),
-                totalEOPPY: await this.getTotalEOPPY(
+                totalEOPPYOnAccount: await this.getTotalEOPPYOnAccount(
+                    criteria,
+                    dateFrom,
+                    dateTo,
+                ),
+                totalEOPPYIncome: await this.getTotalEOPPYIncome(
                     criteria,
                     dateFrom,
                     dateTo,
@@ -166,13 +171,23 @@ export class StatisticsService {
         return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
     }
 
-    public async getTotalEOPPY(
+    public async getTotalEOPPYOnAccount(
         criteria: CriteriaDto,
         dateFrom: string,
         dateTo: string,
     ) {
         criteria.transactionType = [TransactionType.EOPPY];
         criteria.paymentType = [PaymentType.ON_ACCOUNT];
+        return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
+    }
+
+    public async getTotalEOPPYIncome(
+        criteria: CriteriaDto,
+        dateFrom: string,
+        dateTo: string,
+    ) {
+        criteria.transactionType = [TransactionType.EOPPY];
+        criteria.paymentType = [PaymentType.BANK];
         return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
     }
 

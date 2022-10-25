@@ -327,8 +327,8 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         return this.dashboardService.totalPos(this.statistics, this.period.dateFrom);
     }
 
-    totalEOPPYIncludingVat() {
-        return this.dashboardService.totalEOPPYIncludingVat(this.statistics, this.period.dateFrom);
+    totalEOPPYOnAccountIncludingVat() {
+        return this.dashboardService.totalEOPPYOnAccountIncludingVat(this.statistics, this.period.dateFrom);
     }
 
     totalIncomeOnAccount() {
@@ -343,8 +343,12 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         return this.dashboardService.consumablesValue(this.statistics, this.period.dateFrom);
     }
 
-    totalEOPPYAndConsumablesWithoutVat() {
-        return this.dashboardService.totalEOPPYAndConsumablesWithoutVat(this.statistics, this.period.dateFrom);
+    totalEOPPYAndConsumablesOnAccountWithoutVat() {
+        return this.dashboardService.totalEOPPYAndConsumablesOnAccountWithoutVat(this.statistics, this.period.dateFrom);
+    }
+
+    totalEOPPYIncomeIncludingVat() {
+        return this.dashboardService.totalEOPPYAndConsumablesIncomeWithVat(this.statistics, this.period.dateFrom);
     }
 
     totalGrossProfitWithoutVat() {

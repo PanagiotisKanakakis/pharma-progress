@@ -125,7 +125,7 @@ export class BreakEvenPointComponent implements OnInit {
         this.editingValue[3] = false;
     }
 
-    getAvgEOPPY() {
+    getAvgEOPPY(): number {
         return this.values[3];
     }
 
@@ -160,6 +160,10 @@ export class BreakEvenPointComponent implements OnInit {
         return this.getSalesPercentageOnMedicine() / (1 + this.getMarkUpMedicine()) + this.getSalesPercentageOnParamedics() / (1 + this.getMarkUpParaMedics());
     }
 
+    calculateAvgCostOfSoldItems() {
+        return this.calculateCostOfSoldItems()*this.getMonthlySales();
+    }
+
     calculateRebateApproach() {
         if(this.getMonthlySales() > 0){
             return this.calculateRebate(this.getAvgEOPPY()) / this.getMonthlySales();
@@ -167,7 +171,7 @@ export class BreakEvenPointComponent implements OnInit {
         return 0;
     }
 
-    calculateRebate(total) {
+    calculateRebate(total: number) {
         if (total <= 3000) {
             return 0;
         } else if (total <= 10000) {
@@ -185,5 +189,20 @@ export class BreakEvenPointComponent implements OnInit {
         return this.variableCosts.reduce((partialSum, a) => partialSum + +a.value, 0)
             + +this.calculateRebateApproach()
             + +this.calculateCostOfSoldItems();
+    }
+
+    avgOperatingExpensesValue(i) {
+        if(this.getMonthlySales() > 0){
+            return this.operatingExpenses[i].value/this.getMonthlySales();
+        }
+        return 0;
+    }
+
+    avgOverallForecast() {
+        let value = this.calculateAvgCostOfSoldItems() + this.calculateRebate(this.getAvgEOPPY());
+        for(let i=0;i<this.operatingExpenses.length;i++){
+            value += this.avgOperatingExpensesValue(i)
+        }
+        return value;
     }
 }

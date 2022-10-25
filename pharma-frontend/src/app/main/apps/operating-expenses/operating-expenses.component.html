@@ -23,7 +23,7 @@
                 <div class="col-lg-4">
                     <div class="col-12 mb-50">
                         <button class="btn btn-primary ml-1" style="float: right" rippleEffect
-                                (click)="addNewRow(undefined,undefined, 0, undefined)">
+                                (click)="addNewRow(undefined,undefined, 0, undefined, undefined)">
                             <i data-feather="plus" class="mr-0 mr-sm-1"></i>
                             <span class="d-none d-sm-inline-block">{{ 'BUTTON.ADD_NEW_RECORD' | translate }}</span>
                         </button>
@@ -45,6 +45,9 @@
                                                     <th class="text-center" style="color: white!important;">
                                                         {{'TABLE.CATEGORY' | translate}}
                                                     </th>
+                                                    <th class="text-center" style="color: white!important;">
+                                                        {{'TABLE.PAYMENT_TYPE' | translate}}
+                                                    </th>
                                                     <th class="text-center"  style="color: white!important;">
                                                         {{'TABLE.DATE' | translate}}
                                                     </th>
@@ -65,7 +68,7 @@
                                                         <select *ngIf="row.id === undefined"
                                                                 class="form-control form-control-lg block btn-btn-success accent-4"
                                                                 #selectElement
-                                                                (change)='onOptionsSelected(selectElement.value, rowIndex)'>
+                                                                (change)='onTransactionsTypeOptionsSelected(selectElement.value, rowIndex)'>
                                                             <option value="{{'TABLE.OPTION_DEFAULT_SELECT' | translate}}"
                                                                     selected="selected"
                                                                     disabled="disabled">{{'TABLE.OPTION_DEFAULT_SELECT' | translate}}</option>
@@ -79,6 +82,24 @@
                                                              class="block btn btn-btn-success accent-4"
                                                         >
                                                             {{row.transactionType}}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <select *ngIf="row.id === undefined"
+                                                                class="form-control form-control-lg block btn-btn-success accent-4"
+                                                                #selectElement
+                                                                (change)='onPaymentTypeOptionsSelected(selectElement.value, rowIndex)'>
+                                                            <option value="{{'TABLE.OPTION_DEFAULT_PAYMENT_SELECT' | translate}}"
+                                                                    selected="selected"
+                                                                    disabled="disabled">{{'TABLE.OPTION_DEFAULT_PAYMENT_SELECT' | translate}}</option>
+                                                            <option value="Μετρητά">Μετρητά</option>
+                                                            <option value="Τράπεζα">Τράπεζα</option>
+                                                        </select>
+                                                        <div *ngIf="row.id !== undefined"
+                                                             style="white-space: nowrap;margin-left: 5px;width: available"
+                                                             class="block btn btn-btn-success accent-4"
+                                                        >
+                                                            {{row.paymentType}}
                                                         </div>
                                                     </td>
                                                     <td>

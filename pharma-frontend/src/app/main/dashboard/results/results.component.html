@@ -370,7 +370,7 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalEOPPYIncludingVat()| number: '1.0-2':'gr'}}
+                                                                <span class="font-weight-bolder mb-25">{{totalEOPPYOnAccountIncludingVat()| number: '1.0-2':'gr'}}
                                                                     €</span>
                                                         </div>
                                                     </td>
@@ -422,7 +422,7 @@
                                                                 <span class="font-weight-bolder mb-25">
                                                                     {{ (totalCash() +
                                                                     totalPos() +
-                                                                    totalEOPPYIncludingVat() +
+                                                                    totalEOPPYOnAccountIncludingVat() +
                                                                     totalIncomeOnAccount())| number: '1.0-2':'gr'
                                                                     }}€
                                                                 </span>
@@ -922,7 +922,7 @@
                                         </div>
                                     </div>
                                     <h4 class="font-weight-bolder mt-1"
-                                        style="color: #1e1e1e">{{totalEOPPYAndConsumablesWithoutVat()| number: '1.0-2':'gr'}}
+                                        style="color: #1e1e1e">{{totalEOPPYAndConsumablesOnAccountWithoutVat()| number: '1.0-2':'gr'}}
                                         €</h4>
                                     <h5 class="font-weight-bolder" style="color: #1e1e1e">ΕΟΠΠΥ & Αναλωσιμα (χωρις
                                         ΦΠΑ)</h5>
@@ -1055,7 +1055,7 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <span class="font-weight-bolder mb-25">
-                                                                {{totalEOPPYIncludingVat()| number: '1.0-2':'gr'}}€
+                                                                {{totalEOPPYIncomeIncludingVat()| number: '1.0-2':'gr'}}€
                                                             </span>
                                                         </div>
                                                     </td>

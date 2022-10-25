@@ -96,7 +96,7 @@
                                            <div class="d-flex align-items-center">
                                                <div>
                                                    <div class="ml-1">
-                                                       ΕΟΠΠΥ (Μ>Ο>) Χωρίς ΦΠΑ
+                                                       ΕΟΠΠΥ (Μ.Ο.) Χωρίς ΦΠΑ
                                                    </div>
                                                </div>
                                            </div>
@@ -237,12 +237,12 @@
                                     </tbody>
                                     <tfoot style="border-top: 2px solid #1e1e1e; ">
                                     <tr>
-                                        <td class="text-center">
+                                        <td class="text-left">
                                             Συνολικές σταθερές δαπάνες
                                         </td>
                                         <td>
                                             <div class="text-center">
-                                                {{ this.sumOfOperatingExpenses().toLocaleString('el-GR') }}€
+                                                {{ this.sumOfOperatingExpenses()| number: '1.0-2':'gr' }}€
                                             </div>
                                         </td>
                                     </tr>
@@ -262,6 +262,7 @@
                                         <th colspan="2" style="background-color: #3A697B !important; color: white!important;text-align: center">
                                             ΒΗΜΑ 4: Μεταβλητες δαπανες
                                         </th>
+                                        <th></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -278,6 +279,9 @@
                                         <td style="text-align: center">
                                             {{(this.calculateCostOfSoldItems()*100).toLocaleString('el-GR')}}%
                                         </td>
+                                        <td style="text-align: center">
+                                            {{(this.calculateAvgCostOfSoldItems()| number: '1.0-2':'gr')}}€
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -291,6 +295,9 @@
                                         </td>
                                         <td style="text-align: center">
                                             {{(this.calculateRebateApproach()*100).toLocaleString('el-GR')}}%
+                                        </td>
+                                        <td style="text-align: center">
+                                            {{(this.calculateRebate(this.getAvgEOPPY())) | number: '1.0-2':'gr'}}€
                                         </td>
                                     </tr>
                                     <tr *ngFor="let row of this.variableCosts;let i=index">
@@ -317,16 +324,26 @@
                                                    type="number"
                                             />
                                         </td>
+                                        <td style="text-align: center">
+                                            <div class="text-center">
+                                                {{this.avgOperatingExpensesValue(i)| number: '1.0-2':'gr'}}€
+                                            </div>
+                                        </td>
                                     </tr>
                                     </tbody>
                                     <tfoot style="border-top: 2px solid #1e1e1e; ">
                                     <tr>
-                                        <td class="text-center">
+                                        <td class="text-left">
                                             Συνολική Πρόβλεψη για Μείωση Τζίρου:
                                         </td>
                                         <td>
                                             <div class="text-center">
                                                 {{ (this.overallForecast()*100).toLocaleString('el-GR') }}%
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-center">
+                                                {{ this.avgOverallForecast()| number: '1.0-2':'gr'}}€
                                             </div>
                                         </td>
                                     </tr>
@@ -346,7 +363,7 @@
                 <div class="card bg-secondary text-black">
                     <div class="card-body">
                         <div>
-                            <h4 class="card-title text-black">
+                            <h4 class="card-title text-black font-weight-bolder" style="color: black">
                                 Νεκρό Σημείο Πωλήσεων
                                 <b style="color: red ; float: right"><u>{{this.calculateBreakEvenPoint().toLocaleString('el-GR')}}€</u></b>
                             </h4>

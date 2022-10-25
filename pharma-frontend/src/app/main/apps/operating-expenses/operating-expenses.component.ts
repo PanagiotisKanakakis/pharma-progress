@@ -125,8 +125,12 @@ export class OperatingExpensesComponent implements OnInit {
         }
     }
 
-    onOptionsSelected(value: string, rowIndex: number) {
+    onTransactionsTypeOptionsSelected(value: string, rowIndex: number) {
         this.rows[rowIndex].transactionType = value;
+    }
+
+    onPaymentTypeOptionsSelected(value: string, rowIndex: number) {
+        this.rows[rowIndex].paymentType = value;
     }
 
     removeRow(rowIndex: any) {
@@ -148,7 +152,11 @@ export class OperatingExpensesComponent implements OnInit {
         return -1;
     }
 
-    addNewRow(transactionType: string | undefined, id: number | undefined, cost: number, date: string | undefined) {
+    addNewRow(transactionType: string | undefined,
+              id: number | undefined,
+              cost: number,
+              paymentType: number | undefined,
+              date: string | undefined) {
         this.numberFormControl[this.rows.length] = new FormControl('',
             [Validators.required, Validators.min(0)]);
         this.dateFormControl[this.rows.length] = new FormControl('',
@@ -166,7 +174,7 @@ export class OperatingExpensesComponent implements OnInit {
             createdAt: date,
             comment: '',
             vat: this.calculateVat(transactionType),
-            paymentType: PaymentType.CASH,
+            paymentType: PaymentType.valueOf(paymentType),
         }];
     }
 
@@ -203,8 +211,12 @@ export class OperatingExpensesComponent implements OnInit {
             if (data.length !== 0) {
                 for (let i = 0; i < data.length; i++) {
                     const transaction = plainToInstance(TransactionEntity, data[i]);
-                    this.addNewRow(TransactionType.valueOf(transaction.transactionType),
-                        transaction.id, transaction.cost, DateUtils.formatDbDate(transaction.createdAt));
+                    this.addNewRow(
+                        TransactionType.valueOf(transaction.transactionType),
+                        transaction.id,
+                        transaction.cost,
+                        transaction.paymentType,
+                        DateUtils.formatDbDate(transaction.createdAt));
                     this.rows[i].transactionType = TransactionType.valueOf(transaction.transactionType);
                     this.rows[i].createdAt = DateUtils.formatDbDate(transaction.createdAt);
                 }
