@@ -4,7 +4,6 @@ import {Subject} from 'rxjs';
 
 import {CoreTranslationService} from '@core/services/translation.service';
 import {NgbDate, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
-import {TransactionEntity} from 'app/api/transaction/transaction.entity';
 import {locale as english} from 'app/common/i18n/en';
 import {locale as greek} from 'app/common/i18n/gr';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -15,7 +14,7 @@ import {DatePeriod} from '../../../common/utils/interfaces/date-period.interface
 import {AuthenticationService} from '../../../auth/service';
 import {FormControl, Validators} from '@angular/forms';
 import {Greek} from 'flatpickr/dist/l10n/gr';
-import {CheckEntity, getChecksByCriteria, submitChecks, updateChecks} from 'app/api/checks';
+import {getPrescriptionsByCriteria, PrescriptionEntity, submitPrescription, updatePrescription} from '../../../api/prescrptions';
 
 @Component({
     selector: 'prescript-datatable',
@@ -67,10 +66,10 @@ export class PrescriptionComponent implements OnInit {
             onClose: (selectedDates: any) => {
                 this.period = DateUtils.NgbDateToMonthPeriod(
                     new NgbDate(+selectedDates[0].getUTCFullYear(), +selectedDates[0].getUTCMonth()+1, +selectedDates[0].getUTCDate()));
-                this.getChecksByUserId();
+                this.getPrescriptionsByUserId();
             },
         };
-        this.getChecksByUserId();
+        this.getPrescriptionsByUserId();
     }
 
     formatDate(date: Date) {
@@ -83,17 +82,17 @@ export class PrescriptionComponent implements OnInit {
     inlineEditingUpdateValue(event, rowIndex) {
         if (this.numberFormControl[rowIndex].valid) {
             this.editingValue[rowIndex] = false;
-            this.rows[rowIndex].cost = event.target.value;
+            this.rows[rowIndex].amount = event.target.value;
             if (this.rows[rowIndex].id === undefined) {
-                this.submitPrescription(this.rows[rowIndex], rowIndex);
+                this.submit(this.rows[rowIndex], rowIndex);
             } else {
-                this.updatePrescription(this.rows[rowIndex]);
+                this.update(this.rows[rowIndex]);
             }
         }
     }
 
-    private getChecksByUserId() {
-        getChecksByCriteria(
+    private getPrescriptionsByUserId() {
+        getPrescriptionsByCriteria(
             {
                 'userId': this.currentUser.id.toString(),
                 'date': this.period.dateFrom,
@@ -108,7 +107,7 @@ export class PrescriptionComponent implements OnInit {
             this.rows = [];
             if (data.length !== 0) {
                 for (let i = 0; i < data.length; i++) {
-                    this.addNewRow(plainToInstance(CheckEntity, data[i]));
+                    this.addNewRow(plainToInstance(PrescriptionEntity, data[i]));
                 }
             }
         }).catch((_: any) => {
@@ -126,6 +125,11 @@ export class PrescriptionComponent implements OnInit {
         if (DateUtils.dateInRange(this.period, DateUtils.toDate(event.target.value))) {
             this.rows[rowIndex].createdAt = event.target.value;
             this.dateFormControl[rowIndex].setErrors(null);
+            if (this.rows[rowIndex].id === undefined) {
+                this.submit(this.rows[rowIndex], rowIndex);
+            } else {
+                this.update(this.rows[rowIndex]);
+            }
         } else {
             this.dateFormControl[rowIndex].setErrors({'range': true});
         }
@@ -137,47 +141,46 @@ export class PrescriptionComponent implements OnInit {
         this.rows = temp;
     }
 
-    addNewRow(check: CheckEntity) {
-        console.log(check)
-        if(check === undefined){
+    addNewRow(prescription: PrescriptionEntity) {
+        this.numberFormControl[this.rows.length] = new FormControl('',
+            [Validators.required, Validators.min(0)]);
+        this.dateFormControl[this.rows.length] = new FormControl('',
+            [Validators.required, Validators.pattern(this.regexPattern)]);
+        this.dateFormControl[this.rows.length].setErrors(null);
+        this.numberFormControl[this.rows.length].setErrors(null);
+
+        if(prescription === undefined){
             this.rows = [...this.rows, {
                 id: undefined,
-                cost: 0,
-                purchasedAt: DateUtils.formatDate(new Date()),
-                expiredAt: DateUtils.formatDate(new Date()),
+                amount: 0,
+                createdAt: DateUtils.formatDate(new Date()),
                 comment: '',
-                company: '',
             }];
         }else{
             this.rows = [...this.rows, {
-                id: check.id,
-                cost: check.cost,
-                purchasedAt: DateUtils.formatDbDate(check.purchasedAt),
-                expiredAt: DateUtils.formatDbDate(check.expiredAt),
-                comment: check.comment,
-                company: check.company,
+                id: prescription.id,
+                amount: prescription.amount,
+                createdAt: DateUtils.formatDbDate(prescription.createdAt),
+                comment: prescription.comment,
             }];
         }
     }
 
-    submitPrescription(row, rowIndex) {
+    submit(row, rowIndex) {
         if (this.dateFormControl[rowIndex].valid) {
-            const check = new CheckEntity();
-            check.userId = this.currentUser.id;
-            check.purchasedAt = DateUtils.toDate(row.purchasedAt);
-            check.expiredAt = DateUtils.toDate(row.expiredAt);
-            check.cost = row.cost;
-            check.comment = row.comment;
-            check.company = row.company;
-            console.log(check);
-            submitChecks(
-                {'checks': [check]},
+            const prescription = new PrescriptionEntity();
+            prescription.userId = this.currentUser.id.toString();
+            prescription.amount = row.amount;
+            prescription.comment = row.comment;
+            prescription.createdAt = DateUtils.queryFormattedDate(DateUtils.toDate(this.rows[rowIndex].createdAt));
+            submitPrescription(
+                prescription,
                 {
                     'Accept': 'application/json',
                     'Authorization': 'Bearer ' + this.currentUser.token
                 }
             )
-                .then(r => row.id = r[0].id)
+                .then(r => row.id = r.id)
                 .catch((_: any) => {
                     this._authenticationService.logout();
                     this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
@@ -186,21 +189,24 @@ export class PrescriptionComponent implements OnInit {
 
     }
 
-    onChange(event, row) {
-        row.comment = event.target.value;
+    onCommentChange(event, rowIndex) {
+        this.rows[rowIndex].comment = event.target.value;
+        if (this.rows[rowIndex].id === undefined) {
+            this.submit(this.rows[rowIndex], rowIndex);
+        } else {
+            this.update(this.rows[rowIndex]);
+        }
     }
 
-    private updatePrescription(row: any) {
-        const check = new CheckEntity();
-        check.id = row.id;
-        check.userId = this.currentUser.id;
-        check.purchasedAt = DateUtils.toDate(row.purchasedAt);
-        check.expiredAt = DateUtils.toDate(row.expiredAt);
-        check.cost = row.cost;
-        check.comment = row.comment;
-        check.company = row.company;
-        updateChecks(
-            {'checks': [check]},
+    private update(row: any) {
+        const prescription = new PrescriptionEntity();
+        prescription.id = row.id;
+        prescription.userId = this.currentUser.id.toString();
+        prescription.amount = row.amount;
+        prescription.comment = row.comment;
+        prescription.createdAt = DateUtils.queryFormattedDate(DateUtils.toDate(row.createdAt));
+        updatePrescription(
+            prescription,
             {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + this.currentUser.token

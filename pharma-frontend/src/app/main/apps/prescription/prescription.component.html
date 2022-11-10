@@ -38,16 +38,13 @@
                                                 <thead>
                                                 <tr>
                                                     <th class="text-center" style="color: white!important;">
-                                                        {{'TABLE.DATE_START' | translate}}
+                                                        {{'TABLE.CATEGORY' | translate}}
                                                     </th>
                                                     <th class="text-center" style="color: white!important;">
-                                                        {{'TABLE.COMPANY' | translate}}
+                                                        {{'TABLE.QUANTITY' | translate}}
                                                     </th>
                                                     <th class="text-center" style="color: white!important;">
-                                                        {{'TABLE.VALUE' | translate}}
-                                                    </th>
-                                                    <th class="text-center" style="color: white!important;">
-                                                        {{'TABLE.DATE_END' | translate}}
+                                                        {{'TABLE.DATE' | translate}}
                                                     </th>
                                                     <th class="text-center" style="color: white!important;">
                                                         {{'TABLE.DESCRIPTION' | translate}}
@@ -60,37 +57,17 @@
                                                 <tbody>
                                                 <tr *ngFor="let row of rows;let rowIndex=index;">
                                                     <td>
-                                                        <div title="Double click to edit"
-                                                             class="text-center"
-                                                             (dblclick)="editingDateValue[rowIndex] = true"
-                                                             *ngIf="!editingDateValue[rowIndex]"
-                                                             style="font-weight: bold;font-size: 13px;">
-                                                            {{row.purchasedAt}}
+                                                        <div class="block btn btn-btn-success accent-4"
+                                                             style="white-space: nowrap;margin-left: 5px;width: available">
+                                                            Συνταγές
                                                         </div>
-                                                        <input autofocus
-                                                               type="text"
-                                                               class="form-control"
-                                                               placeholder="dd-mm-yyyy"
-                                                               *ngIf="editingDateValue[rowIndex]"
-                                                               (blur)="parseDate($event,rowIndex)"
-                                                               [formControl]="dateFormControl[rowIndex]">
-                                                        <span *ngIf="!dateFormControl[rowIndex].valid"
-                                                              class="invalid-form">
-                                                            <small class="form-text text-muted danger"
-                                                                   *ngIf="dateFormControl[rowIndex].errors?.pattern">
-                                                                {{'TABLE.DATE_PATTERN' | translate}}
-                                                            </small>
-                                                        </span>
-                                                    </td>
-                                                    <td class="text-nowrap">
-                                                        <input type="text" class="form-control">
                                                     </td>
                                                     <td>
                                                         <div title="Double click to edit"
                                                              class="text-center"
                                                              (click)="editingValue[rowIndex] = true"
                                                              *ngIf="!editingValue[rowIndex]">
-                                                            {{row.cost | number: '1.0-2':'gr'}}€
+                                                            {{row.amount | number: '1.0':'gr'}}
                                                         </div>
                                                         <input autofocus
                                                                class="form-control form-control-sm"
@@ -117,7 +94,7 @@
                                                              (dblclick)="editingDateValue[rowIndex] = true"
                                                              *ngIf="!editingDateValue[rowIndex]"
                                                              style="font-weight: bold;font-size: 13px;">
-                                                            {{row.expiredAt}}
+                                                            {{row.createdAt}}
                                                         </div>
                                                         <input autofocus
                                                                type="text"
@@ -132,11 +109,16 @@
                                                                    *ngIf="dateFormControl[rowIndex].errors?.pattern">
                                                                 {{'TABLE.DATE_PATTERN' | translate}}
                                                             </small>
+                                                            <small class="form-text text-muted danger"
+                                                                   *ngIf="dateFormControl[rowIndex].errors?.range">
+                                                                {{'TABLE.DATE_LIMIT' | translate}}
+                                                            </small>
                                                         </span>
                                                     </td>
 
                                                     <td class="text-nowrap">
-                                                        <input type="text" class="form-control">
+                                                        <input type="text" [value]="row.comment"
+                                                               class="form-control" (change)="onCommentChange($event, rowIndex)">
                                                     </td>
                                                     <td>
                                                         <div *ngIf="row.id == undefined"

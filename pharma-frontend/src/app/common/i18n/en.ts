@@ -19,6 +19,8 @@ export const locale = {
     },
     TABLE: {
       CATEGORY: 'Category',
+      PRODUCT: 'Product',
+      QUANTITY: 'Quantity',
       VALUE: 'Value',
       DATE: 'Date',
       DATE_PATTERN: 'The pattern does not match',
@@ -29,6 +31,7 @@ export const locale = {
       DESCRIPTION: 'Description',
       ACTION: 'Action',
       OPTION_DEFAULT_SELECT: 'Select one',
+      OPTION_DEFAULT_PRODUCT_SELECT: 'Select product type',
       ACTIONS: 'Actions',
       SUMMARY: 'Summary',
       MAIN_COMPANY: 'Main company',

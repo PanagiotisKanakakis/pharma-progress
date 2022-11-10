@@ -8,14 +8,7 @@ import {NgbDate, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import {TransactionEntity} from 'app/api/transaction/transaction.entity';
 import {locale as english} from 'app/common/i18n/en';
 import {locale as greek} from 'app/common/i18n/gr';
-import {
-    getTransactionsByCriteria,
-    PaymentType,
-    submitTransaction,
-    TransactionType,
-    updateTransaction,
-    VAT
-} from '../../../api/transaction';
+import {getTransactionsByCriteria, PaymentType, submitTransaction, TransactionType, updateTransaction, VAT} from '../../../api/transaction';
 import {ActivatedRoute, Router} from '@angular/router';
 import {plainToInstance} from 'class-transformer';
 import {User} from '../../../auth/models';
@@ -72,8 +65,8 @@ export class NationalHealthComponent implements OnInit {
 
     }
 
-    initTransactions() {
-        this.addNewRow(undefined, 0, '', '');
+    initTransaction() {
+        this.addNewRow(undefined, 0, '',undefined, undefined);
     }
 
     submit(row,rowIndex){
@@ -167,7 +160,7 @@ export class NationalHealthComponent implements OnInit {
                 * for income of previous months
                 * *!/
                     if (this.type === 'income') {
-                        let tr = new CheckEntity();
+                        let tr = new PrescriptionEntity();
                         tr.userId = this.currentUser.id;
                         tr.transactionType = TransactionType.getIndexOf(TransactionType.INCOME);
                         tr.paymentType = PaymentType.getIndexOf(PaymentType.PREVIOUS_MONTHS_RECEIPTS);
@@ -216,7 +209,11 @@ export class NationalHealthComponent implements OnInit {
         this.getTransactions();
     }
 
-    addNewRow(id: number | undefined, cost: number, comment: string, date: string | undefined) {
+    addNewRow(id: number | undefined,
+              cost: number,
+              comment: string,
+              vat: number | undefined,
+              date: string | undefined) {
         this.numberFormControl[this.rows.length] = new FormControl('',
             [Validators.required, Validators.min(0)]);
         this.dateFormControl[this.rows.length] = new FormControl('',
@@ -226,29 +223,23 @@ export class NationalHealthComponent implements OnInit {
         if (date === undefined) {
             date = DateUtils.formatDate(new Date());
         }
-        if (this.type === 'income') {
-            this.rows = [...this.rows, {
-                id: id,
-                transactionType: TransactionType.EOPPY,
-                vat: VAT.NONE,
-                paymentType: PaymentType.BANK,
-                supplier: SupplierType.getIndexOf(SupplierType.NONE),
-                comment: comment,
-                cost: cost,
-                createdAt: date,
-            }];
-        } else {
-            this.rows = [...this.rows, {
-                id: id,
-                transactionType: TransactionType.EOPPY,
-                vat: VAT.NONE,
-                paymentType: PaymentType.ON_ACCOUNT,
-                supplier: SupplierType.getIndexOf(SupplierType.NONE),
-                comment: comment,
-                cost: cost,
-                createdAt: date,
-            }];
+
+        let payment = PaymentType.BANK;
+        if(this.type !== 'income'){
+            payment = PaymentType.ON_ACCOUNT;
         }
+
+        this.rows = [...this.rows, {
+            id: id,
+            transactionType: TransactionType.EOPPY,
+            vat: VAT.valueOf(vat),
+            paymentType: payment,
+            supplier: SupplierType.getIndexOf(SupplierType.NONE),
+            comment: comment,
+            cost: cost,
+            createdAt: date,
+            productType: this.getProductType(vat),
+        }];
     }
 
     removeRow(rowIndex: any) {
@@ -289,10 +280,6 @@ export class NationalHealthComponent implements OnInit {
         }
     }
 
-    onChange(event, row) {
-        row.comment = event.target.value;
-    }
-
     private getTransactions() {
         let paymentType = PaymentType.BANK;
         if (this.type !== 'income') {
@@ -316,7 +303,11 @@ export class NationalHealthComponent implements OnInit {
             if (data.length !== 0) {
                 for (let i = 0; i < data.length; i++) {
                     const transaction = plainToInstance(TransactionEntity, data[i]);
-                    this.addNewRow(transaction.id, transaction.cost, transaction.comment, DateUtils.formatDbDate(transaction.createdAt));
+                    this.addNewRow(transaction.id,
+                        transaction.cost,
+                        transaction.comment,
+                        transaction.vat,
+                        DateUtils.formatDbDate(transaction.createdAt));
                     this.rows[i].createdAt = DateUtils.formatDbDate(transaction.createdAt);
                 }
                 this.summaryColumn();
@@ -380,5 +371,23 @@ export class NationalHealthComponent implements OnInit {
             this._authenticationService.logout();
             this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
         });
+    }
+
+    onProductTypeOptionsSelected(value: string, rowIndex) {
+        console.log(VAT.valueOf(Number(value)))
+        this.rows[rowIndex].vat = VAT.valueOf(Number(value));
+        this.rows[rowIndex].productType = this.getProductType(Number(value))
+        if (this.rows[rowIndex].id === undefined) {
+            this.submit(this.rows[rowIndex], rowIndex);
+        } else {
+            this.update(this.rows[rowIndex], rowIndex);
+        }
+    }
+
+    getProductType(vat: number){
+        if(vat == 1){
+            return 'Φάρμακα';
+        }
+        return 'Αναλώσιμα';
     }
 }

@@ -21,10 +21,10 @@ const routes: Routes = [
     {
         path: '',
         data: {
-            title: 'Check',
+            title: 'Prescription',
             urls: [
-                {title: 'Check', url: '/check'},
-                {title: 'Check'}
+                {title: 'Prescription', url: '/prescriptions'},
+                {title: 'Prescriptions'}
             ]
         },
         component: PrescriptionComponent

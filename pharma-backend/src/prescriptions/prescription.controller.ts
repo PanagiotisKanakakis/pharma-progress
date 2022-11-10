@@ -12,9 +12,12 @@ import {
     Param,
     Post,
     Put,
+    Query,
 } from '@nestjs/common';
 import { CreatePrescriptionDto } from './dto';
 import { PrescriptionService } from './prescription.service';
+import { CriteriaDto } from '../statistics/dto';
+import { Prescription } from './prescription.entity';
 
 @ApiTags('Prescription')
 @Controller('api/prescription')
@@ -51,11 +54,24 @@ export class PrescriptionController {
     @Get('getAllByUserId/:userId')
     @ApiOkResponse({
         status: 201,
-        description: 'Get opening balance values for a given userId',
+        description: 'Get prescription values for a given userId',
     })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     @ApiBearerAuth()
     async getAllByUserId(@Param('userId') userId): Promise<any> {
         return this.service.getByUserId(userId);
+    }
+
+    @Get('getAllByCriteria')
+    @ApiOkResponse({
+        status: 201,
+        description: 'Get prescription (s) for a given userId using criteria',
+    })
+    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    @ApiBearerAuth()
+    async getAllByCriteria(
+        @Query() criteriaDto: CriteriaDto,
+    ): Promise<Prescription[]> {
+        return await this.service.getAllByCriteria(criteriaDto);
     }
 }

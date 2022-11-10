@@ -96,7 +96,7 @@ export const menu: CoreMenu[] = [
                                 translate: 'MENU.APPS.EOPPY_PRESCRIPTIONS',
                                 type: 'item',
                                 icon: 'target',
-                                url: 'apps/nationalHealth/prescriptions',
+                                url: 'apps/prescriptions',
                                 children: [],
                             },
 

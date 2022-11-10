@@ -1,12 +1,34 @@
-import { Column, Entity, ManyToOne, Relation } from 'typeorm';
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    Generated,
+    ManyToOne,
+    PrimaryColumn,
+    Relation,
+    UpdateDateColumn,
+} from 'typeorm';
 import type { User } from '../authbroker/users';
 import { Exclude } from 'class-transformer';
-import { AbstractEntity } from '../common';
 
 @Entity()
-export class Prescription extends AbstractEntity {
+export class Prescription {
+
+    @PrimaryColumn()
+    @Generated('increment')
+    public id: number;
+
+    @CreateDateColumn({ type: 'timestamp' })
+    public createdAt: Date;
+
+    @UpdateDateColumn({ type: 'timestamp' })
+    public updatedAt: Date;
+
     @Column()
     public amount: string;
+
+    @Column()
+    public comment: string;
 
     @ManyToOne('User', 'prescriptions')
     @Exclude()

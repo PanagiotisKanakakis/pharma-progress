@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class initial1667725050957 implements MigrationInterface {
-    name = 'initial1667725050957'
+export class initial1668109779420 implements MigrationInterface {
+    name = 'initial1668109779420'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -19,21 +19,12 @@ export class initial1667725050957 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
-            CREATE TABLE "opening_balance" (
-                "id" SERIAL NOT NULL,
-                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "value" character varying NOT NULL,
-                "userId" integer,
-                CONSTRAINT "PK_b8778e0226b17d5286b2548e422" PRIMARY KEY ("id")
-            )
-        `);
-        await queryRunner.query(`
             CREATE TABLE "prescription" (
                 "id" SERIAL NOT NULL,
                 "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "amount" character varying NOT NULL,
+                "comment" character varying NOT NULL,
                 "userId" integer,
                 CONSTRAINT "PK_eaba5e4414e5382781e08467b51" PRIMARY KEY ("id")
             )
@@ -81,6 +72,16 @@ export class initial1667725050957 implements MigrationInterface {
                 "comment" character varying NOT NULL,
                 "userId" integer,
                 CONSTRAINT "PK_89eadb93a89810556e1cbcd6ab9" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "opening_balance" (
+                "id" SERIAL NOT NULL,
+                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "value" character varying NOT NULL,
+                "userId" integer,
+                CONSTRAINT "PK_b8778e0226b17d5286b2548e422" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
@@ -137,10 +138,6 @@ export class initial1667725050957 implements MigrationInterface {
             ADD CONSTRAINT "FK_918560179c0e9aeb24381534b7e" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
-            ALTER TABLE "opening_balance"
-            ADD CONSTRAINT "FK_cd0dcf2d53900224c503453f9d0" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-        await queryRunner.query(`
             ALTER TABLE "prescription"
             ADD CONSTRAINT "FK_400cc960985202feb366b3dd1ba" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
@@ -148,17 +145,21 @@ export class initial1667725050957 implements MigrationInterface {
             ALTER TABLE "transaction"
             ADD CONSTRAINT "FK_605baeb040ff0fae995404cea37" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
+        await queryRunner.query(`
+            ALTER TABLE "opening_balance"
+            ADD CONSTRAINT "FK_cd0dcf2d53900224c503453f9d0" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`
+            ALTER TABLE "opening_balance" DROP CONSTRAINT "FK_cd0dcf2d53900224c503453f9d0"
+        `);
         await queryRunner.query(`
             ALTER TABLE "transaction" DROP CONSTRAINT "FK_605baeb040ff0fae995404cea37"
         `);
         await queryRunner.query(`
             ALTER TABLE "prescription" DROP CONSTRAINT "FK_400cc960985202feb366b3dd1ba"
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "opening_balance" DROP CONSTRAINT "FK_cd0dcf2d53900224c503453f9d0"
         `);
         await queryRunner.query(`
             ALTER TABLE "check" DROP CONSTRAINT "FK_918560179c0e9aeb24381534b7e"
@@ -188,6 +189,9 @@ export class initial1667725050957 implements MigrationInterface {
             DROP TYPE "public"."shortaccesstoken_resourcetype_enum"
         `);
         await queryRunner.query(`
+            DROP TABLE "opening_balance"
+        `);
+        await queryRunner.query(`
             DROP TABLE "transaction"
         `);
         await queryRunner.query(`
@@ -204,9 +208,6 @@ export class initial1667725050957 implements MigrationInterface {
         `);
         await queryRunner.query(`
             DROP TABLE "prescription"
-        `);
-        await queryRunner.query(`
-            DROP TABLE "opening_balance"
         `);
         await queryRunner.query(`
             DROP TABLE "check"

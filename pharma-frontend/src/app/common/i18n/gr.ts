@@ -19,6 +19,8 @@ export const locale = {
     },
     TABLE: {
       CATEGORY: 'Κατηγορια',
+      PRODUCT: 'Προϊόν',
+      QUANTITY: 'Ποσότητα',
       VALUE: 'Ποσο',
       DATE: 'Ημερομηνια',
       DATE_PATTERN: 'Η μορφη της ημερομηνιας ειναι λανθασμενη',
@@ -30,6 +32,7 @@ export const locale = {
       ACTION: 'Ενεργεια',
       OPTION_DEFAULT_SELECT: 'Επιλογη κατηγοριας',
       OPTION_DEFAULT_PAYMENT_SELECT: 'Επιλογή τρ. πληρωμής',
+      OPTION_DEFAULT_PRODUCT_SELECT: 'Επιλογή είδους προϊόντος',
       ACTIONS: 'Ενεργειες',
       SUMMARY: 'Σύνολο',
       MAIN_COMPANY: 'Κ.Ε.',

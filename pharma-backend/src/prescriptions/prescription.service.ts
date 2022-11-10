@@ -3,14 +3,11 @@ import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository } from 'typeorm';
 import { CreatePrescriptionDto } from './dto';
 import { UserService } from '../authbroker/users';
-import { InjectQueue, Process } from '@nestjs/bull';
-import { Job, Queue } from 'bull';
-import { ConfigService } from '@nestjs/config';
-import { CronExpression } from '@nestjs/schedule';
 import { Prescription } from './prescription.entity';
-import { StatisticsService } from '../statistics/statistics.service';
 import { CriteriaDto } from '../statistics/dto';
-import { parseDate } from '../common';
+import {getMonthRanges, getWeek, toDate} from '../common';
+import { Check } from '../checks';
+import { RangeType } from '../statistics/enums/range-type.enum';
 
 @Injectable()
 export class PrescriptionService {
@@ -31,7 +28,10 @@ export class PrescriptionService {
                 dto.userId,
             );
             prescription.amount = dto.amount;
+            prescription.createdAt = toDate(dto.createdAt);
+            prescription.comment = dto.comment;
             await this.prescriptionRepository.save(prescription);
+            return prescription;
         } catch (e) {
             this.logger.error('Commit prescription failed with error ' + e);
         }
@@ -39,9 +39,8 @@ export class PrescriptionService {
 
     public async update(id: string, dto: CreatePrescriptionDto): Promise<any> {
         try {
-            await this.prescriptionRepository.update(id, {
-                amount: dto.amount,
-            });
+            delete dto.userId;
+            await this.prescriptionRepository.update(id, dto);
         } catch (e) {
             this.logger.error('Commit prescription failed with error ' + e);
         }
@@ -56,5 +55,38 @@ export class PrescriptionService {
                 'Failed to retrieve prescription for user with error  ' + e,
             );
         }
+    }
+
+    async getAllByCriteria(criteriaDto: CriteriaDto): Promise<Prescription[]> {
+        const query = this.prescriptionRepository
+            .createQueryBuilder('prescriptions')
+            .where('prescriptions.userId = :userId ', {
+                userId: criteriaDto.userId,
+            });
+        let dateRange;
+        if (criteriaDto.range == RangeType.WEEKLY) {
+            dateRange = getWeek(new Date(criteriaDto.date));
+            query
+                .andWhere('CAST ("createdAt" AS DATE) >= :dateFrom ', {
+                    dateFrom: dateRange.dateFrom,
+                })
+                .andWhere('CAST ("createdAt" AS DATE) <= :dateTo ', {
+                    dateTo: dateRange.dateTo,
+                });
+        } else if (criteriaDto.range == RangeType.MONTHLY) {
+            dateRange = getMonthRanges(criteriaDto.range, criteriaDto.date);
+            query
+                .andWhere('CAST ("createdAt" AS DATE) >= :dateFrom ', {
+                    dateFrom: dateRange[0].dateFrom,
+                })
+                .andWhere('CAST ("createdAt" AS DATE) <= :dateTo ', {
+                    dateTo: dateRange[0].dateTo,
+                });
+        } else if (criteriaDto.range == RangeType.DAILY) {
+            query.andWhere('CAST ("createdAt" AS DATE) = :dateFrom ', {
+                dateFrom: criteriaDto.date,
+            });
+        }
+        return query.getMany();
     }
 }

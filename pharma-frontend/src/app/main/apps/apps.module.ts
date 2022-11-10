@@ -51,6 +51,10 @@ const routes: Routes = [
     loadChildren: () => import('./nationalHealth/nationalHealth.module').then(m => m.NationalHealthModule)
   },
   {
+    path: 'prescriptions',
+    loadChildren: () => import('./prescription/prescription.module').then(m => m.PrescriptionModule)
+  },
+  {
     path: 'operating-expenses',
     loadChildren: () => import('./operating-expenses/operating-expenses.module').then(m => m.OperatingExpensesModule)
   },

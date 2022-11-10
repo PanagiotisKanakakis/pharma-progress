@@ -13,6 +13,7 @@ import { AuthBrokerModule } from './authbroker/authbroker.module';
 import { TransactionModule } from './transaction/transaction.module';
 import {StatisticsModule} from './statistics/statistics.module';
 import {CheckModule} from './checks/check.module';
+import {PrescriptionModule} from './prescriptions/prescription.module';
 
 @Module({
     imports: [
@@ -86,6 +87,7 @@ import {CheckModule} from './checks/check.module';
         OpeningBalanceModule,
         StatisticsModule,
         CheckModule,
+        PrescriptionModule
     ],
     providers: [
         {
