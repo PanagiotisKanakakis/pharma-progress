@@ -3,6 +3,8 @@ import { Entity, Column, Index, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Transaction } from '../../transaction';
 import { OpeningBalance } from '../../opening-balance';
+import {Prescription} from '../../prescriptions';
+import {Check} from '../../checks';
 
 @Entity({ name: 'users' })
 export class User extends AbstractEntity {
@@ -41,4 +43,12 @@ export class User extends AbstractEntity {
     })
     @Exclude()
     public openingBalances: OpeningBalance[];
+
+    @OneToMany(() => Prescription, (prescription) => prescription.user)
+    @Exclude()
+    public prescriptions: Prescription[];
+
+    @OneToMany(() => Check, (check) => check.user)
+    @Exclude()
+    public checks: Check[];
 }

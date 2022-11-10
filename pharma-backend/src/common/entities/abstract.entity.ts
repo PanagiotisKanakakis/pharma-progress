@@ -1,6 +1,7 @@
 import { Exclude } from 'class-transformer';
 import {
-    CreateDateColumn, PrimaryColumn,
+    CreateDateColumn,
+    PrimaryColumn,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';

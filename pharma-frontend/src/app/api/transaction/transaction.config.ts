@@ -2,11 +2,11 @@ import {API_BASE_URL} from '../../common';
 import {CriteriaDto} from './dto';
 
 export const getSubmitTransactionUrl = () => {
-    return `${API_BASE_URL}/transaction/commit`;
+    return `${API_BASE_URL}/transaction`;
 };
 
 export const getUpdateTransactionUrl = () => {
-    return `${API_BASE_URL}/transaction/update`;
+    return `${API_BASE_URL}/transaction`;
 };
 
 export const getAllTransactionsByAfmUrl = (afm: string) => {

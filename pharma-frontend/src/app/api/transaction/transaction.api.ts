@@ -9,13 +9,13 @@ import {
 import {CriteriaDto} from './dto';
 
 
-export const submitTransactions = async (data: { transactions: TransactionEntity[] }, headers: any): Promise<any> => {
-    const {data: response} = await axios.post(getSubmitTransactionUrl(), data, {headers: headers});
+export const submitTransaction = async (transaction: TransactionEntity, headers: any): Promise<any> => {
+    const {data: response} = await axios.post(getSubmitTransactionUrl(), transaction, {headers: headers});
     return response;
 };
 
-export const updateTransactions = async (data: { transactions: TransactionEntity[] }, headers: any): Promise<any> => {
-    const {data: response} = await axios.put(getUpdateTransactionUrl(), data, {headers: headers});
+export const updateTransaction = async (transaction: TransactionEntity, headers: any): Promise<any> => {
+    const {data: response} = await axios.put(getUpdateTransactionUrl()+ '/'+transaction.id, transaction, {headers: headers});
     return response;
 };
 

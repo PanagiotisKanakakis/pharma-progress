@@ -11,9 +11,9 @@ import {locale as greek} from 'app/common/i18n/gr';
 import {
     getTransactionsByCriteria,
     PaymentType,
-    submitTransactions,
+    submitTransaction,
     TransactionType,
-    updateTransactions,
+    updateTransaction,
     VAT
 } from '../../../../api/transaction';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -74,9 +74,9 @@ export class PersonalWithdrawalsComponent implements OnInit {
             this.editingValue[rowIndex] = false;
             this.rows[rowIndex].cost = event.target.value;
             if (this.rows[rowIndex].id === undefined) {
-                this.submitTransaction(this.rows[rowIndex], rowIndex);
+                this.submit(this.rows[rowIndex], rowIndex);
             } else {
-                this.updateTransaction(this.rows[rowIndex]);
+                this.update(this.rows[rowIndex]);
             }
         }
     }
@@ -99,6 +99,11 @@ export class PersonalWithdrawalsComponent implements OnInit {
         if (DateUtils.dateInRange(this.period, DateUtils.toDate(event.target.value))) {
             this.rows[rowIndex].createdAt = event.target.value;
             this.dateFormControl[rowIndex].setErrors(null);
+            if (this.rows[rowIndex].id === undefined) {
+                this.submit(this.rows[rowIndex], rowIndex);
+            } else {
+                this.update(this.rows[rowIndex]);
+            }
         } else {
             this.dateFormControl[rowIndex].setErrors({'range': true});
         }
@@ -186,6 +191,7 @@ export class PersonalWithdrawalsComponent implements OnInit {
                     this.addNewRow(transaction.id, transaction.cost, DateUtils.formatDbDate(transaction.createdAt));
                     this.rows[i].paymentType = PaymentType.valueOf(transaction.paymentType);
                     this.rows[i].createdAt = DateUtils.formatDbDate(transaction.createdAt);
+                    this.rows[i].comment = transaction.comment;
                 }
                 this.summaryColumn();
             }
@@ -195,7 +201,7 @@ export class PersonalWithdrawalsComponent implements OnInit {
         });
     }
 
-    submitTransaction(row, rowIndex) {
+    submit(row, rowIndex) {
         if (this.dateFormControl[rowIndex].valid) {
             const tr = new TransactionEntity();
             tr.userId = this.currentUser.id;
@@ -206,14 +212,14 @@ export class PersonalWithdrawalsComponent implements OnInit {
             tr.cost = row.cost;
             tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
             tr.comment = row.comment;
-            submitTransactions(
-                {'transactions': [tr]},
+            submitTransaction(
+                tr,
                 {
                     'Accept': 'application/json',
                     'Authorization': 'Bearer ' + this.currentUser.token
                 }
             )
-                .then(r => row.id = r[0].id)
+                .then(r => row.id = r.id)
                 .catch((error: any) => {
                     this._authenticationService.logout();
                     this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
@@ -222,11 +228,16 @@ export class PersonalWithdrawalsComponent implements OnInit {
 
     }
 
-    onChange(event, row) {
-        row.comment = event.target.value;
+    onCommentChange(event, rowIndex) {
+        this.rows[rowIndex].comment = event.target.value;
+        if (this.rows[rowIndex].id === undefined) {
+            this.submit(this.rows[rowIndex], rowIndex);
+        } else {
+            this.update(this.rows[rowIndex]);
+        }
     }
 
-    private updateTransaction(row: any) {
+    private update(row: any) {
         const tr = new TransactionEntity();
         tr.id = row.id;
         tr.userId = this.currentUser.id;
@@ -237,8 +248,8 @@ export class PersonalWithdrawalsComponent implements OnInit {
         tr.cost = row.cost;
         tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
         tr.comment = row.comment;
-        updateTransactions(
-            {'transactions': [tr]},
+        updateTransaction(
+            tr,
             {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + this.currentUser.token
@@ -249,28 +260,6 @@ export class PersonalWithdrawalsComponent implements OnInit {
                 this._authenticationService.logout();
                 this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
             });
-    }
-
-    submitTransactions() {
-        this.transactionsToSubmit = [];
-        this.rows.forEach((row, i) => {
-            const tr = new TransactionEntity();
-            tr.id = this.currentUser.id;
-            tr.transactionType = TransactionType.getIndexOf(row.transactionType);
-            tr.paymentType = this.getPaymentType();
-            tr.vat = VAT.getIndexOf(row.vat);
-            tr.createdAt = row.createdAt;
-            tr.cost = row.cost;
-            this.transactionsToSubmit.push(tr);
-        });
-        console.log(this.transactionsToSubmit);
-        submitTransactions(
-            {'transactions': this.transactionsToSubmit},
-            {
-                'Accept': 'application/json',
-                'Authorization': 'Bearer ' + this.currentUser.token
-            }
-        ).then(r => console.log(r));
     }
 
     private getPaymentType() {

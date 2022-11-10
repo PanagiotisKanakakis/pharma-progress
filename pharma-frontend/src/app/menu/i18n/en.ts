@@ -38,6 +38,7 @@ export const locale = {
         EOPPY: 'National Health',
         EOPPY_INCOME: 'Income',
         EOPPY_ON_ACCOUNT: 'On Account',
+        EOPPY_PRESCRIPTIONS: 'Register prescriptions',
         PERSONAL_WITHDRAWALS: 'Withdrawals',
         WITHDRAWALS_BANK: 'Bank',
         WITHDRAWALS_POS: 'POS',

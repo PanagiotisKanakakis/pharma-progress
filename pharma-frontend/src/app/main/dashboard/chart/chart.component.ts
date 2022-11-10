@@ -92,8 +92,8 @@ export class ChartComponent implements OnInit {
             dateFormat: 'm.y',
             altFormat: 'F Y',
             onClose: (selectedDates: any) => {
-                const [month, day, year] = selectedDates[0].toLocaleDateString().split('/');
-                this.period = DateUtils.NgbDateToMonthPeriod(new NgbDate(+year, +month, +day));
+                this.period = DateUtils.NgbDateToMonthPeriod(
+                    new NgbDate(+selectedDates[0].getUTCFullYear(), +selectedDates[0].getUTCMonth()+1, +selectedDates[0].getUTCDate()));
                 this.getData();
             },
         };

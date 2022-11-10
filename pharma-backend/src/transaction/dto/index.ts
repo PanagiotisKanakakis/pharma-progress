@@ -1,1 +1,1 @@
-export * from './commit-transaction.dto';
+export * from './create-transaction.dto';

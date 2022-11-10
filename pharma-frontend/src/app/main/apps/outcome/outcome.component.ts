@@ -11,9 +11,9 @@ import {locale as greek} from 'app/common/i18n/gr';
 import {
     getTransactionsByCriteria,
     PaymentType,
-    submitTransactions,
+    submitTransaction,
     TransactionType,
-    updateTransactions,
+    updateTransaction,
     VAT
 } from '../../../api/transaction';
 import {plainToInstance} from 'class-transformer';
@@ -108,8 +108,8 @@ export class OutcomeComponent implements OnInit {
                 defaultDate: new Date(),
                 altFormat: 'j-n-Y',
                 onClose: (selectedDates: any) => {
-                    const [month, day, year] = selectedDates[0].toLocaleDateString().split('/');
-                    this.dates = DateUtils.initSpecificWeek(new NgbDate(+year,+month,+day));
+                    this.dates = DateUtils.initSpecificWeek(
+                        new NgbDate(+selectedDates[0].getUTCFullYear(), +selectedDates[0].getUTCMonth()+1, +selectedDates[0].getUTCDate()));
                     this.initEmptyCells();
                     this.initCellValues();
                 },
@@ -269,8 +269,8 @@ export class OutcomeComponent implements OnInit {
         tr.supplierType = this.getSupplierType();
         tr.comment = '';
         console.log(tr);
-        submitTransactions(
-            {'transactions': [tr]},
+        submitTransaction(
+            tr,
             {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + this.currentUser.token
@@ -296,8 +296,8 @@ export class OutcomeComponent implements OnInit {
         tr.cost = transactionCell.cost;
         tr.supplierType = this.getSupplierType();
         tr.comment = '';
-        updateTransactions(
-            {'transactions': [tr]},
+        updateTransaction(
+            tr,
             {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + this.currentUser.token

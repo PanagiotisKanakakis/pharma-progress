@@ -11,9 +11,9 @@ import {locale as greek} from 'app/common/i18n/gr';
 import {
     getTransactionsByCriteria,
     PaymentType,
-    submitTransactions,
+    submitTransaction,
     TransactionType,
-    updateTransactions,
+    updateTransaction,
     VAT
 } from '../../../api/transaction';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -76,13 +76,64 @@ export class NationalHealthComponent implements OnInit {
         this.addNewRow(undefined, 0, '', '');
     }
 
+    submit(row,rowIndex){
+        if (this.numberFormControl[rowIndex].valid && this.dateFormControl[rowIndex].valid) {
+            let tr = new TransactionEntity();
+            tr.userId = this.currentUser.id;
+            tr.transactionType = TransactionType.getIndexOf(this.rows[rowIndex].transactionType);
+            tr.paymentType = PaymentType.getIndexOf(this.rows[rowIndex].paymentType);
+            tr.vat = VAT.getIndexOf(this.rows[rowIndex].vat);
+            tr.createdAt = DateUtils.queryFormattedDate(DateUtils.toDate(this.rows[rowIndex].createdAt));
+            tr.cost = this.rows[rowIndex].cost;
+            tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
+            tr.comment = this.rows[rowIndex].comment;
+
+            submitTransaction(
+                tr,
+                {
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + this.currentUser.token
+                }
+            ).then(r => this.rows[rowIndex].id = r.id).catch((_: any) => {
+                this._authenticationService.logout();
+                this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
+            });
+        }
+    }
+
+    update(row,rowIndex){
+        if (this.numberFormControl[rowIndex].valid && this.dateFormControl[rowIndex].valid) {
+            let tr = new TransactionEntity();
+            tr.id = this.rows[rowIndex].id;
+            tr.userId = this.currentUser.id;
+            tr.transactionType = TransactionType.getIndexOf(this.rows[rowIndex].transactionType);
+            tr.paymentType = PaymentType.getIndexOf(this.rows[rowIndex].paymentType);
+            tr.vat = VAT.getIndexOf(this.rows[rowIndex].vat);
+            tr.createdAt = DateUtils.queryFormattedDate(DateUtils.toDate(this.rows[rowIndex].createdAt));
+            tr.cost = this.rows[rowIndex].cost;
+            tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
+            tr.comment = this.rows[rowIndex].comment;
+
+            updateTransaction(
+                tr,
+                {
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + this.currentUser.token
+                }
+            ).then()
+                .catch((_: any) => {
+                this._authenticationService.logout();
+                this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
+            });
+        }
+    }
+
     async inlineEditingUpdateValue(event, rowIndex) {
         if (this.numberFormControl[rowIndex].valid) {
             this.editingValue[rowIndex] = false;
             let oldValue = this.rows[rowIndex].cost;
             this.rows[rowIndex].cost = event.target.value;
 
-            let transactions = [];
             let tr = new TransactionEntity();
             tr.userId = this.currentUser.id;
             tr.transactionType = TransactionType.getIndexOf(this.rows[rowIndex].transactionType);
@@ -95,9 +146,8 @@ export class NationalHealthComponent implements OnInit {
 
             if (this.rows[rowIndex].id === undefined) {
                 if (this.dateFormControl[rowIndex].valid) {
-                    transactions.push(tr);
-                    submitTransactions(
-                        {'transactions': transactions},
+                    submitTransaction(
+                        tr,
                         {
                             'Accept': 'application/json',
                             'Authorization': 'Bearer ' + this.currentUser.token
@@ -117,7 +167,7 @@ export class NationalHealthComponent implements OnInit {
                 * for income of previous months
                 * *!/
                     if (this.type === 'income') {
-                        let tr = new TransactionEntity();
+                        let tr = new CheckEntity();
                         tr.userId = this.currentUser.id;
                         tr.transactionType = TransactionType.getIndexOf(TransactionType.INCOME);
                         tr.paymentType = PaymentType.getIndexOf(PaymentType.PREVIOUS_MONTHS_RECEIPTS);
@@ -127,7 +177,7 @@ export class NationalHealthComponent implements OnInit {
                         tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
                         tr.comment = this.rows[rowIndex].comment;
                         submitTransactions(
-                            {'transactions': [tr]},
+                            tr,
                             {
                                 'Accept': 'application/json',
                                 'Authorization': 'Bearer ' + this.currentUser.token
@@ -141,10 +191,9 @@ export class NationalHealthComponent implements OnInit {
 
             } else {
                 if (this.dateFormControl[rowIndex].valid) {
-                    transactions.push(tr);
                     tr.id = this.rows[rowIndex].id;
-                    updateTransactions(
-                        {'transactions': transactions},
+                    updateTransaction(
+                        tr,
                         {
                             'Accept': 'application/json',
                             'Authorization': 'Bearer ' + this.currentUser.token
@@ -221,8 +270,22 @@ export class NationalHealthComponent implements OnInit {
         if (DateUtils.dateInRange(this.period, DateUtils.toDate(event.target.value))) {
             this.rows[rowIndex].createdAt = event.target.value;
             this.dateFormControl[rowIndex].setErrors(null);
+            if (this.rows[rowIndex].id === undefined) {
+                this.submit(this.rows[rowIndex], rowIndex);
+            } else {
+                this.update(this.rows[rowIndex], rowIndex);
+            }
         } else {
             this.dateFormControl[rowIndex].setErrors({'range': true});
+        }
+    }
+
+    onCommentChange(event, rowIndex) {
+        this.rows[rowIndex].comment = event.target.value;
+        if (this.rows[rowIndex].id === undefined) {
+            this.submit(this.rows[rowIndex], rowIndex);
+        } else {
+            this.update(this.rows[rowIndex], rowIndex);
         }
     }
 
@@ -281,8 +344,8 @@ export class NationalHealthComponent implements OnInit {
             for (let i = 0; i < data.length; i++) {
                 const transaction = plainToInstance(TransactionEntity, data[i]);
                 transaction.cost = +transaction.cost -  +oldValue + +cost;
-                updateTransactions(
-                    {'transactions': [transaction]},
+                updateTransaction(
+                   transaction,
                     {
                         'Accept': 'application/json',
                         'Authorization': 'Bearer ' + this.currentUser.token

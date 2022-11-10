@@ -8,9 +8,9 @@ import {locale as greek} from 'app/common/i18n/gr';
 import {
     getTransactionsByCriteria,
     PaymentType,
-    submitTransactions,
+    submitTransaction,
     TransactionType,
-    updateTransactions,
+    updateTransaction,
     VAT
 } from '../../../api/transaction';
 import {User} from '../../../auth/models';
@@ -94,14 +94,11 @@ export class IncomeComponent implements OnInit {
             defaultDate: new Date(),
             altFormat: 'j-n-Y',
             onClose: (selectedDates: any) => {
-                const [month, day, year] = selectedDates[0].toLocaleDateString().split('/');
-                this.dates = DateUtils.initSpecificWeek(new NgbDate(+year,+month,+day));
+                this.dates = DateUtils.initSpecificWeek(
+                    new NgbDate(+selectedDates[0].getUTCFullYear(), +selectedDates[0].getUTCMonth()+1, +selectedDates[0].getUTCDate()));
                 this.initEmptyCells();
                 this.initCellValues();
             },
-            // parseDate: (selectedDates: any) => {
-            //     console.log(selectedDates)
-            // }
         };
     }
 
@@ -157,10 +154,12 @@ export class IncomeComponent implements OnInit {
                 'Authorization': 'Bearer ' + this.currentUser.token
             }
         ).then((data) => {
+            console.log(data)
             if (data.length !== 0) {
                 this.rows.forEach((row, i) => {
                     this.dates.forEach((date, j) => {
                         const dbTransaction = this.searchData(row.paymentType, row.vat, date.queryFormattedDate, data);
+                        console.log(dbTransaction)
                         if (dbTransaction !== undefined) {
                             this.cells[i][j].id = dbTransaction.id;
                             this.cells[i][j].date = date;
@@ -275,19 +274,20 @@ export class IncomeComponent implements OnInit {
                 totalZ: false,
                 totalIncome: false
             });
+            this.transactions.push({
+                transactionType: TransactionType.INCOME,
+                vat: VAT.NONE,
+                paymentType: PaymentType.EXTRA,
+                cost: 0,
+                totalZ: false,
+                totalIncome: false
+            });
         }
     }
 
     searchData(paymentType: string, vat: string, date: string, data: any): TransactionEntity {
         for (let i = 0; i < data.length; i++) {
             const transaction = plainToInstance(TransactionEntity, data[i]);
-            if(transaction.cost == 2840 && date === '2022-10-19'){
-                console.log(paymentType,vat,date)
-                console.log(transaction)
-                console.log(vat)
-                console.log(PaymentType.getIndexOf(paymentType))
-                console.log(date)
-            }
             if (transaction.vat === VAT.getIndexOf(vat)
                 && transaction.paymentType === PaymentType.getIndexOf(paymentType)
                 && transaction.createdAt.toString().split('T')[0] === date) {
@@ -327,16 +327,17 @@ export class IncomeComponent implements OnInit {
         tr.cost = transactionCell.cost;
         tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
         tr.comment = '';
-        submitTransactions(
-            {'transactions': [tr]},
+        submitTransaction(
+            tr,
             {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + this.currentUser.token
             }
         ).then(r => {
-            transactionCell.id = r[0].id;
+            transactionCell.id = r.id;
         }).catch((error: any) => {
             // if (error.response.status === 401) {
+            console.log(error)
             this._authenticationService.logout();
             this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
             // }
@@ -354,8 +355,8 @@ export class IncomeComponent implements OnInit {
         tr.cost = transactionCell.cost;
         tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
         tr.comment = '';
-        updateTransactions(
-            {'transactions': [tr]},
+        updateTransaction(
+            tr,
             {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + this.currentUser.token

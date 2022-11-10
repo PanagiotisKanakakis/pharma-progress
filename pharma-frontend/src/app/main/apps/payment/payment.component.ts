@@ -11,9 +11,9 @@ import {locale as greek} from 'app/common/i18n/gr';
 import {
     getTransactionsByCriteria,
     PaymentType,
-    submitTransactions,
+    submitTransaction,
     TransactionType,
-    updateTransactions,
+    updateTransaction,
     VAT
 } from '../../../api/transaction';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -81,8 +81,8 @@ export class PaymentComponent implements OnInit {
                 dateFormat: 'm.y',
                 altFormat: 'F Y',
                 onClose: (selectedDates: any) => {
-                    const [month, day, year] = selectedDates[0].toLocaleDateString().split('/');
-                    this.period = DateUtils.NgbDateToMonthPeriod(new NgbDate(+year,+month,+day));
+                    this.period = DateUtils.NgbDateToMonthPeriod(
+                        new NgbDate(+selectedDates[0].getUTCFullYear(), +selectedDates[0].getUTCMonth()+1, +selectedDates[0].getUTCDate()));
                     this.getTransactions();
                 },
             };
@@ -103,9 +103,9 @@ export class PaymentComponent implements OnInit {
             this.editingValue[rowIndex] = false;
             this.rows[rowIndex].cost = event.target.value;
             if (this.rows[rowIndex].id === undefined) {
-                this.submitTransaction(this.rows[rowIndex], rowIndex);
+                this.submit(this.rows[rowIndex], rowIndex);
             } else {
-                this.updateTransaction(this.rows[rowIndex]);
+                this.update(this.rows[rowIndex]);
             }
         }
     }
@@ -136,6 +136,7 @@ export class PaymentComponent implements OnInit {
                     const transaction = plainToInstance(TransactionEntity, data[i]);
                     this.addNewRow(transaction.id, transaction.cost, DateUtils.formatDbDate(transaction.createdAt), transaction.paymentType);
                     this.rows[i].createdAt = DateUtils.formatDbDate(transaction.createdAt);
+                    this.rows[i].comment = transaction.comment;
                 }
                 this.summaryColumn();
             }
@@ -154,6 +155,11 @@ export class PaymentComponent implements OnInit {
         if (DateUtils.dateInRange(this.period, DateUtils.toDate(event.target.value))) {
             this.rows[rowIndex].createdAt = event.target.value;
             this.dateFormControl[rowIndex].setErrors(null);
+            if (this.rows[rowIndex].id === undefined) {
+                this.submit(this.rows[rowIndex], rowIndex);
+            } else {
+                this.update(this.rows[rowIndex]);
+            }
         } else {
             this.dateFormControl[rowIndex].setErrors({'range': true});
         }
@@ -237,7 +243,7 @@ export class PaymentComponent implements OnInit {
         return supplierType;
     }
 
-    submitTransaction(row, rowIndex) {
+    submit(row, rowIndex) {
         if (this.dateFormControl[rowIndex].valid) {
             const tr = new TransactionEntity();
             tr.userId = this.currentUser.id;
@@ -254,14 +260,14 @@ export class PaymentComponent implements OnInit {
             tr.supplierType = this.getSupplierType();
             tr.comment = row.comment;
             console.log(tr);
-            submitTransactions(
-                {'transactions': [tr]},
+            submitTransaction(
+                tr,
                 {
                     'Accept': 'application/json',
                     'Authorization': 'Bearer ' + this.currentUser.token
                 }
             )
-                .then(r => row.id = r[0].id)
+                .then(r => row.id = r.id)
                 .catch((_: any) => {
                     this._authenticationService.logout();
                     this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
@@ -270,11 +276,7 @@ export class PaymentComponent implements OnInit {
 
     }
 
-    onChange(event, row) {
-        row.comment = event.target.value;
-    }
-
-    private updateTransaction(row: any) {
+    private update(row: any) {
         const tr = new TransactionEntity();
         tr.id = row.id;
         tr.userId = this.currentUser.id;
@@ -285,8 +287,8 @@ export class PaymentComponent implements OnInit {
         tr.cost = row.cost;
         tr.supplierType = this.getSupplierType();
         tr.comment = row.comment;
-        updateTransactions(
-            {'transactions': [tr]},
+        updateTransaction(
+            tr,
             {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + this.currentUser.token
@@ -313,5 +315,14 @@ export class PaymentComponent implements OnInit {
             return SupplierType.OTHER;
         }
         return TransactionType.TAXES;
+    }
+
+    onCommentChange(event, rowIndex) {
+        this.rows[rowIndex].comment = event.target.value;
+        if (this.rows[rowIndex].id === undefined) {
+            this.submit(this.rows[rowIndex], rowIndex);
+        } else {
+            this.update(this.rows[rowIndex]);
+        }
     }
 }

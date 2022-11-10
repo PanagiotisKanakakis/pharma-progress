@@ -59,8 +59,8 @@ const routes: Routes = [
     loadChildren: () => import('./personal-withdrawals/personal-withdrawals-edit/personal-withdrawals.module').then(m => m.PersonalWithdrawalsModule)
   },
   {
-    path: 'prescript',
-    loadChildren: () => import('./prescript/prescript.module').then(m => m.PrescriptModule)
+    path: 'check',
+    loadChildren: () => import('./check/check.module').then(m => m.CheckModule)
   },
   {
     path: 'payment',

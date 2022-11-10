@@ -5,7 +5,7 @@ import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/r
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable()
-export class PrescriptService implements Resolve<any> {
+export class PrescriptionService implements Resolve<any> {
   rows: any;
   onDatatablessChanged: BehaviorSubject<any>;
 

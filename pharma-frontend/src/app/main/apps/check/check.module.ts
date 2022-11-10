@@ -1,43 +1,39 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
+import {CheckComponent} from './check.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
-import {NgxDatatableModule} from '@swimlane/ngx-datatable';
-import {NgbDateParserFormatter, NgbDatepickerModule, NgbDropdownModule} from '@ng-bootstrap/ng-bootstrap';
-import {NgSelectModule} from '@ng-select/ng-select';
-import {TranslateModule} from '@ngx-translate/core';
 import {DatatablesModule} from '../../tables/datatables/datatables.module';
 import {ContentHeaderModule} from '../../../layout/components/content-header/content-header.module';
 import {CardSnippetModule} from '../../../../@core/components/card-snippet/card-snippet.module';
+import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import {CorePipesModule} from '../../../../@core/pipes/pipes.module';
+import {NgbDatepickerModule} from '@ng-bootstrap/ng-bootstrap';
 import {CoreCardModule} from '../../../../@core/components/core-card/core-card.module';
+import {NgSelectModule} from '@ng-select/ng-select';
+import {TranslateModule} from '@ngx-translate/core';
 import {CoreDirectivesModule} from '../../../../@core/directives/directives';
-import {NationalHealthComponent} from './nationalHealth.component';
-import {NgbdateCustomParserFormatterYearMonth} from '../../../common/utils/ngbdate-custom-parser-formatter-year-month';
+import {CheckService} from './check.service';
+import {Ng2FlatpickrModule} from 'ng2-flatpickr';
 
 
 const routes: Routes = [
     {
-        path: 'onAccount',
-        redirectTo: '/apps/nationalHealth/onAccount'
-    },
-    {
-        path: 'income',
-        redirectTo: '/apps/nationalHealth/income'
-    },
-    {
-        path: 'prescriptions',
-        redirectTo: '/apps/nationalHealth/prescriptions'
-    },
-    {
-        path: ':type',
-        component: NationalHealthComponent,
-    },
+        path: '',
+        data: {
+            title: 'Check',
+            urls: [
+                {title: 'Check', url: '/check'},
+                {title: 'Check'}
+            ]
+        },
+        component: CheckComponent
+    }
 ];
 
 @NgModule({
     declarations: [
-        NationalHealthComponent,
+        CheckComponent,
     ],
     imports: [
         FormsModule,
@@ -54,15 +50,13 @@ const routes: Routes = [
         NgSelectModule,
         TranslateModule,
         CoreDirectivesModule,
-        NgbDropdownModule
+        Ng2FlatpickrModule
     ],
-    providers:[
-        {
-            provide: NgbDateParserFormatter,
-            useClass: NgbdateCustomParserFormatterYearMonth
-        },
+    providers: [
+        CheckService
     ]
+
 })
-export class NationalHealthModule {
+export class CheckModule {
 
 }

@@ -46,6 +46,7 @@ export const locale = {
         EOPPY: 'ΕΟΠΠΥ',
         EOPPY_INCOME: 'Είσπραξη',
         EOPPY_ON_ACCOUNT: 'Επί πιστώσει',
+        EOPPY_PRESCRIPTIONS: 'Καταχώρηση συνταγών',
         BREAK_EVEN_POINT: 'Νεκρό σημείο πωλήσεων',
         MARK_UP: 'Κατηγορίες mark-up',
         EMAIL: 'Email',

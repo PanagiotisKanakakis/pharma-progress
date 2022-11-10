@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {PrescriptComponent} from './prescript.component';
+import {PrescriptionComponent} from './prescription.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {DatatablesModule} from '../../tables/datatables/datatables.module';
@@ -13,26 +13,27 @@ import {CoreCardModule} from '../../../../@core/components/core-card/core-card.m
 import {NgSelectModule} from '@ng-select/ng-select';
 import {TranslateModule} from '@ngx-translate/core';
 import {CoreDirectivesModule} from '../../../../@core/directives/directives';
-import {PrescriptService} from './prescript.service';
+import {PrescriptionService} from './prescription.service';
+import {Ng2FlatpickrModule} from 'ng2-flatpickr';
 
 
 const routes: Routes = [
     {
         path: '',
         data: {
-            title: 'Prescript',
+            title: 'Check',
             urls: [
-                {title: 'Prescript', url: '/prescript'},
-                {title: 'Prescript'}
+                {title: 'Check', url: '/check'},
+                {title: 'Check'}
             ]
         },
-        component: PrescriptComponent
+        component: PrescriptionComponent
     }
 ];
 
 @NgModule({
     declarations: [
-        PrescriptComponent,
+        PrescriptionComponent,
     ],
     imports: [
         FormsModule,
@@ -48,13 +49,14 @@ const routes: Routes = [
         CoreCardModule,
         NgSelectModule,
         TranslateModule,
-        CoreDirectivesModule
+        CoreDirectivesModule,
+        Ng2FlatpickrModule
     ],
     providers: [
-        PrescriptService
+        PrescriptionService
     ]
 
 })
-export class PrescriptModule {
+export class PrescriptionModule {
 
 }

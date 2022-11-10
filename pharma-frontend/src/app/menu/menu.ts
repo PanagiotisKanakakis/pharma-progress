@@ -90,6 +90,16 @@ export const menu: CoreMenu[] = [
                                 url: 'apps/nationalHealth/income',
                                 children: [],
                             },
+                            {
+                                id: 'eoppy_prescriptions',
+                                title: 'Καταχώρηση συνταγών',
+                                translate: 'MENU.APPS.EOPPY_PRESCRIPTIONS',
+                                type: 'item',
+                                icon: 'target',
+                                url: 'apps/nationalHealth/prescriptions',
+                                children: [],
+                            },
+
                         ]
                     }
                 ],
@@ -227,7 +237,7 @@ export const menu: CoreMenu[] = [
                 translate: 'MENU.APPS.PRESCRIPT',
                 type: 'item',
                 icon: 'file-text',
-                url: 'apps/prescript'
+                url: 'apps/check'
             },
             {
                 id: 'break_even_point',
@@ -243,7 +253,7 @@ export const menu: CoreMenu[] = [
                 translate: 'MENU.APPS.MARK_UP',
                 type: 'item',
                 icon: 'file-text',
-                url: 'apps/prescript'
+                url: 'apps/mark-up'
             },
             {
                 id: 'prescript',
@@ -251,7 +261,7 @@ export const menu: CoreMenu[] = [
                 translate: 'MENU.APPS.COMMENTS',
                 type: 'item',
                 icon: 'file-text',
-                url: 'apps/prescript'
+                url: 'apps/transaction-comments'
             }
         ]
     }

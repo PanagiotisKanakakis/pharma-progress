@@ -2,12 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Transaction } from './transaction.entity';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository } from 'typeorm';
-import { CommitTransactionDto } from './dto';
+import { CreateTransactionDto } from './dto';
 import { UserService } from '../authbroker/users';
 import { CriteriaDto } from '../statistics/dto';
-import { getMonthRanges, getWeek } from '../common';
+import { getMonthRanges, getWeek, toDateFromDBFormat } from '../common';
 import { RangeType } from '../statistics/enums/range-type.enum';
-import { PaymentType, SupplierType, TransactionType } from './enums';
+import { TransactionType } from './enums';
 
 @Injectable()
 export class TransactionService {
@@ -21,38 +21,26 @@ export class TransactionService {
         private readonly connection: Connection,
     ) {}
 
-    public async commit(dto: CommitTransactionDto): Promise<any> {
-        const transactions: Transaction[] = [];
-        for (const tr of dto.transactions) {
-            const transaction = new Transaction();
-            transaction.transactionType = tr.transactionType;
-            transaction.paymentType = tr.paymentType;
-            transaction.vat = tr.vat;
-            transaction.cost = tr.cost;
-            transaction.createdAt = tr.createdAt;
-            transaction.supplierType = tr.supplierType;
-            transaction.comment = tr.comment;
-            transaction.user = await this.userService.findOneOrFail(tr.userId);
-            transactions.push(transaction);
-        }
+    public async commit(dto: CreateTransactionDto): Promise<any> {
+        const transaction = new Transaction();
+        transaction.transactionType = dto.transactionType;
+        transaction.paymentType = dto.paymentType;
+        transaction.vat = dto.vat;
+        transaction.cost = dto.cost;
+        transaction.createdAt = toDateFromDBFormat(dto.createdAt);
+        transaction.supplierType = dto.supplierType;
+        transaction.comment = dto.comment;
+        transaction.user = await this.userService.findOneOrFail(dto.userId);
         try {
-            return await this.transactionRepository.save(transactions);
+            return await this.transactionRepository.save(transaction);
         } catch (e) {
             this.logger.error('Commit transactions failed with error ' + e);
         }
     }
 
-    public async update(dto: CommitTransactionDto): Promise<any> {
-        for (const tr of dto.transactions) {
-            await this.transactionRepository.update(
-                {
-                    id: tr.id,
-                },
-                {
-                    cost: tr.cost,
-                },
-            );
-        }
+    public async update(id: string, dto: CreateTransactionDto): Promise<any> {
+        delete dto.userId;
+        await this.transactionRepository.update(id, dto);
     }
 
     async getAllTransactionsByCriteria(

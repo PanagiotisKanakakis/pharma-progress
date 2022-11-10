@@ -22,6 +22,8 @@ import {
 } from './shortaccesstoken';
 import { User, UserController, UserService } from './users';
 import { OpeningBalance } from '../opening-balance';
+import { Prescription } from '../prescriptions';
+import { Check } from '../checks';
 
 @Module({
     imports: [
@@ -29,6 +31,8 @@ import { OpeningBalance } from '../opening-balance';
             User,
             ShortAccessTokenEntity,
             OpeningBalance,
+            Prescription,
+            Check,
         ]),
         HttpModule,
     ],

@@ -14,7 +14,7 @@ import {
     Put,
     Query,
 } from '@nestjs/common';
-import { CommitTransactionDto } from './dto';
+import { CreateTransactionDto } from './dto';
 import { TransactionService } from './transaction.service';
 import { CriteriaDto } from '../statistics/dto';
 import { Transaction } from './transaction.entity';
@@ -39,26 +39,26 @@ export class TransactionController {
         return await this.service.getAllTransactionsByCriteria(criteriaDto);
     }
 
-    @Post('commit')
+    @Post('')
     @ApiOkResponse({
         status: 201,
         description: 'Commit transaction (s) for a given userId',
     })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     @ApiBearerAuth()
-    async commit(@Body() dto: CommitTransactionDto): Promise<any> {
+    async commit(@Body() dto: CreateTransactionDto): Promise<any> {
         return await this.service.commit(dto);
     }
 
-    @Put('update')
+    @Put('/:id')
     @ApiOkResponse({
         status: 201,
         description: 'Update transaction (s) for a given userId',
     })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     @ApiBearerAuth()
-    async update(@Body() dto: CommitTransactionDto): Promise<any> {
-        return await this.service.update(dto);
+    async update(@Param('id') id, @Body() dto: CreateTransactionDto): Promise<any> {
+        return await this.service.update(id, dto);
     }
 
     @Get('getAllByUserId/:userId')

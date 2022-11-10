@@ -137,7 +137,8 @@
                                                         </span>
                                                     </td>
                                                     <td class="text-nowrap">
-                                                        <input type="text" class="form-control">
+                                                        <input type="text" [value]="row.comment"
+                                                               class="form-control" (change)="onCommentChange($event, rowIndex)">
                                                     </td>
                                                     <td>
                                                         <div *ngIf="row.id == undefined"

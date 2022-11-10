@@ -40,16 +40,25 @@ export function getMonthRanges(rangeType: string, date: string): DateRange[] {
 }
 
 export function getWeek(monday: Date) {
-    console.log(monday);
     const sunday = new Date(
         monday.getFullYear(),
         monday.getMonth(),
         monday.getDate() + 6,
     );
-    console.log(parseDate(sunday.toLocaleDateString()));
     return {
         dateFrom: parseDate(monday.toLocaleDateString()),
         dateTo: parseDate(sunday.toLocaleDateString()),
     };
 }
 
+export function toDate(date: string) {
+    const stringDate = date.split('T')[0];
+    const [day, month, year] = stringDate.split('-');
+    return new Date(+year, +month - 1, +day);
+}
+
+export function toDateFromDBFormat(date: string) {
+    const stringDate = date.split('T')[0];
+    const [year, month, day] = stringDate.split('-');
+    return new Date(+year, +month - 1, +day + 1);
+}

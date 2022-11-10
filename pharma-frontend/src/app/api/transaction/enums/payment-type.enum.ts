@@ -4,7 +4,7 @@ export enum PaymentType {
   ON_ACCOUNT = 'Επί πιστώσει',
   PREVIOUS_MONTHS_RECEIPTS = 'Είσπραξη προηγούμενων μηνών',
   POS = 'POS',
-  EXTRA = 'EXTRA',
+  EXTRA = 'Extra',
   PRESCRIPT = 'Επιταγή',
   NONE = ''
 }
