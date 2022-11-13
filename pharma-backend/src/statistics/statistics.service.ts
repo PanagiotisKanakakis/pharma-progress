@@ -47,6 +47,11 @@ export class StatisticsService {
                 ),
                 totalCash: await this.getTotalCash(criteria, dateFrom, dateTo),
                 totalPos: await this.getTotalPos(criteria, dateFrom, dateTo),
+                totalExtra: await this.getTotalExtra(
+                    criteria,
+                    dateFrom,
+                    dateTo,
+                ),
                 totalEOPPYOnAccount: await this.getTotalEOPPYOnAccount(
                     criteria,
                     dateFrom,
@@ -168,6 +173,16 @@ export class StatisticsService {
     ) {
         criteria.transactionType = [TransactionType.INCOME];
         criteria.paymentType = [PaymentType.POS];
+        return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
+    }
+
+    public async getTotalExtra(
+        criteria: CriteriaDto,
+        dateFrom: string,
+        dateTo: string,
+    ) {
+        criteria.transactionType = [TransactionType.INCOME];
+        criteria.paymentType = [PaymentType.EXTRA];
         return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
     }
 

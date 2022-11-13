@@ -204,7 +204,7 @@ export class OperatingExpensesComponent implements OnInit {
                 'range': 'monthly',
                 'transactionType': transactionType,
                 'supplierType': SupplierType.getIndexOf(SupplierType.NONE),
-                'paymentType': [PaymentType.getIndexOf(PaymentType.CASH)]
+                'paymentType': [PaymentType.getIndexOf(PaymentType.CASH), PaymentType.getIndexOf(PaymentType.BANK)]
             },
             {
                 'Accept': 'application/json',
@@ -262,7 +262,7 @@ export class OperatingExpensesComponent implements OnInit {
 
     }
 
-    private update(row: any) {
+    update(row: any) {
         const tr = new TransactionEntity();
         tr.id = row.id;
         tr.userId = this.currentUser.id;
@@ -287,7 +287,7 @@ export class OperatingExpensesComponent implements OnInit {
             });
     }
 
-    private initContentHeader() {
+    initContentHeader() {
         this.contentHeader = {
             headerTitle: 'Λειτουργικά έξοδα',
             actionButton: false,

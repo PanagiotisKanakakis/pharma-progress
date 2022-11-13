@@ -450,7 +450,6 @@ export class ChartComponent implements OnInit {
             .then(response => {
                 setTimeout(() => {
                     this.statistics = plainToInstance(StatisticsDto, response);
-                    console.log(this.statistics)
                     const [year, month, day] = this.period.dateFrom.split('-');
                     this.tableLabels = this.generateLabels(new Date(+year, +month - 1, +day));
                     this.lineChart.labels = this.generateLabels(new Date(+year, +month - 1, +day));

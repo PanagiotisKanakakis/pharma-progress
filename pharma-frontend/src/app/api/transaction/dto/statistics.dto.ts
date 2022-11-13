@@ -7,6 +7,7 @@ export class StatisticsDto {
         outcomePerVat: Partial<Record<VAT, number>>;
         totalCash: number;
         totalPos: number;
+        totalExtra: number;
         totalEOPPYOnAccount: number;
         totalEOPPYIncome: number;
         totalOnAccount: number;

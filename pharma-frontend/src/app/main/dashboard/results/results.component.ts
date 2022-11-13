@@ -230,7 +230,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         };
         this.basicDPdata = DateUtils.getTodayAsNgbDateStruct();
         this.period = DateUtils.NgbDateToMonthPeriod(new NgbDate(this.basicDPdata.year, this.basicDPdata.month, this.basicDPdata.day));
-        this.updateApiData();
+        this.getData();
         // ng2-flatpickr options
         this.DateRangeOptions = {
             locale: Greek,
@@ -243,7 +243,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
             onClose: (selectedDates: any) => {
                 this.period = DateUtils.NgbDateToMonthPeriod(
                     new NgbDate(+selectedDates[0].getUTCFullYear(), +selectedDates[0].getUTCMonth()+1, +selectedDates[0].getUTCDate()));
-                this.updateApiData();
+                this.getData();
             },
         };
 
@@ -419,22 +419,23 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         return this.dashboardService.totalClosingBalance(this.statistics, this.period.dateFrom);
     }
 
-    private updateApiData() {
-        this.dashboardService.getStatisticsData(String(this.currentUser.id), this.currentUser.token, this.period.dateFrom, 'monthly')
+    getData() {
+        this.dashboardService.getStatisticsData(String((this.currentUser.id)), this.currentUser.token, this.period.dateFrom, 'yearly')
             .then(response => {
-                const [year, month, day] = this.period.dateFrom.split('-');
-                this.period.dateFrom = year + '-' + +month + '-' + day;
-                this.statistics = plainToInstance(StatisticsDto, response);
-                Object.keys(this.statistics[this.period.dateFrom].operatingExpenses).forEach((key) => {
-                    const result = this.statistics[this.period.dateFrom].operatingExpenses[key].reduce((accumulator, transaction) => {
-                        return accumulator + +transaction.cost;
-                    }, 0);
-                    this.operatingExpensesData.push({
-                        transactionType: +key,
-                        cost: result
-                    })
-                });
-                this.isLoaded = true;
+                setTimeout(() => {
+                    this.statistics = plainToInstance(StatisticsDto, response);
+                    Object.keys(this.statistics[this.period.dateFrom].operatingExpenses).forEach((key) => {
+                        const result = this.statistics[this.period.dateFrom].operatingExpenses[key].reduce((accumulator, transaction) => {
+                            return accumulator + +transaction.cost;
+                        }, 0);
+                        this.operatingExpensesData.push({
+                            transactionType: +key,
+                            cost: result
+                        })
+                    });
+                    this.isLoaded = true;
+                }, 500);
+
             })
             .catch((_: Error) => {
                 this._authenticationService.logout();
@@ -452,5 +453,40 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 
     totalOutcome() {
         return this.totalMainSupplierOutcome() + this.totalOtherSupplierOutcome()
+    }
+
+    avgPersonalWithdrawals() {
+        let pw = [];
+        for (let date in this.statistics) {
+            pw.push(this.dashboardService.totalPersonalWithdrawals(this.statistics, date));
+        }
+        let monthNumber = this.period.dateFrom.split('-')[1];
+        let value = 0;
+        for(let i = 0 ; i < +monthNumber; i++){
+            value += pw[i];
+        }
+        return value / (+monthNumber -1);
+
+    }
+
+    totalExtraDividedToTotalIncome() {
+        if(this.dashboardService.totalMonthIncome(this.statistics,this.period.dateFrom) == 0 ){
+            return 0;
+        }
+        return this.dashboardService.totalExtra(this.statistics, this.period.dateFrom) / this.dashboardService.totalMonthIncome(this.statistics,this.period.dateFrom);
+    }
+
+    avgExtra() {
+        let extras = [];
+        for (let date in this.statistics) {
+            extras.push(this.dashboardService.totalExtra(this.statistics, date));
+        }
+        let monthNumber = this.period.dateFrom.split('-')[1];
+        let value = 0;
+        for(let i = 0 ; i < +monthNumber; i++){
+            value += extras[i];
+        }
+        return value / (+monthNumber -1);
+
     }
 }

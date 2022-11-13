@@ -285,4 +285,8 @@ export class DashboardService {
             - this.totalOperatingExpensesIncludingVat( payload , date )
             - this.totalPersonalWithdrawals( payload , date );
     }
+
+    totalExtra(payload, date) {
+        return payload[date].totalExtra;
+    }
 }
