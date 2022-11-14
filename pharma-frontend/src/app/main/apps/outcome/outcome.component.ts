@@ -203,28 +203,24 @@ export class OutcomeComponent implements OnInit {
             vat: VAT.ZERO,
             paymentType: PaymentType.CASH,
             cost: 0,
-            totalOutcome: true
         });
         this.transactions.push({
             transactionType: TransactionType.EXPENSE,
             vat: VAT.SIX,
             paymentType: PaymentType.CASH,
             cost: 0,
-            totalOutcome: true
         });
         this.transactions.push({
             transactionType: TransactionType.EXPENSE,
             vat: VAT.THIRTEEN,
             paymentType: PaymentType.CASH,
             cost: 0,
-            totalOutcome: true
         });
         this.transactions.push({
             transactionType: TransactionType.EXPENSE,
             vat: VAT.TWENTYFOUR,
             paymentType: PaymentType.CASH,
             cost: 0,
-            totalOutcome: true
         });
     }
 
@@ -276,7 +272,7 @@ export class OutcomeComponent implements OnInit {
                 'Authorization': 'Bearer ' + this.currentUser.token
             }
         ).then(r => {
-            transactionCell.id = r[0].id;
+            transactionCell.id = r.id;
         }).catch((error: any) => {
             // if (error.response.status === 401) {
             this._authenticationService.logout();

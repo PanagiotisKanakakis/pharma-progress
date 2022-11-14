@@ -3,8 +3,8 @@ import { Entity, Column, Index, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Transaction } from '../../transaction';
 import { OpeningBalance } from '../../opening-balance';
-import {Prescription} from '../../prescriptions';
-import {Check} from '../../checks';
+import { Prescription } from '../../prescriptions';
+import { Check } from '../../checks';
 
 @Entity({ name: 'users' })
 export class User extends AbstractEntity {
@@ -14,7 +14,7 @@ export class User extends AbstractEntity {
     public keycloakId: string;
 
     @Index()
-    @Column({ unique: true })
+    @Column({ nullable: true })
     public afm: string;
 
     @Index()

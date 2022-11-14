@@ -68,9 +68,9 @@ export class IncomeComponent implements OnInit {
             this.cells[rowIndex][cell].cost = event.target.value;
             this.summaryFooterColumn(cell);
             if (this.cells[rowIndex][cell].id !== undefined) {
-                this.updateTransaction(transaction, this.cells[rowIndex][cell]);
+                this.update(transaction, this.cells[rowIndex][cell]);
             } else {
-                this.pushTransaction(transaction, this.cells[rowIndex][cell]);
+                this.submit(transaction, this.cells[rowIndex][cell]);
             }
         }
     }
@@ -309,7 +309,8 @@ export class IncomeComponent implements OnInit {
         let value = 0;
         for (let rowIndex = 0; rowIndex < this.rows.length; rowIndex++) {
             if( this.rows[rowIndex].paymentType != PaymentType.ON_ACCOUNT
-                && this.rows[rowIndex].paymentType != PaymentType.PREVIOUS_MONTHS_RECEIPTS  ){
+                && this.rows[rowIndex].paymentType != PaymentType.PREVIOUS_MONTHS_RECEIPTS
+                && this.rows[rowIndex].paymentType != PaymentType.EXTRA  ){
                 value += Number(this.cells[rowIndex][j].cost);
             }
 
@@ -317,7 +318,7 @@ export class IncomeComponent implements OnInit {
         return value;
     }
 
-    pushTransaction(transaction, transactionCell) {
+    submit(transaction, transactionCell) {
         const tr = new TransactionEntity();
         tr.userId = this.currentUser.id;
         tr.transactionType = TransactionType.getIndexOf(transaction.transactionType);
@@ -344,7 +345,7 @@ export class IncomeComponent implements OnInit {
         });
     }
 
-    updateTransaction(transaction, transactionCell) {
+    update(transaction, transactionCell) {
         const tr = new TransactionEntity();
         tr.id = transactionCell.id;
         tr.userId = this.currentUser.id;
