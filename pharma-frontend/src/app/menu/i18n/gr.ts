@@ -42,7 +42,7 @@ export const locale = {
         WITHDRAWALS_POS: 'Μετρητά',
         PRESCRIPT: 'Επιταγές/Υποχρεώσεις',
         COMMENTS: 'Σχόλια συναλλαγών',
-        PAYMENT: 'Πληρωμές προμηθευτών',
+        PAYMENT: 'Πληρωμές αγορών επί πιστώσει',
         EOPPY: 'ΕΟΠΠΥ',
         EOPPY_INCOME: 'Είσπραξη',
         EOPPY_ON_ACCOUNT: 'Επί πιστώσει',

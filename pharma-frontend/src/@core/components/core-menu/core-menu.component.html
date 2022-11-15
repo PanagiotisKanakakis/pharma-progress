@@ -36,7 +36,7 @@
           [routerLinkActiveOptions]="{ exact: item.exactMatch || false }"
         >
           <!-- Fix: Required routerLink to identify the active -->
-          <span [routerLink]="item.openInNewTab ? [] : [item.url]" class="d-none"></span>
+          <span [routerLink]="item.openInNewTab ? [] : [item.url]" class="d-none" style="white-space: break-spaces;"></span>
         </li>
         <!-- collapsible -->
         <li

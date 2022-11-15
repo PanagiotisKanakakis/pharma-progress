@@ -73,14 +73,14 @@
                                                             <option value="{{'TABLE.OPTION_DEFAULT_PAYMENT_SELECT' | translate}}"
                                                                     selected="selected"
                                                                     disabled="disabled">{{'TABLE.OPTION_DEFAULT_PAYMENT_SELECT' | translate}}</option>
-                                                            <option value="Μετρητά">Μετρητά</option>
+                                                            <option value="Μετρητά">Μετρητοίς</option>
                                                             <option value="Τράπεζα">Τράπεζα</option>
                                                         </select>
                                                         <div *ngIf="row.id !== undefined"
                                                              style="white-space: nowrap;margin-left: 5px;width: available"
                                                              class="block btn btn-btn-success accent-4"
                                                         >
-                                                            {{row.paymentType}}
+                                                            {{getPaymentType(row)}}
                                                         </div>
                                                     </td>
                                                     <td>

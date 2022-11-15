@@ -7,7 +7,7 @@
   <!-- itemContent template -->
   <ng-template #itemContent>
     <span [data-feather]="item.icon" *ngIf="item.icon"></span>
-    <span class="menu-title text-truncate" [translate]="item.translate">{{ item.title }}</span>
+    <span class="menu-title text-truncate" [translate]="item.translate" style="white-space: break-spaces;">{{ item.title }}</span>
     <span
       class="badge ml-auto mr-1"
       *ngIf="item.badge"

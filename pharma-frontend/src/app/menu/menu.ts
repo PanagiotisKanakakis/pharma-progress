@@ -156,7 +156,7 @@ export const menu: CoreMenu[] = [
             },
             {
                 id: 'payment',
-                title: 'Πληρωμές αγορών προηγ. μηνών',
+                title: 'Πληρωμές αγορών επί πιστώσει',
                 translate: 'MENU.APPS.PAYMENT',
                 type: 'collapsible',
                 icon: 'file-text',

@@ -325,4 +325,11 @@ export class PaymentComponent implements OnInit {
             this.update(this.rows[rowIndex]);
         }
     }
+
+    getPaymentType(row) {
+        if(row.paymentType == PaymentType.CASH){
+            return 'Μετρητοίς';
+        }
+        return PaymentType.BANK;
+    }
 }
