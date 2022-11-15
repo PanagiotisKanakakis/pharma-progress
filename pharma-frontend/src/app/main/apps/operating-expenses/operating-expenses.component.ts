@@ -268,7 +268,7 @@ export class OperatingExpensesComponent implements OnInit {
         tr.userId = this.currentUser.id;
         tr.transactionType = TransactionType.getIndexOf(row.transactionType);
         tr.paymentType = PaymentType.getIndexOf(row.paymentType);
-        tr.vat = VAT.getIndexOf(row.vat);
+        tr.vat = VAT.getIndexOf(this.calculateVat(row.transactionType));
         tr.createdAt = DateUtils.queryFormattedDate(DateUtils.toDate(row.createdAt));
         tr.cost = row.cost;
         tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);

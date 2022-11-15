@@ -33,7 +33,6 @@ export class StatisticsService {
         for (const dateRange of dateRanges) {
             const dateFrom = dateRange.dateFrom;
             const dateTo = dateRange.dateTo;
-
             statistics[dateFrom] = {
                 incomePerVat: await this.getIncomePerVatType(
                     criteria,
@@ -147,6 +146,11 @@ export class StatisticsService {
                 supplierType: criteria.supplierType,
             });
         }
+        if (criteria.vatType) {
+            query.andWhere('transaction.vat in (:...vatType) ', {
+                vatType: criteria.vatType,
+            });
+        }
         return query.getRawOne().then((rs) => {
             if (rs.total == null) {
                 return 0;
@@ -161,6 +165,7 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
+        criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.INCOME];
         criteria.paymentType = [PaymentType.CASH];
         return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
@@ -171,6 +176,7 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
+        criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.INCOME];
         criteria.paymentType = [PaymentType.POS];
         return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
@@ -181,6 +187,7 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
+        criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.INCOME];
         criteria.paymentType = [PaymentType.EXTRA];
         return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
@@ -191,9 +198,28 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
+        const values: Partial<Record<VAT.SIX | VAT.THIRTEEN, number>> = {};
+
         criteria.transactionType = [TransactionType.EOPPY];
         criteria.paymentType = [PaymentType.ON_ACCOUNT];
-        return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
+
+        criteria.vatType = [VAT.SIX];
+        values[VAT.SIX] = await this.createAndExecuteCriteriaQuery(
+            criteria,
+            dateFrom,
+            dateTo,
+        );
+
+        criteria.transactionType = [TransactionType.EOPPY];
+        criteria.paymentType = [PaymentType.ON_ACCOUNT];
+
+        criteria.vatType = [VAT.THIRTEEN];
+        values[VAT.THIRTEEN] = await this.createAndExecuteCriteriaQuery(
+            criteria,
+            dateFrom,
+            dateTo,
+        );
+        return values;
     }
 
     public async getTotalEOPPYIncome(
@@ -201,9 +227,26 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
+        const values: Partial<Record<VAT.SIX | VAT.THIRTEEN, number>> = {};
+
         criteria.transactionType = [TransactionType.EOPPY];
         criteria.paymentType = [PaymentType.BANK];
-        return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
+        criteria.vatType = [VAT.SIX];
+        values[VAT.SIX] = await this.createAndExecuteCriteriaQuery(
+            criteria,
+            dateFrom,
+            dateTo,
+        );
+
+        criteria.transactionType = [TransactionType.EOPPY];
+        criteria.paymentType = [PaymentType.BANK];
+        criteria.vatType = [VAT.THIRTEEN];
+        values[VAT.THIRTEEN] = await this.createAndExecuteCriteriaQuery(
+            criteria,
+            dateFrom,
+            dateTo,
+        );
+        return values;
     }
 
     public async getTotalOnAccount(
@@ -211,6 +254,7 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
+        criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.INCOME];
         criteria.paymentType = [PaymentType.ON_ACCOUNT];
         return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
@@ -221,6 +265,7 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
+        criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.INCOME];
         criteria.paymentType = [PaymentType.NONE];
         const query = this.createPerVatTypeQuery(criteria, dateFrom, dateTo);
@@ -238,6 +283,7 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
+        criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.INCOME];
         criteria.paymentType = [PaymentType.PREVIOUS_MONTHS_RECEIPTS];
         return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
@@ -248,6 +294,7 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
+        criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.EXPENSE];
         criteria.paymentType = [PaymentType.CASH, PaymentType.ON_ACCOUNT];
         const query = this.createPerVatTypeQuery(criteria, dateFrom, dateTo);
@@ -303,6 +350,7 @@ export class StatisticsService {
             TransactionType.TAXES,
             TransactionType.OTHER_EXPENSES,
         ];
+        criteria.vatType = undefined;
         criteria.paymentType = [PaymentType.CASH];
         criteria.supplierType = SupplierType.NONE;
         return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
@@ -353,7 +401,7 @@ export class StatisticsService {
 
         criteria.transactionType = [TransactionType.EXPENSE];
         criteria.supplierType = SupplierType.OTHER;
-
+        criteria.vatType = undefined;
         criteria.paymentType = [PaymentType.CASH];
         values[PaymentType.CASH] = await this.createAndExecuteCriteriaQuery(
             criteria,
@@ -379,7 +427,7 @@ export class StatisticsService {
         const values: Partial<
             Record<PaymentType.CASH | PaymentType.BANK, number>
         > = {};
-
+        criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.PAYMENT];
         criteria.supplierType = SupplierType.OTHER;
         criteria.paymentType = [PaymentType.CASH];
@@ -403,7 +451,7 @@ export class StatisticsService {
         dateTo: string,
     ) {
         const values: Partial<Record<PaymentType.ON_ACCOUNT, number>> = {};
-
+        criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.EXPENSE];
         criteria.supplierType = SupplierType.MAIN;
         criteria.paymentType = [PaymentType.ON_ACCOUNT];
@@ -424,7 +472,7 @@ export class StatisticsService {
         const values: Partial<
             Record<PaymentType.CASH | PaymentType.BANK, number>
         > = {};
-
+        criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.PAYMENT];
         criteria.supplierType = SupplierType.MAIN;
         criteria.paymentType = [PaymentType.CASH];
@@ -448,6 +496,7 @@ export class StatisticsService {
         dateTo: string,
     ) {
         const values: Partial<Record<TransactionType, number>> = {};
+        criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.PERSONAL_WITHDRAWALS];
         criteria.paymentType = [PaymentType.CASH, PaymentType.BANK];
         criteria.supplierType = SupplierType.NONE;
@@ -465,6 +514,7 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
+        criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.INCOME];
         criteria.paymentType = [PaymentType.CASH, PaymentType.POS];
         return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
@@ -474,6 +524,8 @@ export class StatisticsService {
         criteria: CriteriaDto,
         dateFrom: string,
     ) {
+        criteria.vatType = undefined;
+        criteria.paymentType = [PaymentType.CASH, PaymentType.BANK];
         const transactions =
             await this.transactionService.getAllOperatingExpensesByDateRange(
                 criteria,

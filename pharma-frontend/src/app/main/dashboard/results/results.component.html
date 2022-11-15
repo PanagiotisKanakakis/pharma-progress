@@ -371,7 +371,7 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                                <span class="font-weight-bolder mb-25">{{totalEOPPYOnAccountIncludingVat()| number: '1.0-2':'gr'}}
+                                                                <span class="font-weight-bolder mb-25">{{totalMedicineAndConsumablesOnAccountWithVat()| number: '1.0-2':'gr'}}
                                                                     €</span>
                                                         </div>
                                                     </td>
@@ -423,7 +423,7 @@
                                                                 <span class="font-weight-bolder mb-25">
                                                                     {{ (totalCash() +
                                                                     totalPos() +
-                                                                    totalEOPPYOnAccountIncludingVat() +
+                                                                    totalMedicineAndConsumablesOnAccountWithVat() +
                                                                     totalIncomeOnAccount())| number: '1.0-2':'gr'
                                                                     }}€
                                                                 </span>
@@ -1091,7 +1091,7 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <span class="font-weight-bolder mb-25">
-                                                                {{totalEOPPYIncomeIncludingVat()| number: '1.0-2':'gr'}}€
+                                                                {{totalMedicineAndConsumablesIncomeWithVat()| number: '1.0-2':'gr'}}€
                                                             </span>
                                                         </div>
                                                     </td>
@@ -1340,7 +1340,7 @@
                                     </div>
                                 </div>
                                 <h4 class="font-weight-bolder mt-1"
-                                    style="color: #1e1e1e">{{totalExtraDividedToTotalIncome()| number: '1.0-2':'gr'}}€</h4>
+                                    style="color: #1e1e1e">{{totalExtraDividedToTotalIncome() * 100| number: '1.0-2':'gr'}}%</h4>
                                 <h5 class="font-weight-bolder" style="color: #1e1e1e">Ποσοστό Extra προς σύνολο</h5>
                             </div>
                             <div id="orderChartoptions" #personalWitdrawalsRef>
@@ -1375,7 +1375,7 @@
                                     </div>
                                 </div>
                                 <h4 class="font-weight-bolder mt-1"
-                                    style="color: #1e1e1e">{{avgExtra()| number: '1.0-2':'gr'}}€</h4>
+                                    style="color: #1e1e1e">{{avgExtra()| number: '1.0-2':'gr'}}%</h4>
                                 <h5 class="font-weight-bolder" style="color: #1e1e1e">Μ.Ο. Extra</h5>
                             </div>
                             <div id="orderChartoptions" #personalWitdrawalsRef>

@@ -48,4 +48,10 @@ export class CriteriaDto {
     @IsNotEmpty()
     @IsNumberString()
     supplierType?: number;
+
+    @ApiProperty()
+    @IsOptional()
+    @IsNotEmpty()
+    @IsNumberString()
+    vatType?: number[];
 }

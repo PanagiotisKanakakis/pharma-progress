@@ -8,8 +8,12 @@ export class StatisticsDto {
         totalCash: number;
         totalPos: number;
         totalExtra: number;
-        totalEOPPYOnAccount: number;
-        totalEOPPYIncome: number;
+        totalEOPPYOnAccount: Partial<
+            Record<VAT.SIX | VAT.THIRTEEN, number>
+            >;
+        totalEOPPYIncome: Partial<
+            Record<VAT.SIX | VAT.THIRTEEN, number>
+            >;
         totalOnAccount: number;
         totalPreviousMonths: number;
         totalIncome: number;

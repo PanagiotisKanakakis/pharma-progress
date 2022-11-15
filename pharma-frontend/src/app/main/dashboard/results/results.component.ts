@@ -327,8 +327,8 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         return this.dashboardService.totalPos(this.statistics, this.period.dateFrom);
     }
 
-    totalEOPPYOnAccountIncludingVat() {
-        return this.dashboardService.totalEOPPYOnAccountIncludingVat(this.statistics, this.period.dateFrom);
+    totalMedicineAndConsumablesOnAccountWithVat() {
+        return this.dashboardService.totalMedicineAndConsumablesOnAccountWithVat(this.statistics, this.period.dateFrom);
     }
 
     totalIncomeOnAccount() {
@@ -340,15 +340,31 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     }
 
     consumablesValue() {
-        return this.dashboardService.consumablesValue(this.statistics, this.period.dateFrom);
+        return this.dashboardService.consumablesValueIncome(this.statistics, this.period.dateFrom);
+    }
+
+    consumablesOnAccountWithoutVat(){
+        return this.dashboardService.consumablesOnAccountWithoutVat(this.statistics, this.period.dateFrom);
+    }
+
+    consumablesOnAccountWithVat(){
+        return this.dashboardService.consumablesOnAccountWithVat(this.statistics, this.period.dateFrom);
+    }
+
+    consumablesIncomeWithVat(){
+        return this.dashboardService.consumablesIncomeWithVat(this.statistics, this.period.dateFrom);
+    }
+
+    consumablesIncomeWithoutVat(){
+        return this.dashboardService.consumablesIncomeWithoutVat(this.statistics, this.period.dateFrom);
     }
 
     totalEOPPYAndConsumablesOnAccountWithoutVat() {
-        return this.dashboardService.totalEOPPYAndConsumablesOnAccountWithoutVat(this.statistics, this.period.dateFrom);
+        return this.dashboardService.totalMedicineAndConsumablesOnAccountWithoutVat(this.statistics, this.period.dateFrom);
     }
 
-    totalEOPPYIncomeIncludingVat() {
-        return this.dashboardService.totalEOPPYAndConsumablesIncomeWithVat(this.statistics, this.period.dateFrom);
+    totalMedicineAndConsumablesIncomeWithVat() {
+        return this.dashboardService.totalMedicineAndConsumablesIncomeWithVat(this.statistics, this.period.dateFrom);
     }
 
     totalGrossProfitWithoutVat() {
@@ -424,6 +440,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
             .then(response => {
                 setTimeout(() => {
                     this.statistics = plainToInstance(StatisticsDto, response);
+                    console.log(this.statistics)
                     Object.keys(this.statistics[this.period.dateFrom].operatingExpenses).forEach((key) => {
                         const result = this.statistics[this.period.dateFrom].operatingExpenses[key].reduce((accumulator, transaction) => {
                             return accumulator + +transaction.cost;
@@ -479,14 +496,17 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     avgExtra() {
         let extras = [];
         for (let date in this.statistics) {
-            extras.push(this.dashboardService.totalExtra(this.statistics, date));
+            if(this.dashboardService.totalMonthIncome(this.statistics,this.period.dateFrom) == 0 ){
+                extras.push(0);
+            }
+            extras.push(this.dashboardService.totalExtra(this.statistics, this.period.dateFrom) / this.dashboardService.totalMonthIncome(this.statistics,this.period.dateFrom));
         }
         let monthNumber = this.period.dateFrom.split('-')[1];
         let value = 0;
         for(let i = 0 ; i < +monthNumber; i++){
             value += extras[i];
         }
-        return value / (+monthNumber -1);
+        return (+value / (+monthNumber - 1)) * 100;
 
     }
 }

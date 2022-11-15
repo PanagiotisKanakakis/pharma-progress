@@ -139,6 +139,7 @@ export class IncomeComponent implements OnInit {
             paymentType = [PaymentType.getIndexOf(PaymentType.ON_ACCOUNT),
                 PaymentType.getIndexOf(PaymentType.PREVIOUS_MONTHS_RECEIPTS),
                 PaymentType.getIndexOf(PaymentType.POS),
+                PaymentType.getIndexOf(PaymentType.EXTRA),
                 PaymentType.getIndexOf(PaymentType.CASH)];
         }
         getTransactionsByCriteria(

@@ -298,7 +298,6 @@ export class NationalHealthComponent implements OnInit {
                 'Authorization': 'Bearer ' + this.currentUser.token
             }
         ).then((data) => {
-            console.log(data);
             this.rows = [];
             if (data.length !== 0) {
                 for (let i = 0; i < data.length; i++) {
@@ -374,7 +373,6 @@ export class NationalHealthComponent implements OnInit {
     }
 
     onProductTypeOptionsSelected(value: string, rowIndex) {
-        console.log(VAT.valueOf(Number(value)))
         this.rows[rowIndex].vat = VAT.valueOf(Number(value));
         this.rows[rowIndex].productType = this.getProductType(Number(value))
         if (this.rows[rowIndex].id === undefined) {
@@ -385,7 +383,7 @@ export class NationalHealthComponent implements OnInit {
     }
 
     getProductType(vat: number){
-        if(vat == 1){
+        if(vat == 2){
             return 'Φάρμακα';
         }
         return 'Αναλώσιμα';

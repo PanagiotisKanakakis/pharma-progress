@@ -72,7 +72,7 @@ export class DashboardService {
         return payload[date].totalPos
             + payload[date].totalCash
             + payload[date].totalOnAccount
-            + payload[date].totalEOPPYOnAccount
+            + this.totalMedicineAndConsumablesOnAccountWithVat(payload,date)
             - payload[date].totalPreviousMonths;
     }
 
@@ -91,7 +91,7 @@ export class DashboardService {
             - payload[date].totalPreviousMonths;
         return totalZNoVat
             + extra
-            + payload[date].totalEOPPYOnAccount / 1.06;
+            + this.totalMedicineAndConsumablesOnAccountWithoutVat(payload,date);
     }
 
     totalExpenses( payload , date ): number {
@@ -154,10 +154,6 @@ export class DashboardService {
         return payload[date].totalPos;
     }
 
-    totalEOPPYOnAccountIncludingVat(payload , date ) {
-        return payload[date].totalEOPPYOnAccount;
-    }
-
     totalIncomeOnAccount( payload , date ) {
         return payload[date].totalOnAccount - payload[date].totalPreviousMonths;
     }
@@ -166,20 +162,52 @@ export class DashboardService {
         return payload[date].exchange;
     }
 
-    consumablesValue( payload , date ) {
-        return 0;
+    consumablesValueOnAccount( payload , date ) {
+        return +payload[date].totalEOPPYOnAccount[3];
     }
 
-    totalEOPPYAndConsumablesOnAccountWithoutVat(payload , date ) {
-        return payload[date].totalEOPPYOnAccount / 1.06 + this.consumablesValue( payload , date );
+    consumablesValueIncome( payload , date ) {
+        return +payload[date].totalEOPPYIncome[3];
     }
 
-    totalEOPPYAndConsumablesIncomeWithoutVat(payload, date) {
-        return payload[date].totalEOPPYIncome / 1.06 + this.consumablesValue( payload , date );
+    medicineValueOnAccount( payload , date ) {
+        return +payload[date].totalEOPPYOnAccount[2];
     }
 
-    totalEOPPYAndConsumablesIncomeWithVat(payload, date) {
-        return payload[date].totalEOPPYIncome  + this.consumablesValue( payload , date );
+    medicineValueIncome( payload , date ) {
+        return +payload[date].totalEOPPYIncome[2];
+    }
+
+    consumablesOnAccountWithoutVat(payload,date){
+        return this.consumablesValueOnAccount(payload,date) / 1.13;
+    }
+
+    consumablesOnAccountWithVat(payload,date){
+        return this.consumablesValueOnAccount(payload,date) ;
+    }
+
+    consumablesIncomeWithVat(payload,date){
+        return this.consumablesValueIncome(payload,date) / 1.13;
+    }
+
+    consumablesIncomeWithoutVat(payload,date){
+        return this.consumablesValueIncome(payload,date) / 1.13;
+    }
+
+    totalMedicineAndConsumablesOnAccountWithoutVat(payload , date ) {
+        return this.medicineValueOnAccount(payload,date) / 1.06 + this.consumablesValueOnAccount( payload , date ) / 1.13;
+    }
+
+    totalMedicineAndConsumablesOnAccountWithVat(payload , date ) {
+        return this.medicineValueOnAccount(payload,date) + this.consumablesValueOnAccount( payload , date );
+    }
+
+    totalMedicineAndConsumablesIncomeWithoutVat(payload, date) {
+        return this.medicineValueIncome(payload,date) / 1.06 + +this.consumablesValueIncome( payload , date ) / 1.13;
+    }
+
+    totalMedicineAndConsumablesIncomeWithVat(payload, date) {
+        return this.medicineValueIncome(payload,date)  + this.consumablesValueIncome( payload , date );
     }
 
     totalGrossProfitWithoutVat( payload , date ) {
@@ -211,7 +239,7 @@ export class DashboardService {
     }
 
     calculateRebate( payload , date ) {
-        let total = this.totalEOPPYAndConsumablesOnAccountWithoutVat( payload , date );
+        let total = this.totalMedicineAndConsumablesOnAccountWithoutVat( payload , date );
         if(total <= 3000){
             return 0;
         }else if(total <= 10000){
@@ -274,7 +302,7 @@ export class DashboardService {
     }
 
     totalCashAvailable( payload , date ) {
-        return this.totalOpeningBalance( payload , date ) + this.totalMonthIncome( payload , date ) + this.totalEOPPYOnAccountIncludingVat(payload,date);
+        return this.totalOpeningBalance( payload , date ) + this.totalMonthIncome( payload , date ) + this.totalMedicineAndConsumablesIncomeWithVat(payload,date);
     }
 
     totalClosingBalance( payload , date ) {

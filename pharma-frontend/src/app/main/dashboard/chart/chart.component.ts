@@ -546,7 +546,7 @@ export class ChartComponent implements OnInit {
 
     private getEOPPY() {
         for (let date in this.statistics) {
-            this.eoppy.push(this.dashboardService.totalEOPPYOnAccountIncludingVat(this.statistics, date));
+            this.eoppy.push(this.dashboardService.totalMedicineAndConsumablesOnAccountWithVat(this.statistics, date));
         }
         return this.eoppy;
     }
