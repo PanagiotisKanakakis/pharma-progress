@@ -40,7 +40,7 @@ export class IncomeComponent implements OnInit {
     public currentUser: User;
     public type = '';
     public numberFormControl: any[][] = [];
-    public totalZCells: number[] = [];
+    public totalZCells = {};
     DateRangeOptions: any;
 
     constructor(private _coreTranslationService: CoreTranslationService,
@@ -49,7 +49,23 @@ export class IncomeComponent implements OnInit {
                 private route: ActivatedRoute) {
         this._coreTranslationService.translate(english, greek);
         this._authenticationService.currentUser.subscribe(x => (this.currentUser = x));
+        // ng2-flatpickr options
+        this.DateRangeOptions = {
+            weekNumbers: true,
+            locale: Greek,
+            altInput: true,
+            altInputClass: 'form-control flat-picker bg-transparent border-0 shadow-none flatpickr-input',
+            defaultDate: new Date(),
+            altFormat: 'j-n-Y',
+            onClose: (selectedDates: any) => {
+                this.dates = DateUtils.initSpecificWeek(
+                    new NgbDate(+selectedDates[0].getUTCFullYear(), +selectedDates[0].getUTCMonth() + 1, +selectedDates[0].getUTCDate()));
+                this.initEmptyCells();
+                this.initCellValues();
+            },
+        };
     }
+
 
     inlineEditingUpdateValue(event, cell, rowIndex, transaction) {
         if (this.numberFormControl[rowIndex][cell].valid) {
@@ -76,21 +92,6 @@ export class IncomeComponent implements OnInit {
             this.initCellValues();
             this.initTotalZCells();
         });
-        // ng2-flatpickr options
-        this.DateRangeOptions = {
-            weekNumbers: true,
-            locale: Greek,
-            altInput: true,
-            altInputClass: 'form-control flat-picker bg-transparent border-0 shadow-none flatpickr-input',
-            defaultDate: new Date(),
-            altFormat: 'j-n-Y',
-            onClose: (selectedDates: any) => {
-                this.dates = DateUtils.initSpecificWeek(
-                    new NgbDate(+selectedDates[0].getUTCFullYear(), +selectedDates[0].getUTCMonth() + 1, +selectedDates[0].getUTCDate()));
-                this.initEmptyCells();
-                this.initCellValues();
-            },
-        };
     }
 
     initTableRows() {
@@ -156,6 +157,7 @@ export class IncomeComponent implements OnInit {
                     this.summaryFooterColumn(cell);
                 });
                 if(this.type == 'real'){
+                    this.initTotalZCells();
                     let filteredData = this.filterByValue(data, PaymentType.getIndexOf(PaymentType.NONE) )
                     let grouped = this.groupByKey(filteredData, 'createdAt');
                     Object.keys(grouped).forEach((key,index) => {
@@ -163,7 +165,7 @@ export class IncomeComponent implements OnInit {
                         grouped[key].forEach(record => {
                             total += +record.cost;
                         })
-                        this.totalZCells[index] = total;
+                        this.totalZCells[key] = total;
                     })
                 }
             } else {
@@ -189,6 +191,7 @@ export class IncomeComponent implements OnInit {
                 this.cells[indexRow][indexColumn].date = date.queryFormattedDate;
             });
         });
+        this.initTotalZCells();
     }
 
     initNumberFormControl() {
@@ -203,8 +206,9 @@ export class IncomeComponent implements OnInit {
     }
 
     private initTotalZCells() {
+        this.totalZCells = {}
         for (let j = 0; j < this.dates.length; j++) {
-            this.totalZCells[j] = 0;
+            this.totalZCells[this.dates[j].queryFormattedDate] = 0;
         }
     }
 
@@ -354,16 +358,16 @@ export class IncomeComponent implements OnInit {
         return +this.cells[2][cell].cost
             + +this.cells[3][cell].cost
             + +this.cells[0][cell].cost
-            - +this.totalZCells[cell]
+            - +this.totalZCells[this.dates[cell].queryFormattedDate]
             - +this.cells[1][cell].cost;
     }
 
     groupByKey(array, key) {
-        return array
-            .reduce((hash, obj) => {
-                if(obj[key] === undefined) return hash;
-                return Object.assign(hash, { [obj[key]]:( hash[obj[key]] || [] ).concat(obj)})
-            }, {})
+        return array.reduce(function (r, a) {
+            r[a[key].split('T')[0]] = r[a[key].split('T')[0]] || [];
+            r[a[key].split('T')[0]].push(a);
+            return r;
+        }, Object.create(null));
     }
 
     filterByValue(array, value){
@@ -377,7 +381,6 @@ export class IncomeComponent implements OnInit {
         if (this.cells[rowIndex][cell].id !== undefined) {
             this.update(transaction, this.cells[rowIndex][cell]);
         } else {
-            console.log(transaction)
             this.submit(transaction, this.cells[rowIndex][cell]);
         }
     }

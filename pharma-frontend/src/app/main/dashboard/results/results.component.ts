@@ -27,6 +27,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 
     @ViewChild('personalWitdrawalsRef') personalWitdrawalsRef: any;
     @ViewChild('eoppyAndConsumablesChartRef') eoppyAndConsumablesChartRef: any;
+    @ViewChild('operatingExpensesOrderChartRef') operatingExpensesOrderChartRef: any;
 
     public data: any;
     public currentUser: User;
@@ -36,16 +37,11 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     public isMenuToggled = false;
     public basicDPdata: NgbDateStruct;
     public period: DatePeriod;
-    public selectStatus: any = [
-        {name: 'Όλα', value: ''},
-        {name: 'Πληρωθέντα', value: 'Downloaded'},
-        {name: 'Σε αναμονή', value: 'Draft'},
-    ];
     public ColumnMode = ColumnMode;
     public selectedStatus = [];
     public personalWithdrawalsChartOptions: any;
     public orderChartoptions: any;
-    public operatingExpensesOrderChartoptions: any;
+    public operatingExpensesOrderChartOptions: any;
     public eoppyAndConsumablesChartoptions: any;
     // Private
     private $warning = '#FF9F43';
@@ -114,7 +110,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
                 x: {show: false}
             }
         };
-        this.operatingExpensesOrderChartoptions = {
+        this.operatingExpensesOrderChartOptions = {
             chart: {
                 height: 100,
                 type: 'area',
@@ -276,6 +272,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
                     this.isMenuToggled = true;
                     this.personalWithdrawalsChartOptions.chart.width = this.personalWitdrawalsRef?.nativeElement.offsetWidth;
                     this.eoppyAndConsumablesChartoptions.chart.width = this.eoppyAndConsumablesChartRef?.nativeElement.offsetWidth;
+                    this.operatingExpensesOrderChartOptions.chart.width = this.operatingExpensesOrderChartRef?.nativeElement.offsetWidth;
                     // }
                 }, 50);
 
