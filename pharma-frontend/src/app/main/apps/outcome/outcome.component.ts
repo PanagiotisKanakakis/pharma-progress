@@ -179,7 +179,7 @@ export class OutcomeComponent implements OnInit {
                         const dbTransaction = this.searchData(row.paymentType, row.vat, date.queryFormattedDate, data);
                         if (dbTransaction !== undefined) {
                             this.cells[i][j].id = dbTransaction.id;
-                            this.cells[i][j].date = date;
+                            this.cells[i][j].date = date.queryFormattedDate;
                             this.cells[i][j].cost = +dbTransaction.cost;
                         }
                     });

@@ -49,7 +49,7 @@
                                                         </div>
                                                     </td>
                                                     <ng-container *ngFor="let date of dates;let j=index;">
-                                                        <td>
+                                                        <td *ngIf=!isExtra(row)>
                                                             <div title="Double click to edit" class="text-center"
                                                                  (click)="editingValue[rowIndex + '-' + j] = true"
                                                                  *ngIf="!editingValue[rowIndex + '-' + j]">
@@ -72,6 +72,11 @@
                                                                                 {{'TABLE.NUMBER_PATTERN' | translate}}
                                                                 </small>
                                                             </span>
+                                                        </td>
+                                                        <td *ngIf=isExtra(row)>
+                                                            <div class="text-center">
+                                                                {{cells[rowIndex][j].cost | number: '1.0-2':'gr'}}€
+                                                            </div>
                                                         </td>
                                                     </ng-container>
                                                 </tr>

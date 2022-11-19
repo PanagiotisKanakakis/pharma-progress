@@ -5,14 +5,7 @@ import {NgbDate, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import {TransactionEntity} from 'app/api/transaction/transaction.entity';
 import {locale as english} from 'app/common/i18n/en';
 import {locale as greek} from 'app/common/i18n/gr';
-import {
-    getTransactionsByCriteria,
-    PaymentType,
-    submitTransaction,
-    TransactionType,
-    updateTransaction,
-    VAT
-} from '../../../api/transaction';
+import {getTransactionsByCriteria, PaymentType, submitTransaction, TransactionType, updateTransaction, VAT} from '../../../api/transaction';
 import {User} from '../../../auth/models';
 import {plainToInstance} from 'class-transformer';
 import DateUtils from '../../../common/utils/date';
@@ -37,21 +30,17 @@ export class IncomeComponent implements OnInit {
         '                        τα στοιχεια αποστελλονται προς καταχωρηση στο συστημα.';
 
     public rows = [];
-    public firstTableRows = [];
-    public secondTableRows = [];
-    public selected = [];
     public basicSelectedOption = 10;
     public ColumnMode = ColumnMode;
     public editingValue = {};
-    public exportCSVData;
     public basicDPdata: NgbDateStruct;
     public dates = [];
-    public days = [];
     public transactions: any = [];
     public cells: TransactionCell[][] = [];
     public currentUser: User;
     public type = '';
     public numberFormControl: any[][] = [];
+    public totalZCells: number[] = [];
     DateRangeOptions: any;
 
     constructor(private _coreTranslationService: CoreTranslationService,
@@ -67,10 +56,11 @@ export class IncomeComponent implements OnInit {
             this.editingValue[rowIndex + '-' + cell] = false;
             this.cells[rowIndex][cell].cost = event.target.value;
             this.summaryFooterColumn(cell);
-            if (this.cells[rowIndex][cell].id !== undefined) {
-                this.update(transaction, this.cells[rowIndex][cell]);
-            } else {
-                this.submit(transaction, this.cells[rowIndex][cell]);
+            this.saveOrUpdate(transaction, rowIndex, cell);
+
+            if(this.calculateExtra(cell) > 0){
+                this.cells[4][cell].cost = this.calculateExtra(cell);
+                this.saveOrUpdate(this.rows[4], 4, cell);
             }
         }
     }
@@ -84,6 +74,7 @@ export class IncomeComponent implements OnInit {
             this.initNumberFormControl();
             this.initEmptyCells();
             this.initCellValues();
+            this.initTotalZCells();
         });
         // ng2-flatpickr options
         this.DateRangeOptions = {
@@ -95,7 +86,7 @@ export class IncomeComponent implements OnInit {
             altFormat: 'j-n-Y',
             onClose: (selectedDates: any) => {
                 this.dates = DateUtils.initSpecificWeek(
-                    new NgbDate(+selectedDates[0].getUTCFullYear(), +selectedDates[0].getUTCMonth()+1, +selectedDates[0].getUTCDate()));
+                    new NgbDate(+selectedDates[0].getUTCFullYear(), +selectedDates[0].getUTCMonth() + 1, +selectedDates[0].getUTCDate()));
                 this.initEmptyCells();
                 this.initCellValues();
             },
@@ -109,24 +100,18 @@ export class IncomeComponent implements OnInit {
             if (transaction.paymentType !== PaymentType.NONE && transaction.vat === VAT.NONE) {
                 rowName = transaction.paymentType;
                 this.rows.push({
-                    // type: 'header',
                     transactionType: transaction.transactionType,
                     paymentType: transaction.paymentType,
                     vat: transaction.vat,
                     name: rowName,
-                    totalZ: transaction.totalZ,
-                    totalIncome: transaction.totalIncome
                 });
             } else {
                 rowName = transaction.transactionType + ' (' + transaction.vat + '%)';
                 this.rows.push({
-                    // type: 'header',
                     transactionType: transaction.transactionType,
                     paymentType: transaction.paymentType,
                     vat: transaction.vat,
                     name: rowName,
-                    totalZ: transaction.totalZ,
-                    totalIncome: transaction.totalIncome
                 });
 
             }
@@ -140,7 +125,8 @@ export class IncomeComponent implements OnInit {
                 PaymentType.getIndexOf(PaymentType.PREVIOUS_MONTHS_RECEIPTS),
                 PaymentType.getIndexOf(PaymentType.POS),
                 PaymentType.getIndexOf(PaymentType.EXTRA),
-                PaymentType.getIndexOf(PaymentType.CASH)];
+                PaymentType.getIndexOf(PaymentType.CASH),
+                PaymentType.getIndexOf(PaymentType.NONE)];
         }
         getTransactionsByCriteria(
             {
@@ -155,15 +141,13 @@ export class IncomeComponent implements OnInit {
                 'Authorization': 'Bearer ' + this.currentUser.token
             }
         ).then((data) => {
-            console.log(data)
             if (data.length !== 0) {
                 this.rows.forEach((row, i) => {
                     this.dates.forEach((date, j) => {
                         const dbTransaction = this.searchData(row.paymentType, row.vat, date.queryFormattedDate, data);
-                        console.log(dbTransaction)
                         if (dbTransaction !== undefined) {
                             this.cells[i][j].id = dbTransaction.id;
-                            this.cells[i][j].date = date;
+                            this.cells[i][j].date = date.queryFormattedDate;
                             this.cells[i][j].cost = +dbTransaction.cost;
                         }
                     });
@@ -171,6 +155,17 @@ export class IncomeComponent implements OnInit {
                 this.dates.forEach((date, cell) => {
                     this.summaryFooterColumn(cell);
                 });
+                if(this.type == 'real'){
+                    let filteredData = this.filterByValue(data, PaymentType.getIndexOf(PaymentType.NONE) )
+                    let grouped = this.groupByKey(filteredData, 'createdAt');
+                    Object.keys(grouped).forEach((key,index) => {
+                        let total = 0;
+                        grouped[key].forEach(record => {
+                            total += +record.cost;
+                        })
+                        this.totalZCells[index] = total;
+                    })
+                }
             } else {
                 this.initEmptyCells();
             }
@@ -196,7 +191,7 @@ export class IncomeComponent implements OnInit {
         });
     }
 
-    private initNumberFormControl() {
+    initNumberFormControl() {
         for (let i = 0; i < this.rows.length; i++) {
             this.numberFormControl[i] = [];
             for (let j = 0; j < this.dates.length; j++) {
@@ -207,6 +202,12 @@ export class IncomeComponent implements OnInit {
         }
     }
 
+    private initTotalZCells() {
+        for (let j = 0; j < this.dates.length; j++) {
+            this.totalZCells[j] = 0;
+        }
+    }
+
     initTransactions() {
         this.transactions = [];
         if (this.type === 'z') {
@@ -214,74 +215,56 @@ export class IncomeComponent implements OnInit {
                 transactionType: TransactionType.INCOME,
                 vat: VAT.ZERO,
                 paymentType: PaymentType.NONE,
-                cost: 0,
-                totalZ: true,
-                totalIncome: true
+                cost: 0
             });
             this.transactions.push({
                 transactionType: TransactionType.INCOME,
                 vat: VAT.SIX,
                 paymentType: PaymentType.NONE,
-                cost: 0,
-                totalZ: true,
-                totalIncome: true
+                cost: 0
             });
             this.transactions.push({
                 transactionType: TransactionType.INCOME,
                 vat: VAT.THIRTEEN,
                 paymentType: PaymentType.NONE,
-                cost: 0,
-                totalZ: true,
-                totalIncome: true
+                cost: 0
             });
             this.transactions.push({
                 transactionType: TransactionType.INCOME,
                 vat: VAT.TWENTYFOUR,
                 paymentType: PaymentType.NONE,
-                cost: 0,
-                totalZ: true,
-                totalIncome: true
+                cost: 0
             });
         } else {
             this.transactions.push({
                 transactionType: TransactionType.INCOME,
                 vat: VAT.NONE,
                 paymentType: PaymentType.ON_ACCOUNT,
-                cost: 0,
-                totalZ: false,
-                totalIncome: true
+                cost: 0
             });
             this.transactions.push({
                 transactionType: TransactionType.INCOME,
                 vat: VAT.NONE,
                 paymentType: PaymentType.PREVIOUS_MONTHS_RECEIPTS,
-                cost: 0,
-                totalZ: false,
-                totalIncome: true
+                cost: 0
             });
             this.transactions.push({
                 transactionType: TransactionType.INCOME,
                 vat: VAT.NONE,
                 paymentType: PaymentType.POS,
-                cost: 0,
-                totalZ: false,
-                totalIncome: false
+                cost: 0
             });
             this.transactions.push({
                 transactionType: TransactionType.INCOME,
                 vat: VAT.NONE,
                 paymentType: PaymentType.CASH,
-                cost: 0,
-                totalZ: false,
-                totalIncome: false
+                cost: 0
             });
             this.transactions.push({
                 transactionType: TransactionType.INCOME,
                 vat: VAT.NONE,
                 paymentType: PaymentType.EXTRA,
-                cost: 0,
-                totalZ: false,
-                totalIncome: false
+                cost: 0
             });
         }
     }
@@ -309,9 +292,9 @@ export class IncomeComponent implements OnInit {
     summaryFooterColumn(j: number) {
         let value = 0;
         for (let rowIndex = 0; rowIndex < this.rows.length; rowIndex++) {
-            if( this.rows[rowIndex].paymentType != PaymentType.ON_ACCOUNT
+            if (this.rows[rowIndex].paymentType != PaymentType.ON_ACCOUNT
                 && this.rows[rowIndex].paymentType != PaymentType.PREVIOUS_MONTHS_RECEIPTS
-                && this.rows[rowIndex].paymentType != PaymentType.EXTRA  ){
+                && this.rows[rowIndex].paymentType != PaymentType.EXTRA) {
                 value += Number(this.cells[rowIndex][j].cost);
             }
 
@@ -337,12 +320,9 @@ export class IncomeComponent implements OnInit {
             }
         ).then(r => {
             transactionCell.id = r.id;
-        }).catch((error: any) => {
-            // if (error.response.status === 401) {
-            console.log(error)
+        }).catch((_: any) => {
             this._authenticationService.logout();
             this._router.navigate(['/pages/authentication/login-v2'], {queryParams: {returnUrl: location.href}});
-            // }
         });
     }
 
@@ -368,5 +348,55 @@ export class IncomeComponent implements OnInit {
 
     getName(name) {
         return this._coreTranslationService.translate(name);
+    }
+
+    private calculateExtra(cell: number) {
+        return +this.cells[2][cell].cost
+            + +this.cells[3][cell].cost
+            + +this.cells[0][cell].cost
+            - +this.totalZCells[cell]
+            - +this.cells[1][cell].cost;
+    }
+
+    groupByKey(array, key) {
+        return array
+            .reduce((hash, obj) => {
+                if(obj[key] === undefined) return hash;
+                return Object.assign(hash, { [obj[key]]:( hash[obj[key]] || [] ).concat(obj)})
+            }, {})
+    }
+
+    filterByValue(array, value){
+        return array.filter(transaction => {
+            let transactionEntity = plainToInstance(TransactionEntity, transaction);
+            return transactionEntity.paymentType == value;
+        })
+    }
+
+    private saveOrUpdate(transaction, rowIndex, cell) {
+        if (this.cells[rowIndex][cell].id !== undefined) {
+            this.update(transaction, this.cells[rowIndex][cell]);
+        } else {
+            console.log(transaction)
+            this.submit(transaction, this.cells[rowIndex][cell]);
+        }
+    }
+
+    private createExtraTransaction(transactionCell, cost) {
+        const tr = new TransactionEntity();
+        tr.id = transactionCell.id;
+        tr.userId = this.currentUser.id;
+        tr.transactionType = TransactionType.getIndexOf(TransactionType.INCOME);
+        tr.paymentType = PaymentType.getIndexOf(PaymentType.EXTRA);
+        tr.vat = VAT.getIndexOf(VAT.NONE);
+        tr.createdAt = transactionCell.date;
+        tr.cost = cost;
+        tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
+        tr.comment = '';
+        return tr;
+    }
+
+    isExtra(row) {
+        return row.paymentType == PaymentType.EXTRA
     }
 }
