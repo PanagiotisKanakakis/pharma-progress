@@ -61,7 +61,7 @@ export class IncomeComponent implements OnInit {
                 this.dates = DateUtils.initSpecificWeek(
                     new NgbDate(+selectedDates[0].getUTCFullYear(), +selectedDates[0].getUTCMonth() + 1, +selectedDates[0].getUTCDate()));
                 this.initEmptyCells();
-                this.initCellValues();
+                this.getData();
             },
         };
     }
@@ -74,7 +74,7 @@ export class IncomeComponent implements OnInit {
             this.summaryFooterColumn(cell);
             this.saveOrUpdate(transaction, rowIndex, cell);
 
-            if(this.calculateExtra(cell) > 0){
+            if (this.calculateExtra(cell) > 0) {
                 this.cells[4][cell].cost = this.calculateExtra(cell);
                 this.saveOrUpdate(this.rows[4], 4, cell);
             }
@@ -89,7 +89,7 @@ export class IncomeComponent implements OnInit {
             this.initTableRows();
             this.initNumberFormControl();
             this.initEmptyCells();
-            this.initCellValues();
+            this.getData();
             this.initTotalZCells();
         });
     }
@@ -119,7 +119,7 @@ export class IncomeComponent implements OnInit {
         });
     }
 
-    initCellValues() {
+    getData() {
         let paymentType = [PaymentType.getIndexOf(PaymentType.NONE)];
         if (this.type === 'real') {
             paymentType = [PaymentType.getIndexOf(PaymentType.ON_ACCOUNT),
@@ -156,17 +156,17 @@ export class IncomeComponent implements OnInit {
                 this.dates.forEach((date, cell) => {
                     this.summaryFooterColumn(cell);
                 });
-                if(this.type == 'real'){
+                if (this.type == 'real') {
                     this.initTotalZCells();
-                    let filteredData = this.filterByValue(data, PaymentType.getIndexOf(PaymentType.NONE) )
+                    let filteredData = this.filterByValue(data, PaymentType.getIndexOf(PaymentType.NONE));
                     let grouped = this.groupByKey(filteredData, 'createdAt');
-                    Object.keys(grouped).forEach((key,index) => {
+                    Object.keys(grouped).forEach((key, index) => {
                         let total = 0;
                         grouped[key].forEach(record => {
                             total += +record.cost;
-                        })
+                        });
                         this.totalZCells[key] = total;
-                    })
+                    });
                 }
             } else {
                 this.initEmptyCells();
@@ -205,8 +205,8 @@ export class IncomeComponent implements OnInit {
         }
     }
 
-    private initTotalZCells() {
-        this.totalZCells = {}
+    initTotalZCells() {
+        this.totalZCells = {};
         for (let j = 0; j < this.dates.length; j++) {
             this.totalZCells[this.dates[j].queryFormattedDate] = 0;
         }
@@ -370,11 +370,11 @@ export class IncomeComponent implements OnInit {
         }, Object.create(null));
     }
 
-    filterByValue(array, value){
+    filterByValue(array, value) {
         return array.filter(transaction => {
             let transactionEntity = plainToInstance(TransactionEntity, transaction);
             return transactionEntity.paymentType == value;
-        })
+        });
     }
 
     private saveOrUpdate(transaction, rowIndex, cell) {
@@ -385,21 +385,7 @@ export class IncomeComponent implements OnInit {
         }
     }
 
-    private createExtraTransaction(transactionCell, cost) {
-        const tr = new TransactionEntity();
-        tr.id = transactionCell.id;
-        tr.userId = this.currentUser.id;
-        tr.transactionType = TransactionType.getIndexOf(TransactionType.INCOME);
-        tr.paymentType = PaymentType.getIndexOf(PaymentType.EXTRA);
-        tr.vat = VAT.getIndexOf(VAT.NONE);
-        tr.createdAt = transactionCell.date;
-        tr.cost = cost;
-        tr.supplierType = SupplierType.getIndexOf(SupplierType.NONE);
-        tr.comment = '';
-        return tr;
-    }
-
     isExtra(row) {
-        return row.paymentType == PaymentType.EXTRA
+        return row.paymentType == PaymentType.EXTRA;
     }
 }

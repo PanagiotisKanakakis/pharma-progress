@@ -51,6 +51,8 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     private statistics: StatisticsDto;
     DateRangeOptions: any;
     operatingExpensesData = [];
+    currentYearWeeklyIncome = [];
+    lastYearWeeklyIncome = [];
 
 
     /**
@@ -433,11 +435,13 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     }
 
     getData() {
+        this.currentYearWeeklyIncome = [];
+        this.lastYearWeeklyIncome = [];
+        this.operatingExpensesData = [];
         this.dashboardService.getStatisticsData(String((this.currentUser.id)), this.currentUser.token, this.period.dateFrom, 'yearly')
             .then(response => {
                 setTimeout(() => {
                     this.statistics = plainToInstance(StatisticsDto, response);
-                    console.log(this.statistics)
                     Object.keys(this.statistics[this.period.dateFrom].operatingExpenses).forEach((key) => {
                         const result = this.statistics[this.period.dateFrom].operatingExpenses[key].reduce((accumulator, transaction) => {
                             return accumulator + +transaction.cost;
@@ -446,6 +450,12 @@ export class ResultsComponent implements OnInit, AfterViewInit {
                             transactionType: +key,
                             cost: result
                         })
+                    });
+                    Object.keys(this.statistics[this.period.dateFrom].weeklyIncome).forEach((week) => {
+                        this.currentYearWeeklyIncome.push(this.statistics[this.period.dateFrom].weeklyIncome[week]);
+                    });
+                    Object.keys(this.statistics[this.locateLastYear()].weeklyIncome).forEach((week) => {
+                        this.lastYearWeeklyIncome.push(this.statistics[this.locateLastYear()].weeklyIncome[week]);
                     });
                     this.isLoaded = true;
                 }, 500);
@@ -505,5 +515,12 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         }
         return (+value / (+monthNumber - 1)) * 100;
 
+    }
+
+    private locateLastYear() {
+        let year = this.period.dateFrom.split('-')[0];
+        let month = this.period.dateFrom.split('-')[1];
+        let day = this.period.dateFrom.split('-')[2];
+        return +year-1 +'-'+month+'-'+day;
     }
 }

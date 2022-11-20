@@ -34,6 +34,7 @@ export class StatisticsService {
             const dateFrom = dateRange.dateFrom;
             const dateTo = dateRange.dateTo;
             statistics[dateFrom] = {
+                weeklyIncome: await this.getWeeklyIncome(criteria, dateFrom),
                 incomePerVat: await this.getIncomePerVatType(
                     criteria,
                     dateFrom,
@@ -543,5 +544,103 @@ export class StatisticsService {
         });
 
         return operatingExpenses;
+    }
+
+    private async getWeeklyIncome(criteria: CriteriaDto, dateFrom: string) {
+        const weekRanges = this.calculateWeekRangesByMonth(
+            dateFrom.split('-')[0],
+            dateFrom.split('-')[1],
+        );
+        const resultSet = {};
+        for (const week of weekRanges) {
+            const totalCashAndPos = await this.getTotalIncome(
+                criteria,
+                week.dateFrom,
+                week.dateTo,
+            );
+            resultSet[week.dateFrom] = {
+                totalCashAndPos: totalCashAndPos,
+                dailyAverage: totalCashAndPos / week.days,
+            };
+        }
+        return resultSet;
+    }
+
+    private calculateWeekRangesByMonth(year: string, month: string) {
+        const daysInMonth = this.getDaysInMonth(year, month);
+        if (daysInMonth == 28) {
+            return [
+                {
+                    dateFrom: year + '-' + month + '-01',
+                    dateTo: year + '-' + month + '-07',
+                    days: 7,
+                },
+                {
+                    dateFrom: year + '-' + month + '-08',
+                    dateTo: year + '-' + month + '-14',
+                    days: 7,
+                },
+                {
+                    dateFrom: year + '-' + month + '-15',
+                    dateTo: year + '-' + month + '-21',
+                    days: 7,
+                },
+                {
+                    dateFrom: year + '-' + month + '-22',
+                    dateTo: year + '-' + month + '-28',
+                    days: 7,
+                },
+            ];
+        } else if (daysInMonth == 30) {
+            return [
+                {
+                    dateFrom: year + '-' + month + '-01',
+                    dateTo: year + '-' + month + '-07',
+                    days: 7,
+                },
+                {
+                    dateFrom: year + '-' + month + '-08',
+                    dateTo: year + '-' + month + '-14',
+                    days: 7,
+                },
+                {
+                    dateFrom: year + '-' + month + '-15',
+                    dateTo: year + '-' + month + '-22',
+                    days: 8,
+                },
+                {
+                    dateFrom: year + '-' + month + '-23',
+                    dateTo: year + '-' + month + '-30',
+                    days: 8,
+                },
+            ];
+        } else if (daysInMonth == 31) {
+            return [
+                {
+                    dateFrom: year + '-' + month + '-01',
+                    dateTo: year + '-' + month + '-07',
+                    days: 7,
+                },
+                {
+                    dateFrom: year + '-' + month + '-08',
+                    dateTo: year + '-' + month + '-15',
+                    days: 8,
+                },
+                {
+                    dateFrom: year + '-' + month + '-16',
+                    dateTo: year + '-' + month + '-23',
+                    days: 8,
+                },
+                {
+                    dateFrom: year + '-' + month + '-24',
+                    dateTo: year + '-' + month + '-31',
+                    days: 8,
+                },
+            ];
+        }
+    }
+
+    private getDaysInMonth(year, month) {
+        return new Date(year, month, 0).getDate();
     }
 }

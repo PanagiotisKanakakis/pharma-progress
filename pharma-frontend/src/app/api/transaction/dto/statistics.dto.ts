@@ -34,5 +34,11 @@ export class StatisticsDto {
         operatingExpenses: Partial<Record<TransactionType, number>>;
         exchange: number;
         other: Partial<Record<TransactionType, number>>;
+        weeklyIncome: {
+            [key: string]: {
+                totalCashAndPos: number;
+                dailyAverage: number;
+            };
+        };
     };
 }
