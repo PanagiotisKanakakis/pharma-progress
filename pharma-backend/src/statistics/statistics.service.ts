@@ -11,6 +11,8 @@ import { Connection, Repository } from 'typeorm';
 import { CriteriaDto, StatisticsDto } from './dto';
 import { getMonthRanges } from '../common';
 import { TransactionService } from '../transaction/transaction.service';
+import { RangeType } from './enums/range-type.enum';
+import { PrescriptionService } from '../prescriptions/prescription.service';
 
 @Injectable()
 export class StatisticsService {
@@ -22,6 +24,7 @@ export class StatisticsService {
         @InjectConnection()
         public readonly connection: Connection,
         public readonly transactionService: TransactionService,
+        public readonly prescriptionService: PrescriptionService,
     ) {}
 
     async getStatisticsByCriteria(
@@ -73,6 +76,15 @@ export class StatisticsService {
                     dateTo,
                 ),
                 totalIncome: await this.getTotalIncome(
+                    criteria,
+                    dateFrom,
+                    dateTo,
+                ),
+                threeMonthPeriodVat: await this.getThreeMonthPeriodVat(
+                    criteria,
+                    dateFrom,
+                ),
+                totalPrescriptions: await this.getTotalPrescriptions(
                     criteria,
                     dateFrom,
                     dateTo,
@@ -199,7 +211,10 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
-        const values: Partial<Record<VAT.SIX | VAT.THIRTEEN, number>> = {};
+        const values: Record<VAT.SIX | VAT.THIRTEEN, number> = {
+            '2': 0,
+            '3': 0,
+        };
 
         criteria.transactionType = [TransactionType.EOPPY];
         criteria.paymentType = [PaymentType.ON_ACCOUNT];
@@ -228,7 +243,10 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
-        const values: Partial<Record<VAT.SIX | VAT.THIRTEEN, number>> = {};
+        const values: Record<VAT.SIX | VAT.THIRTEEN, number> = {
+            '2': 0,
+            '3': 0,
+        };
 
         criteria.transactionType = [TransactionType.EOPPY];
         criteria.paymentType = [PaymentType.BANK];
@@ -261,7 +279,7 @@ export class StatisticsService {
         return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
     }
 
-    public getIncomePerVatType(
+    public async getIncomePerVatType(
         criteria: CriteriaDto,
         dateFrom: string,
         dateTo: string,
@@ -269,13 +287,23 @@ export class StatisticsService {
         criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.INCOME];
         criteria.paymentType = [PaymentType.NONE];
-        const query = this.createPerVatTypeQuery(criteria, dateFrom, dateTo);
-        const values: Partial<Record<VAT, number>> = {};
-        query.getRawMany().then((rs) => {
-            rs.forEach((totalAndVat) => {
-                values[totalAndVat.vat] = +totalAndVat.total;
-            });
+        const query = await this.createPerVatTypeQuery(
+            criteria,
+            dateFrom,
+            dateTo,
+        );
+        const values: Record<VAT, number> = {
+            '0': 0,
+            '1': 0,
+            '2': 0,
+            '3': 0,
+            '4': 0,
+        };
+        const rs = await query.getRawMany();
+        rs.forEach((totalAndVat) => {
+            values[totalAndVat.vat] = +totalAndVat.total;
         });
+
         return values;
     }
 
@@ -298,13 +326,23 @@ export class StatisticsService {
         criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.EXPENSE];
         criteria.paymentType = [PaymentType.CASH, PaymentType.ON_ACCOUNT];
-        const query = this.createPerVatTypeQuery(criteria, dateFrom, dateTo);
-        const values: Partial<Record<VAT, number>> = {};
-        query.getRawMany().then((rs) => {
-            rs.forEach((totalAndVat) => {
-                values[totalAndVat.vat] = +totalAndVat.total;
-            });
+        const query = await this.createPerVatTypeQuery(
+            criteria,
+            dateFrom,
+            dateTo,
+        );
+        const values: Record<VAT, number> = {
+            '0': 0,
+            '1': 0,
+            '2': 0,
+            '3': 0,
+            '4': 0,
+        };
+        const rs = await query.getRawMany();
+        rs.forEach((totalAndVat) => {
+            values[totalAndVat.vat] = +totalAndVat.total;
         });
+
         return values;
     }
 
@@ -396,9 +434,10 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
-        const values: Partial<
-            Record<PaymentType.CASH | PaymentType.ON_ACCOUNT, number>
-        > = {};
+        const values: Record<
+            PaymentType.CASH | PaymentType.ON_ACCOUNT,
+            number
+        > = { '0': 0, '2': 0 };
 
         criteria.transactionType = [TransactionType.EXPENSE];
         criteria.supplierType = SupplierType.OTHER;
@@ -425,9 +464,10 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
-        const values: Partial<
-            Record<PaymentType.CASH | PaymentType.BANK, number>
-        > = {};
+        const values: Record<PaymentType.CASH | PaymentType.BANK, number> = {
+            '0': 0,
+            '1': 0,
+        };
         criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.PAYMENT];
         criteria.supplierType = SupplierType.OTHER;
@@ -451,7 +491,10 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
-        const values: Partial<Record<PaymentType.ON_ACCOUNT, number>> = {};
+        const values: Record<
+            PaymentType.CASH | PaymentType.ON_ACCOUNT,
+            number
+        > = { '0': 0, '2': 0 };
         criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.EXPENSE];
         criteria.supplierType = SupplierType.MAIN;
@@ -470,9 +513,10 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
-        const values: Partial<
-            Record<PaymentType.CASH | PaymentType.BANK, number>
-        > = {};
+        const values: Record<PaymentType.CASH | PaymentType.BANK, number> = {
+            '0': 0,
+            '1': 0,
+        };
         criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.PAYMENT];
         criteria.supplierType = SupplierType.MAIN;
@@ -496,7 +540,25 @@ export class StatisticsService {
         dateFrom: string,
         dateTo: string,
     ) {
-        const values: Partial<Record<TransactionType, number>> = {};
+        const values: Record<TransactionType, number> = {
+            '0': 0,
+            '1': 0,
+            '10': 0,
+            '11': 0,
+            '12': 0,
+            '13': 0,
+            '14': 0,
+            '15': 0,
+            '16': 0,
+            '2': 0,
+            '3': 0,
+            '4': 0,
+            '5': 0,
+            '6': 0,
+            '7': 0,
+            '8': 0,
+            '9': 0,
+        };
         criteria.vatType = undefined;
         criteria.transactionType = [TransactionType.PERSONAL_WITHDRAWALS];
         criteria.paymentType = [PaymentType.CASH, PaymentType.BANK];
@@ -591,6 +653,29 @@ export class StatisticsService {
                     days: 7,
                 },
             ];
+        } else if (daysInMonth == 29) {
+            return [
+                {
+                    dateFrom: year + '-' + month + '-01',
+                    dateTo: year + '-' + month + '-07',
+                    days: 7,
+                },
+                {
+                    dateFrom: year + '-' + month + '-08',
+                    dateTo: year + '-' + month + '-14',
+                    days: 7,
+                },
+                {
+                    dateFrom: year + '-' + month + '-15',
+                    dateTo: year + '-' + month + '-22',
+                    days: 7,
+                },
+                {
+                    dateFrom: year + '-' + month + '-23',
+                    dateTo: year + '-' + month + '-29',
+                    days: 8,
+                },
+            ];
         } else if (daysInMonth == 30) {
             return [
                 {
@@ -642,5 +727,59 @@ export class StatisticsService {
 
     private getDaysInMonth(year, month) {
         return new Date(year, month, 0).getDate();
+    }
+
+    private async getThreeMonthPeriodVat(
+        criteria: CriteriaDto,
+        dateFrom: string,
+    ) {
+        const period = this.getThreeMonthPeriod(
+            Number(dateFrom.split('-')[0]),
+            Number(dateFrom.split('-')[1]),
+        );
+        const incomePerVat = await this.getIncomePerVatType(
+            criteria,
+            period[0],
+            period[1],
+        );
+        const outcomePerVat = await this.getOutcomePerVatType(
+            criteria,
+            period[0],
+            period[1],
+        );
+        return (
+            incomePerVat['1'] -
+            outcomePerVat['1'] +
+            (incomePerVat['2'] - outcomePerVat['2']) * 0.06 +
+            (incomePerVat['3'] - outcomePerVat['3']) * 0.13 +
+            (incomePerVat['4'] - outcomePerVat['4']) * 0.24
+        );
+    }
+
+    private getThreeMonthPeriod(year: number, month: number) {
+        if ([1, 2, 3].includes(month)) {
+            return [year + '-01-01', year + '-03-31'];
+        } else if ([4, 5, 6].includes(month)) {
+            return [year + '-04-01', year + '-06-30'];
+        } else if ([7, 8, 9].includes(month)) {
+            return [year + '-07-01', year + '-09-30'];
+        } else if ([10, 11, 12].includes(month)) {
+            return [year + '-10-01', year + '-12-31'];
+        }
+    }
+
+    private async getTotalPrescriptions(
+        criteria: CriteriaDto,
+        dateFrom: string,
+        dateTo: string,
+    ) {
+        criteria.date = dateFrom;
+        criteria.range = RangeType.MONTHLY;
+        const rs = await this.prescriptionService.getAllByCriteria(criteria);
+        let total = 0;
+        rs.forEach((prescription) => {
+            total += +prescription.amount;
+        });
+        return total;
     }
 }

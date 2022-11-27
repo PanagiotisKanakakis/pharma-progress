@@ -317,4 +317,20 @@ export class DashboardService {
     totalExtra(payload, date) {
         return payload[date].totalExtra;
     }
+
+    totalIncomePerVat(payload , date) {
+        return payload[date].incomePerVat;
+    }
+
+    totalOutcomePerVat(payload , date) {
+        return payload[date].outcomePerVat;
+    }
+
+    threeMonthPeriodVat( payload , date ) {
+        return payload[date].threeMonthPeriodVat;
+    }
+
+    totalMonthPrescriptions(payload , date) {
+        return payload[date].totalPrescriptions;
+    }
 }

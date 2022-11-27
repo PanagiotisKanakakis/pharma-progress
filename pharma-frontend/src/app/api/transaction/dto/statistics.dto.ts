@@ -17,6 +17,8 @@ export class StatisticsDto {
         totalOnAccount: number;
         totalPreviousMonths: number;
         totalIncome: number;
+        threeMonthPeriodVat: number;
+        totalPrescriptions: number;
         suppliers: {
             mainSupplier: {
                 outcome: Partial<

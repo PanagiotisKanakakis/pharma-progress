@@ -5,7 +5,7 @@ import { CreatePrescriptionDto } from './dto';
 import { UserService } from '../authbroker/users';
 import { Prescription } from './prescription.entity';
 import { CriteriaDto } from '../statistics/dto';
-import {getMonthRanges, getWeek, toDate} from '../common';
+import {getMonthRanges, getWeek, toDate, toDateFromDBFormat} from '../common';
 import { Check } from '../checks';
 import { RangeType } from '../statistics/enums/range-type.enum';
 
@@ -28,7 +28,7 @@ export class PrescriptionService {
                 dto.userId,
             );
             prescription.amount = dto.amount;
-            prescription.createdAt = toDate(dto.createdAt);
+            prescription.createdAt = toDateFromDBFormat(dto.createdAt);
             prescription.comment = dto.comment;
             await this.prescriptionRepository.save(prescription);
             return prescription;

@@ -172,7 +172,7 @@ export class PrescriptionComponent implements OnInit {
             prescription.userId = this.currentUser.id.toString();
             prescription.amount = row.amount;
             prescription.comment = row.comment;
-            prescription.createdAt = DateUtils.queryFormattedDate(DateUtils.toDate(this.rows[rowIndex].createdAt));
+            prescription.createdAt = DateUtils.queryFormattedDate(DateUtils.toDate(row.createdAt));
             submitPrescription(
                 prescription,
                 {

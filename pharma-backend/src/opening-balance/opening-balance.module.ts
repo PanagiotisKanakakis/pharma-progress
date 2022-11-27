@@ -10,6 +10,7 @@ import { StatisticsService } from '../statistics/statistics.service';
 import { StatisticsModule } from '../statistics/statistics.module';
 import { Transaction } from '../transaction';
 import { TransactionService } from '../transaction/transaction.service';
+import { PrescriptionModule } from '../prescriptions/prescription.module';
 
 @Module({
     imports: [
@@ -19,6 +20,7 @@ import { TransactionService } from '../transaction/transaction.service';
         }),
         AuthBrokerModule,
         StatisticsModule,
+        PrescriptionModule,
     ],
     providers: [
         OpeningBalanceService,

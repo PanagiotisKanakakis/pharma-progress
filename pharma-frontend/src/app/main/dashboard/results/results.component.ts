@@ -9,7 +9,7 @@ import {AuthenticationService} from 'app/auth/service';
 import {DashboardService} from 'app/main/dashboard/dashboard.service';
 import {ColumnMode} from '@swimlane/ngx-datatable';
 import {locale as greek} from 'app/common/i18n/gr';
-import {StatisticsDto, TransactionType} from '../../../api/transaction';
+import {StatisticsDto, TransactionType, VAT} from '../../../api/transaction';
 import {NgbDate, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import DateUtils from '../../../common/utils/date';
 import {DatePeriod} from '../../../common/utils/interfaces/date-period.interface';
@@ -28,6 +28,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     @ViewChild('personalWitdrawalsRef') personalWitdrawalsRef: any;
     @ViewChild('eoppyAndConsumablesChartRef') eoppyAndConsumablesChartRef: any;
     @ViewChild('operatingExpensesOrderChartRef') operatingExpensesOrderChartRef: any;
+    @ViewChild('averageExtraRef') averageExtraRef: any;
 
     public data: any;
     public currentUser: User;
@@ -42,6 +43,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     public personalWithdrawalsChartOptions: any;
     public orderChartoptions: any;
     public operatingExpensesOrderChartOptions: any;
+    public averageExtraOptions: any;
     public eoppyAndConsumablesChartoptions: any;
     // Private
     private $warning = '#FF9F43';
@@ -188,6 +190,44 @@ export class ResultsComponent implements OnInit, AfterViewInit {
                 x: {show: false}
             }
         };
+        this.averageExtraOptions = {
+            chart: {
+                height: 100,
+                type: 'area',
+                toolbar: {
+                    show: false
+                },
+                sparkline: {
+                    enabled: true
+                }
+            },
+            colors: [this.$personalWithdrawalsWarning],
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 2.5
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 0.9,
+                    opacityFrom: 0.7,
+                    opacityTo: 0.5,
+                    stops: [0, 80, 100]
+                }
+            },
+            series: [
+                {
+                    name: 'Orders',
+                    data: [10, 15, 8, 15, 7, 12, 8]
+                }
+            ],
+            tooltip: {
+                x: {show: false}
+            }
+        };
         this.eoppyAndConsumablesChartoptions = {
             chart: {
                 height: 100,
@@ -240,7 +280,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
             altFormat: 'F Y',
             onClose: (selectedDates: any) => {
                 this.period = DateUtils.NgbDateToMonthPeriod(
-                    new NgbDate(+selectedDates[0].getUTCFullYear(), +selectedDates[0].getUTCMonth()+1, +selectedDates[0].getUTCDate()));
+                    new NgbDate(+selectedDates[0].getUTCFullYear(), +selectedDates[0].getUTCMonth() + 1, +selectedDates[0].getUTCDate()));
                 this.getData();
             },
         };
@@ -275,6 +315,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
                     this.personalWithdrawalsChartOptions.chart.width = this.personalWitdrawalsRef?.nativeElement.offsetWidth;
                     this.eoppyAndConsumablesChartoptions.chart.width = this.eoppyAndConsumablesChartRef?.nativeElement.offsetWidth;
                     this.operatingExpensesOrderChartOptions.chart.width = this.operatingExpensesOrderChartRef?.nativeElement.offsetWidth;
+                    this.averageExtraOptions.chart.width = this.averageExtraRef?.nativeElement.offsetWidth;
                     // }
                 }, 50);
 
@@ -342,19 +383,19 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         return this.dashboardService.consumablesValueIncome(this.statistics, this.period.dateFrom);
     }
 
-    consumablesOnAccountWithoutVat(){
+    consumablesOnAccountWithoutVat() {
         return this.dashboardService.consumablesOnAccountWithoutVat(this.statistics, this.period.dateFrom);
     }
 
-    consumablesOnAccountWithVat(){
+    consumablesOnAccountWithVat() {
         return this.dashboardService.consumablesOnAccountWithVat(this.statistics, this.period.dateFrom);
     }
 
-    consumablesIncomeWithVat(){
+    consumablesIncomeWithVat() {
         return this.dashboardService.consumablesIncomeWithVat(this.statistics, this.period.dateFrom);
     }
 
-    consumablesIncomeWithoutVat(){
+    consumablesIncomeWithoutVat() {
         return this.dashboardService.consumablesIncomeWithoutVat(this.statistics, this.period.dateFrom);
     }
 
@@ -442,14 +483,16 @@ export class ResultsComponent implements OnInit, AfterViewInit {
             .then(response => {
                 setTimeout(() => {
                     this.statistics = plainToInstance(StatisticsDto, response);
+                    console.log(this.statistics);
                     Object.keys(this.statistics[this.period.dateFrom].operatingExpenses).forEach((key) => {
-                        const result = this.statistics[this.period.dateFrom].operatingExpenses[key].reduce((accumulator, transaction) => {
-                            return accumulator + +transaction.cost;
-                        }, 0);
+                        const result = this.statistics[this.period.dateFrom].operatingExpenses[key]
+                            .reduce((accumulator, transaction) => {
+                                return accumulator + +transaction.cost;
+                            }, 0);
                         this.operatingExpensesData.push({
                             transactionType: +key,
                             cost: result
-                        })
+                        });
                     });
                     Object.keys(this.statistics[this.period.dateFrom].weeklyIncome).forEach((week) => {
                         this.currentYearWeeklyIncome.push(this.statistics[this.period.dateFrom].weeklyIncome[week]);
@@ -476,7 +519,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     }
 
     totalOutcome() {
-        return this.totalMainSupplierOutcome() + this.totalOtherSupplierOutcome()
+        return this.totalMainSupplierOutcome() + this.totalOtherSupplierOutcome();
     }
 
     avgPersonalWithdrawals() {
@@ -486,31 +529,31 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         }
         let monthNumber = this.period.dateFrom.split('-')[1];
         let value = 0;
-        for(let i = 0 ; i < +monthNumber; i++){
+        for (let i = 0; i < +monthNumber; i++) {
             value += pw[i];
         }
-        return value / (+monthNumber -1);
+        return value / (+monthNumber - 1);
 
     }
 
     totalExtraDividedToTotalIncome() {
-        if(this.dashboardService.totalMonthIncome(this.statistics,this.period.dateFrom) == 0 ){
+        if (this.dashboardService.totalMonthIncome(this.statistics, this.period.dateFrom) == 0) {
             return 0;
         }
-        return this.dashboardService.totalExtra(this.statistics, this.period.dateFrom) / this.dashboardService.totalMonthIncome(this.statistics,this.period.dateFrom);
+        return this.dashboardService.totalExtra(this.statistics, this.period.dateFrom) / this.dashboardService.totalMonthIncome(this.statistics, this.period.dateFrom);
     }
 
     avgExtra() {
         let extras = [];
         for (let date in this.statistics) {
-            if(this.dashboardService.totalMonthIncome(this.statistics,this.period.dateFrom) == 0 ){
+            if (this.dashboardService.totalMonthIncome(this.statistics, this.period.dateFrom) == 0) {
                 extras.push(0);
             }
-            extras.push(this.dashboardService.totalExtra(this.statistics, this.period.dateFrom) / this.dashboardService.totalMonthIncome(this.statistics,this.period.dateFrom));
+            extras.push(this.dashboardService.totalExtra(this.statistics, this.period.dateFrom) / this.dashboardService.totalMonthIncome(this.statistics, this.period.dateFrom));
         }
         let monthNumber = this.period.dateFrom.split('-')[1];
         let value = 0;
-        for(let i = 0 ; i < +monthNumber; i++){
+        for (let i = 0; i < +monthNumber; i++) {
             value += extras[i];
         }
         return (+value / (+monthNumber - 1)) * 100;
@@ -521,6 +564,86 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         let year = this.period.dateFrom.split('-')[0];
         let month = this.period.dateFrom.split('-')[1];
         let day = this.period.dateFrom.split('-')[2];
-        return +year-1 +'-'+month+'-'+day;
+        return +year - 1 + '-' + month + '-' + day;
+    }
+
+    totalIncomePerVat(i: number) {
+        return this.dashboardService.totalIncomePerVat(this.statistics, this.period.dateFrom)[VAT.getIndexOf(String(i))];
+    }
+
+    totalOutcomePerVat(i: number) {
+        return this.dashboardService.totalOutcomePerVat(this.statistics, this.period.dateFrom)[VAT.getIndexOf(String(i))];
+    }
+
+    totalVAT() {
+        return (this.totalIncomePerVat(0) - this.totalOutcomePerVat(0)) +
+            (this.totalIncomePerVat(6) - this.totalOutcomePerVat(6)) * 0.06 +
+            (this.totalIncomePerVat(13) - this.totalOutcomePerVat(13)) * 0.13 +
+            (this.totalIncomePerVat(24) - this.totalOutcomePerVat(24)) * 0.24;
+    }
+
+    getToday() {
+        return new Date().getUTCDate();
+    }
+
+    threeMonthPeriodVat() {
+        return this.dashboardService.threeMonthPeriodVat(this.statistics, this.period.dateFrom);
+    }
+
+    getTableData() {
+        let data: any[][] = [];
+        let currentYear = this.period.dateFrom;
+        let lastYear = (+this.period.dateFrom.split('-')[0] - 1) + '-' + this.period.dateFrom.split('-')[1] + '-01';
+
+        let totalMedicineAndConsumablesIncomeWithVatCurrentYear = this.dashboardService.totalMedicineAndConsumablesIncomeWithVat(this.statistics, currentYear);
+        let totalMedicineAndConsumablesIncomeWithVatLastYear = this.dashboardService.totalMedicineAndConsumablesIncomeWithVat(this.statistics, lastYear);
+        let change = 0;
+        if (totalMedicineAndConsumablesIncomeWithVatLastYear > 0) {
+            change = (totalMedicineAndConsumablesIncomeWithVatCurrentYear - totalMedicineAndConsumablesIncomeWithVatLastYear) /
+                totalMedicineAndConsumablesIncomeWithVatLastYear;
+        }
+
+        data[0] = [
+            totalMedicineAndConsumablesIncomeWithVatCurrentYear,
+            totalMedicineAndConsumablesIncomeWithVatLastYear,
+            change
+        ];
+
+        let totalPrescriptionsCurrentYear = this.dashboardService.totalMonthPrescriptions(this.statistics, currentYear);
+        let totalPrescriptionsLastYear = this.dashboardService.totalMonthPrescriptions(this.statistics, lastYear);
+        change = 0;
+        if (totalPrescriptionsLastYear > 0) {
+            change = (totalPrescriptionsCurrentYear - totalPrescriptionsLastYear) /
+                totalPrescriptionsLastYear;
+        }
+        data[1] = [
+            totalPrescriptionsCurrentYear,
+            totalPrescriptionsLastYear,
+            change
+        ];
+
+        let prescriptionValueCurrentYear = data[1][0] > 0 ? data[0][0] / data[1][0]: 0;
+        let prescriptionValueLastYear = data[1][1] > 0 ? data[0][1] / data[1][1]: 0;
+        change = prescriptionValueLastYear > 0 ? prescriptionValueCurrentYear / prescriptionValueLastYear: 0;
+        data[2] = [
+            prescriptionValueCurrentYear,
+            prescriptionValueLastYear,
+            change
+        ];
+
+        let totalMonthIncomeCurrentYear = this.dashboardService.totalMonthIncome(this.statistics, currentYear);
+        let totalMonthIncomeLastYear = this.dashboardService.totalMonthIncome(this.statistics, lastYear);
+        change = 0;
+        if (totalMonthIncomeLastYear > 0) {
+            change = (totalMonthIncomeCurrentYear - totalMonthIncomeLastYear) /
+                totalMonthIncomeLastYear;
+        }
+
+        data[3] = [
+            totalMonthIncomeCurrentYear,
+            totalMonthIncomeLastYear,
+            change
+        ];
+        return data;
     }
 }
