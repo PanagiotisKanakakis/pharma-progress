@@ -576,8 +576,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     }
 
     totalVAT() {
-        return (this.totalIncomePerVat(0) - this.totalOutcomePerVat(0)) +
-            (this.totalIncomePerVat(6) - this.totalOutcomePerVat(6)) * 0.06 +
+        return(this.totalIncomePerVat(6) - this.totalOutcomePerVat(6)) * 0.06 +
             (this.totalIncomePerVat(13) - this.totalOutcomePerVat(13)) * 0.13 +
             (this.totalIncomePerVat(24) - this.totalOutcomePerVat(24)) * 0.24;
     }
@@ -595,17 +594,17 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         let currentYear = this.period.dateFrom;
         let lastYear = (+this.period.dateFrom.split('-')[0] - 1) + '-' + this.period.dateFrom.split('-')[1] + '-01';
 
-        let totalMedicineAndConsumablesIncomeWithVatCurrentYear = this.dashboardService.totalMedicineAndConsumablesIncomeWithVat(this.statistics, currentYear);
-        let totalMedicineAndConsumablesIncomeWithVatLastYear = this.dashboardService.totalMedicineAndConsumablesIncomeWithVat(this.statistics, lastYear);
+        let totalMedicineAndConsumablesOnAccountVatCurrentYear = this.dashboardService.totalMedicineAndConsumablesOnAccountWithVat(this.statistics, currentYear);
+        let totalMedicineAndConsumablesOnAccountWithVatLastYear = this.dashboardService.totalMedicineAndConsumablesOnAccountWithVat(this.statistics, lastYear);
         let change = 0;
-        if (totalMedicineAndConsumablesIncomeWithVatLastYear > 0) {
-            change = (totalMedicineAndConsumablesIncomeWithVatCurrentYear - totalMedicineAndConsumablesIncomeWithVatLastYear) /
-                totalMedicineAndConsumablesIncomeWithVatLastYear;
+        if (totalMedicineAndConsumablesOnAccountWithVatLastYear > 0) {
+            change = (totalMedicineAndConsumablesOnAccountVatCurrentYear - totalMedicineAndConsumablesOnAccountWithVatLastYear) /
+                totalMedicineAndConsumablesOnAccountWithVatLastYear;
         }
 
         data[0] = [
-            totalMedicineAndConsumablesIncomeWithVatCurrentYear,
-            totalMedicineAndConsumablesIncomeWithVatLastYear,
+            totalMedicineAndConsumablesOnAccountVatCurrentYear,
+            totalMedicineAndConsumablesOnAccountWithVatLastYear,
             change
         ];
 

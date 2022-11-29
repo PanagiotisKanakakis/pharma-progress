@@ -748,8 +748,6 @@ export class StatisticsService {
             period[1],
         );
         return (
-            incomePerVat['1'] -
-            outcomePerVat['1'] +
             (incomePerVat['2'] - outcomePerVat['2']) * 0.06 +
             (incomePerVat['3'] - outcomePerVat['3']) * 0.13 +
             (incomePerVat['4'] - outcomePerVat['4']) * 0.24
