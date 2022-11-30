@@ -568,7 +568,14 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     }
 
     totalIncomePerVat(i: number) {
-        return this.dashboardService.totalIncomePerVat(this.statistics, this.period.dateFrom)[VAT.getIndexOf(String(i))] / (1 + i/100)
+        if( i != 6){
+            return this.dashboardService.totalIncomePerVat(this.statistics, this.period.dateFrom)[VAT.getIndexOf(String(i))] / (1 + i/100)
+        }else{
+            return this.dashboardService.totalIncomePerVat(this.statistics, this.period.dateFrom)[VAT.getIndexOf(String(i))] / (1 + i/100)
+            +
+                this.dashboardService.totalMedicineAndConsumablesOnAccountWithVat(this.statistics, this.period.dateFrom)/(1 + i/100)
+
+        }
     }
 
     totalOutcomePerVat(i: number) {
