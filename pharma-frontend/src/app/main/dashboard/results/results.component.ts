@@ -568,17 +568,17 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     }
 
     totalIncomePerVat(i: number) {
-        return this.dashboardService.totalIncomePerVat(this.statistics, this.period.dateFrom)[VAT.getIndexOf(String(i))];
+        return this.dashboardService.totalIncomePerVat(this.statistics, this.period.dateFrom)[VAT.getIndexOf(String(i))] / (1 + i/100)
     }
 
     totalOutcomePerVat(i: number) {
-        return this.dashboardService.totalOutcomePerVat(this.statistics, this.period.dateFrom)[VAT.getIndexOf(String(i))];
+        return this.dashboardService.totalOutcomePerVat(this.statistics, this.period.dateFrom)[VAT.getIndexOf(String(i))] / (1 + i/100);
     }
 
     totalVAT() {
-        return(this.totalIncomePerVat(6) - this.totalOutcomePerVat(6)) * 0.06 +
-            (this.totalIncomePerVat(13) - this.totalOutcomePerVat(13)) * 0.13 +
-            (this.totalIncomePerVat(24) - this.totalOutcomePerVat(24)) * 0.24;
+        return(this.totalIncomePerVat(6)/1.06 - this.totalOutcomePerVat(6)/1.06) * 0.06 +
+            (this.totalIncomePerVat(13)/1.13 - this.totalOutcomePerVat(13)/1.13) * 0.13 +
+            (this.totalIncomePerVat(24)/1.24 - this.totalOutcomePerVat(24)/1.24) * 0.24;
     }
 
     getToday() {
