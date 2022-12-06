@@ -279,6 +279,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
             dateFormat: 'm.y',
             altFormat: 'F Y',
             onClose: (selectedDates: any) => {
+                this.isLoaded = false;
                 this.period = DateUtils.NgbDateToMonthPeriod(
                     new NgbDate(+selectedDates[0].getUTCFullYear(), +selectedDates[0].getUTCMonth() + 1, +selectedDates[0].getUTCDate()));
                 this.getData();
@@ -440,7 +441,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     }
 
     totalNetProfitWithTaxes() {
-        return this.dashboardService.totalNetProfitWithTaxes(this.statistics, this.period.dateFrom);
+        return this.totalNetProfitWithoutTaxes() - this.predictTaxes();
     }
 
     totalTaxes() {
@@ -572,8 +573,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
             return this.dashboardService.totalIncomePerVat(this.statistics, this.period.dateFrom)[VAT.getIndexOf(String(i))] / (1 + i/100)
         }else{
             return this.dashboardService.totalIncomePerVat(this.statistics, this.period.dateFrom)[VAT.getIndexOf(String(i))] / (1 + i/100)
-            +
-                this.dashboardService.totalMedicineAndConsumablesOnAccountWithVat(this.statistics, this.period.dateFrom)/(1 + i/100)
+            + this.dashboardService.totalMedicineAndConsumablesOnAccountWithVat(this.statistics, this.period.dateFrom)/(1 + i/100)
 
         }
     }
@@ -589,6 +589,12 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     }
 
     getToday() {
+        let currentMonth = new Date().getUTCMonth()+1;
+        if(currentMonth > Number(this.period.dateFrom.split('-')[1])){
+            let year = Number(this.period.dateFrom.split('-')[0])
+            let month = Number(this.period.dateFrom.split('-')[2])
+            return new Date(year, month, 0).getDate();
+        }
         return new Date().getUTCDate();
     }
 
@@ -612,7 +618,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         data[0] = [
             totalMedicineAndConsumablesOnAccountVatCurrentYear,
             totalMedicineAndConsumablesOnAccountWithVatLastYear,
-            change
+            change*100
         ];
 
         let totalPrescriptionsCurrentYear = this.dashboardService.totalMonthPrescriptions(this.statistics, currentYear);
@@ -625,16 +631,16 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         data[1] = [
             totalPrescriptionsCurrentYear,
             totalPrescriptionsLastYear,
-            change
+            change*100
         ];
 
         let prescriptionValueCurrentYear = data[1][0] > 0 ? data[0][0] / data[1][0]: 0;
         let prescriptionValueLastYear = data[1][1] > 0 ? data[0][1] / data[1][1]: 0;
-        change = prescriptionValueLastYear > 0 ? prescriptionValueCurrentYear / prescriptionValueLastYear: 0;
+        change = prescriptionValueLastYear > 0 ? (prescriptionValueCurrentYear - prescriptionValueLastYear)/ prescriptionValueLastYear: 0;
         data[2] = [
             prescriptionValueCurrentYear,
             prescriptionValueLastYear,
-            change
+            change*100
         ];
 
         let totalMonthIncomeCurrentYear = this.dashboardService.totalMonthIncome(this.statistics, currentYear);
@@ -648,8 +654,31 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         data[3] = [
             totalMonthIncomeCurrentYear,
             totalMonthIncomeLastYear,
-            change
+            change*100
         ];
         return data;
+    }
+
+    predictTaxes() {
+        let totalNetProfitWithoutTaxesPerMonth = [];
+        for (let date in this.statistics) {
+            totalNetProfitWithoutTaxesPerMonth.push(this.dashboardService.totalNetProfitWithoutTaxes(this.statistics, date));
+        }
+        let total: number
+        if(totalNetProfitWithoutTaxesPerMonth.includes(0)){
+            /* in case we have at least one 0 value we calculate
+            *  the average income
+            * */
+            let averageMonth = totalNetProfitWithoutTaxesPerMonth.reduce((accumulator, current) => {
+                return accumulator + current;
+            }, 0) / 12;
+            total = averageMonth * 12;
+        }else{
+            total = totalNetProfitWithoutTaxesPerMonth.reduce((accumulator, current) => {
+                return accumulator + current;
+            }, 0)
+        }
+        let totalTaxes = this.dashboardService.calculateTaxes(this.statistics, total)
+        return totalTaxes > 0 ? totalTaxes : 0;
     }
 }

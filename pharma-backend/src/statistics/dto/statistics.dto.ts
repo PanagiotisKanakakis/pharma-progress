@@ -36,6 +36,7 @@ export class StatisticsDto {
             };
         };
         operatingExpenses: Partial<Record<TransactionType, Transaction[]>>;
+        taxes: Partial<Record<TransactionType, Transaction[]>>;
         exchange: number;
         other: Record<TransactionType, number>;
         weeklyIncome: {

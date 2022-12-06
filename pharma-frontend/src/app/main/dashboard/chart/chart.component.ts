@@ -705,14 +705,15 @@ export class ChartComponent implements OnInit {
     }
 
     getValueOfOperatingExpense(expense: string, date: string) {
-        let value = this.statistics[date].operatingExpenses[TransactionType.getIndexOf(expense)];
-        if (value !== undefined) {
-            let total = 0;
-            this.statistics[date].operatingExpenses[TransactionType.getIndexOf(expense)].forEach((transaction) => {
-                total+= +transaction.cost
-            })
-            return +total;
-        }
+
+        // let value = this.statistics[date].operatingExpenses[TransactionType.getIndexOf(expense)];
+        // if (value !== undefined) {
+        //     let total = 0;
+        //     this.statistics[date].operatingExpenses[TransactionType.getIndexOf(expense)].forEach((transaction) => {
+        //         total+= +transaction.cost
+        //     })
+        //     return +total;
+        // }
         return 0;
     }
 

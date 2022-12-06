@@ -27,12 +27,12 @@ export function getMonthRanges(rangeType: string, date: string): DateRange[] {
             parsedDate.getMonth() - i + 1,
             0,
         );
+        let month = String(+firstDay.getMonth() + 1);
+        if (Number(month) < 10) {
+            month = '0' + month.toString();
+        }
         dateRanges.push({
-            dateFrom:
-                firstDay.getFullYear() +
-                '-' +
-                (+firstDay.getMonth() + 1) +
-                '-01',
+            dateFrom: firstDay.getFullYear() + '-' + month + '-01',
             dateTo: parseDate(lastDay.toLocaleDateString()),
         });
     }

@@ -118,4 +118,11 @@ export class TransactionService {
         ];
         return this.getAllTransactionsByCriteria(criteria);
     }
+
+    async getAllTaxesByDateRange(criteria: CriteriaDto, dateFrom: string) {
+        criteria.date = dateFrom;
+        criteria.range = RangeType.MONTHLY;
+        criteria.transactionType = [TransactionType.TAXES];
+        return this.getAllTransactionsByCriteria(criteria);
+    }
 }

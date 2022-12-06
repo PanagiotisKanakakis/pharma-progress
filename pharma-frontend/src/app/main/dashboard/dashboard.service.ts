@@ -267,12 +267,14 @@ export class DashboardService {
         }
     }
 
-    totalNetProfitWithTaxes( payload , date ) {
-        return this.totalNetProfitWithoutTaxes( payload , date ) - this.totalTaxes( payload , date );
-    }
-
     totalTaxes( payload , date ) {
-        return 0;
+        let value = 0;
+        Object.keys(payload[date].taxes).forEach((key) => {
+            payload[date].taxes[key].forEach((transaction) => {
+                value += Number(transaction.cost);
+            })
+        });
+        return value;
     }
 
     totalOperatingExpensesIncludingVat( payload , date ) {
@@ -332,5 +334,35 @@ export class DashboardService {
 
     totalMonthPrescriptions(payload , date) {
         return payload[date].totalPrescriptions;
+    }
+
+    calculateTaxes(payload, total: number) {
+        if(this.isIndividualBusiness(payload)){
+            return this.calculateTaxesForIndividual(total)
+        }else{
+            return this.calculateCompanyTaxes(total)
+        }
+    }
+
+    private isIndividualBusiness(payload) {
+        return true;
+    }
+
+    private calculateTaxesForIndividual(total: number) {
+        if(total <= 10000){
+            return total * 0.09;
+        }else if(total <= 20000){
+            return 900 + (total - 10000)*0.22;
+        }else if (total <= 30000){
+            return 3100 + (total - 20000)*0.28;
+        }else if (total <= 40000){
+            return 5900 + (total - 30000)*0.36;
+        }else{
+            return 9500 + (total - 40000)*0.44;
+        }
+    }
+
+    private calculateCompanyTaxes(total: number) {
+        return 0;
     }
 }

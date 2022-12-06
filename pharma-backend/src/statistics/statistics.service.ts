@@ -95,6 +95,7 @@ export class StatisticsService {
                         criteria,
                         dateFrom,
                     ),
+                taxes: await this.getAllTaxesByDateRange(criteria, dateFrom),
                 other: await this.getOtherTransactionValues(
                     criteria,
                     dateFrom,
@@ -587,6 +588,9 @@ export class StatisticsService {
         criteria.transactionType = [TransactionType.INCOME];
         criteria.paymentType = [PaymentType.CASH, PaymentType.POS];
         criteria.supplierType = SupplierType.NONE;
+        console.log(criteria);
+        console.log(dateFrom);
+        console.log(dateTo);
         return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
     }
 
@@ -787,5 +791,29 @@ export class StatisticsService {
             total += +prescription.amount;
         });
         return total;
+    }
+
+    private async getAllTaxesByDateRange(
+        criteria: CriteriaDto,
+        dateFrom: string,
+    ) {
+        criteria.vatType = undefined;
+        criteria.paymentType = [PaymentType.CASH, PaymentType.BANK];
+        criteria.supplierType = SupplierType.NONE;
+        const transactions =
+            await this.transactionService.getAllTaxesByDateRange(
+                criteria,
+                dateFrom,
+            );
+        const taxes: Partial<Record<TransactionType, Transaction[]>> = {};
+
+        transactions.forEach((transaction) => {
+            if (taxes[transaction.transactionType] == undefined) {
+                taxes[transaction.transactionType] = [];
+            }
+            taxes[transaction.transactionType].push(transaction);
+        });
+
+        return taxes;
     }
 }
