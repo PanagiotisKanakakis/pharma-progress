@@ -332,6 +332,10 @@ export class DashboardService {
         return payload[date].threeMonthPeriodVat;
     }
 
+    monthlyVat( payload , date ) {
+        return payload[date].monthlyVat;
+    }
+
     totalMonthPrescriptions(payload , date) {
         return payload[date].totalPrescriptions;
     }

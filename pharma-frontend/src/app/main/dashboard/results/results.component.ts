@@ -281,7 +281,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
             onClose: (selectedDates: any) => {
                 this.isLoaded = false;
                 this.period = DateUtils.NgbDateToMonthPeriod(
-                    new NgbDate(+selectedDates[0].getUTCFullYear(), +selectedDates[0].getUTCMonth() + 1, +selectedDates[0].getUTCDate()));
+                    new NgbDate(+selectedDates[0].getFullYear(), +selectedDates[0].getMonth() + 1, +selectedDates[0].getDate()));
                 this.getData();
             },
         };
@@ -570,26 +570,24 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 
     totalIncomePerVat(i: number) {
         if( i != 6){
-            return this.dashboardService.totalIncomePerVat(this.statistics, this.period.dateFrom)[VAT.getIndexOf(String(i))] / (1 + i/100)
+            return this.dashboardService.totalIncomePerVat(this.statistics, this.period.dateFrom)[VAT.getIndexOf(String(i))]/ (1+i/100)
         }else{
-            return this.dashboardService.totalIncomePerVat(this.statistics, this.period.dateFrom)[VAT.getIndexOf(String(i))] / (1 + i/100)
-            + this.dashboardService.totalMedicineAndConsumablesOnAccountWithVat(this.statistics, this.period.dateFrom)/(1 + i/100)
+            return this.dashboardService.totalIncomePerVat(this.statistics, this.period.dateFrom)[VAT.getIndexOf(String(i))] / (1+i/100)
+            + this.dashboardService.totalMedicineAndConsumablesOnAccountWithVat(this.statistics, this.period.dateFrom) / (1+i/100)
 
         }
     }
 
     totalOutcomePerVat(i: number) {
-        return this.dashboardService.totalOutcomePerVat(this.statistics, this.period.dateFrom)[VAT.getIndexOf(String(i))] / (1 + i/100);
+        return this.dashboardService.totalOutcomePerVat(this.statistics, this.period.dateFrom)[VAT.getIndexOf(String(i))] / (1+i/100);
     }
 
     totalVAT() {
-        return(this.totalIncomePerVat(6)/1.06 - this.totalOutcomePerVat(6)/1.06) * 0.06 +
-            (this.totalIncomePerVat(13)/1.13 - this.totalOutcomePerVat(13)/1.13) * 0.13 +
-            (this.totalIncomePerVat(24)/1.24 - this.totalOutcomePerVat(24)/1.24) * 0.24;
+        return this.dashboardService.monthlyVat(this.statistics, this.period.dateFrom);
     }
 
     getToday() {
-        let currentMonth = new Date().getUTCMonth()+1;
+        let currentMonth = new Date().getMonth()+1;
         if(currentMonth > Number(this.period.dateFrom.split('-')[1])){
             let year = Number(this.period.dateFrom.split('-')[0])
             let month = Number(this.period.dateFrom.split('-')[2])

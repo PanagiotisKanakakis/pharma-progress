@@ -18,6 +18,7 @@ export class StatisticsDto {
         totalPreviousMonths: number;
         totalIncome: number;
         threeMonthPeriodVat: number;
+        monthlyVat: number;
         totalPrescriptions: number;
         suppliers: {
             mainSupplier: {

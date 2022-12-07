@@ -85,6 +85,11 @@ export class StatisticsService {
                     criteria,
                     dateFrom,
                 ),
+                monthlyVat: await this.getMonthlyVat(
+                    criteria,
+                    dateFrom,
+                    dateTo,
+                ),
                 totalPrescriptions: await this.getTotalPrescriptions(
                     criteria,
                     dateFrom,
@@ -588,9 +593,6 @@ export class StatisticsService {
         criteria.transactionType = [TransactionType.INCOME];
         criteria.paymentType = [PaymentType.CASH, PaymentType.POS];
         criteria.supplierType = SupplierType.NONE;
-        console.log(criteria);
-        console.log(dateFrom);
-        console.log(dateTo);
         return this.createAndExecuteCriteriaQuery(criteria, dateFrom, dateTo);
     }
 
@@ -741,6 +743,36 @@ export class StatisticsService {
         return new Date(year, month, 0).getDate();
     }
 
+    private async getMonthlyVat(
+        criteria: CriteriaDto,
+        dateFrom: string,
+        dateTo: string,
+    ) {
+        const incomePerVat = await this.getIncomePerVatType(
+            criteria,
+            dateFrom,
+            dateTo,
+        );
+        const outcomePerVat = await this.getOutcomePerVatType(
+            criteria,
+            dateFrom,
+            dateTo,
+        );
+        let totalEoppyOnAccount;
+        await this.getTotalEOPPYOnAccount(criteria, dateFrom, dateTo).then(
+            (r) => {
+                totalEoppyOnAccount = r[VAT.SIX];
+            },
+        );
+        return (
+            ((incomePerVat['2'] + totalEoppyOnAccount) / 1.06 -
+                outcomePerVat['2'] / 1.06) *
+                0.06 +
+            (incomePerVat['3'] / 1.13 - outcomePerVat['3'] / 1.13) * 0.13 +
+            (incomePerVat['4'] / 1.24 - outcomePerVat['4'] / 1.24) * 0.24
+        );
+    }
+
     private async getThreeMonthPeriodVat(
         criteria: CriteriaDto,
         dateFrom: string,
@@ -759,8 +791,16 @@ export class StatisticsService {
             period[0],
             period[1],
         );
+        let totalEoppyOnAccount;
+        await this.getTotalEOPPYOnAccount(criteria, period[0], period[1]).then(
+            (r) => {
+                totalEoppyOnAccount = r[VAT.SIX];
+            },
+        );
         return (
-            (incomePerVat['2'] / 1.06 - outcomePerVat['2'] / 1.06) * 0.06 +
+            ((incomePerVat['2'] + totalEoppyOnAccount) / 1.06 -
+                outcomePerVat['2'] / 1.06) *
+                0.06 +
             (incomePerVat['3'] / 1.13 - outcomePerVat['3'] / 1.13) * 0.13 +
             (incomePerVat['4'] / 1.24 - outcomePerVat['4'] / 1.24) * 0.24
         );
